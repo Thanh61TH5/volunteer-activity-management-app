@@ -1,6 +1,6 @@
 <template>
   <div
-      class="sm:w-full  max-w-md  mx-auto  sm:bg-white/60 px-6 pt-10  sm:shadow-xl sm:ring-1 ring-gray-900/5 sm:rounded-xl pb-14">
+      class="sm:w-full  max-w-md  mx-auto  sm:bg-white/60 px-6 pt-10  sm:shadow-xl sm:ring-1 ring-gray-900/5 sm:rounded-xl pb-8 mt-10">
     <div class="w-full">
       <NuxtLink class="relative" to="/">
         <div class="bg-gray-100 p-5 rounded-full w-5 h-5  hover:cursor-pointer btn-back-home">
@@ -131,6 +131,11 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "auth",
+  middleware:"no-auth"
+
+});
 import { ref } from "vue";
 import {ErrorMessage, Field, Form} from "vee-validate";
 import { useLoadingStore } from '~/store';
@@ -138,12 +143,6 @@ import { useLoadingStore } from '~/store';
 
 const loadingStore = useLoadingStore();
 const loading = computed(() => loadingStore.isLoading);
-
-definePageMeta({
-  layout: "auth",
-  middleware:"no-auth"
-
-});
 const router = useRouter();
 const client = useSupabaseClient();
 const username = ref("");
@@ -173,13 +172,18 @@ const signUp = async () => {
     password: password.value,
   });
   if (error) {
-    useNuxtApp().$toast.error("Tài khoản này đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.");
-  }
+    ElNotification.error({
+      title: 'Thất bại',
+      message: 'Tài khoản này đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
+    });  }
   else {
     const {} = await client
         .from('accounts')
         .insert({name: username.value, email: email.value, password: password.value, role: selectedRole.value})
-    useNuxtApp().$toast.success("Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.");
+    ElNotification.success({
+      title: 'Thành công',
+      message: 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.',
+    });
     loadingStore.setLoading(false);
   }
 

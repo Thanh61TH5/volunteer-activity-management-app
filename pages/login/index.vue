@@ -115,11 +115,17 @@ const signIn = async () => {
   if (user.value) {
     await router.push("/admin");
     loadingStore.setLoading(false);
-    useNuxtApp().$toast.success("Đăng nhập thành công");
+    ElNotification.success({
+      title: 'Thành công',
+      message: 'Đăng nhập thành công',
+    });
   } else {
     errorMsg.value = error.message;
     loadingStore.setLoading(false);
-    useNuxtApp().$toast.error("Thông tin đăng nhập không hợp lệ. Mời nhập lại");
+    ElNotification.error({
+      title: 'Thất bại',
+      message: 'Thông tin đăng nhập không chính xác. Mời nhập lại',
+    });
 
   }
 
@@ -135,21 +141,6 @@ export default {
 .btn-back-home:hover span {
   display: block;
 }
-
-.circle-big-left{
-  width: 600px;
-  height: 600px;
-  top: -100px;
-  left: 450px;
-}
-
-.circle-big-right{
-  width: 300px;
-  height: 300px;
-  top: 550px;
-  right: 600px;
-}
-
 
 </style>
 

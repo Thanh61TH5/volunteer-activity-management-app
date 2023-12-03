@@ -9,14 +9,3 @@ export const useLoadingStore = defineStore('loading', {
     },
 });
 
-
-export const useOpenForm = defineStore('form', {
-    state: () => ({
-        isOpen: false,
-    }),
-    actions: {
-        setOpen(open: boolean) {
-            this.isOpen = open;
-        },
-    },
-});
