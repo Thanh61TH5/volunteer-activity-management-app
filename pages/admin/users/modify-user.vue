@@ -4,7 +4,7 @@ import { useLoadingStore } from '~/store';
 import {ref} from "vue";
 
 definePageMeta({
-  layout:"dashboard-admin",
+  layout:"sidebar-admin",
   middleware:"auth"
 })
 
@@ -13,6 +13,7 @@ const name = ref("");
 const isOpenModifyForm = ref(true)
 const loadingStore = useLoadingStore();
 const loading = computed(() => loadingStore.isLoading);
+const isModifyUserDialogVisible = ref(true)
 
 
 
@@ -26,6 +27,13 @@ const user = ref(props.user);
 
 async function saveUser() {
   emit('save');
+  if(user.value.name === user.value.name || user.value.password === user.value.password) {
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Không có thông tin nào thay đổi.',
+    });
+    return ;
+  }
   const { error } = await client
       .from('accounts')
       .update({ name: user.value.name,  password: user.value.password})
@@ -36,6 +44,7 @@ async function saveUser() {
       title: 'Thất bại',
       message: 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
     });
+    return ;
   } else {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     ElNotification.success({
@@ -43,7 +52,7 @@ async function saveUser() {
       message: 'Sửa thông tin người dùng thành công',
     });
     await fetchUserData();
-    return true; // Trả về true khi thành công
+    return true;
   }
 }
 
@@ -56,8 +65,8 @@ const closeForm = () => {
 
 <template>
   <div
-      class="rounded shadow-md rounded-lg bg-white p-6" v-if="isOpenModifyForm">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa tài khoản</h1>
+      class="" v-if="isModifyUserDialogVisible">
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa người dùng</h1>
     <span>
       <hr class="w-full">
     </span>
@@ -123,9 +132,6 @@ const closeForm = () => {
       <div class="flex justify-center space-x-5 py-5">
         <button @click="saveUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
           Lưu
-        </button>
-        <button @click="closeForm" type="button" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
-          Hủy
         </button>
       </div>
     </Form>

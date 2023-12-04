@@ -4,7 +4,7 @@ import { useLoadingStore } from '~/store';
 import {ref} from "vue";
 
 definePageMeta({
-  layout:"dashboard-admin",
+  layout:"sidebar-admin",
   middleware:"auth"
 })
 
