@@ -5,8 +5,9 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted, watch } from 'vue';
-import Chart from 'chart.js/auto';
+import Chart from 'chart.js';
 const client = useSupabaseClient();
 const totalUsersVolunteer = ref(0);
 const totalUsersSupport = ref(0);

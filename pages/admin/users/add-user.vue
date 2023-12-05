@@ -14,8 +14,7 @@ const email = ref("");
 const password = ref("");
 const selectedRole = ref("");
 const isAddUserDialogVisible = ref(true);
-const addingUser = ref(false);
-const emit = defineEmits(['add']);
+const emit = defineEmits(['close','add']);
 
 
 async function addUser() {
@@ -55,7 +54,6 @@ async function addUser() {
       message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
     })
     return;
-    addingUser.value = false;
   }
 
   const {error} = await client
@@ -76,13 +74,23 @@ async function addUser() {
   }
 }
 
+const handleClose = (done: () => void) => {
+  name.value ="";
+  email.value ="";
+  password.value ="";
+  selectedRole.value =""
+
+  emit('close');
+  done()
+}
+
 
 
 </script>
 
 <template>
-  <div
-      class="" v-if="isAddUserDialogVisible">
+  <el-dialog :before-close="handleClose"
+             class="p-5" v-model="isAddUserDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Thêm người dùng</h1>
     <span>
       <hr class="w-full">
@@ -165,12 +173,15 @@ async function addUser() {
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click.prevent="addUser" type="submit" class="bg-green-500 text-white rounded py-2 px-10 hover:bg-green-400 transition duration-200 ease-in-out">
+        <button @click.prevent="addUser" type="submit" class="bg-green-500 text-white rounded py-2 px-5 hover:bg-green-400 transition duration-200 ease-in-out">
           Thêm
+        </button>
+        <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
+          Hủy
         </button>
       </div>
     </Form>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

@@ -5,6 +5,7 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted } from 'vue';
 import Chart from 'chart.js/auto';
 
@@ -19,10 +20,10 @@ async function fetchUserDataByMonth() {
   // Truy vấn cơ sở dữ liệu để lấy dữ liệu theo tháng
   const { data, error } = await client
       .from('accounts')
-      .select('create_at')
+      .select('created_at')
       .eq('status', 'TRUE')
-      .gte('create_at', `${currentYear}-01-01`)
-      .lte('create_at', `${currentYear}-12-31`);
+      .gte('created_at', `${currentYear}-01-01`)
+      .lte('created_at', `${currentYear}-12-31`);
 
   if (error) {
     console.error(error);

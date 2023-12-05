@@ -68,7 +68,7 @@ const handleAdd = () => {
 
 };
 const handleSaveEdit = async () => {
-  isOpenModifyForm.value = false;
+  isModifyUserDialogVisible.value = false;
 };
 
 const handleSaveAdd = async () => {
@@ -118,13 +118,14 @@ const currentPageData = computed(() => {
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý người dùng</h1>
     <div class="flex justify-between py-2 w-full">
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin người dùng..." />
-      <button @click="handleAdd()" class="bg-green-500 rounded text-white hover:bg-green-400 py-2 px-4 mr-2 text-sm">Thêm người dùng</button>
+      <button @click="handleAdd" class="bg-green-500 rounded text-white hover:bg-green-400 py-2 px-2 mr-2.5 text-sm">Thêm người dùng</button>
     </div>
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
       pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
       layout: 'total, sizes, prev, pager, next, jumper', // Cấu trúc phân trang
       total: tableData.length // Tổng số lượng dữ liệu
-    }">      <el-table-column label="ID" prop="id" />
+    }">
+      <el-table-column label="ID" prop="id" />
       <el-table-column label="Họ tên" prop="name" />
       <el-table-column label="Email" prop="email" />
       <el-table-column label="Mật khẩu" prop="password" />
@@ -141,25 +142,19 @@ const currentPageData = computed(() => {
       <p>Không tìm thấy dữ liệu người dùng</p>
     </div>
     <el-pagination class="mt-10" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
-    <el-dialog class="rounded shadow-md rounded-lg bg-white"
-               v-model="isModifyUserDialogVisible">
-      <modify-user class=""
+      <modify-user v-model="isModifyUserDialogVisible"
+                   v-loading ="loading"
                    :user="selectedUser"
                    :fetchUserData="fetchUserData"
                    @close="isModifyUserDialogVisible = false"
-                   @save="handleSaveEdit"/>
-    </el-dialog>
+                   @save="handleSaveEdit"
+      />
 
-    <el-dialog class="rounded shadow-md rounded-lg bg-white px-6"
-        v-model="isAddUserDialogVisible"
-    >
-    <!-- Include the AddUser component inside the dialog -->
-    <AddUser class=""
+    <AddUser v-model="isAddUserDialogVisible"
         :fetchUserData="fetchUserData"
         @close="isAddUserDialogVisible = false"
         @add="handleSaveAdd"
     />
-    </el-dialog>
   </div>
 </template>
 

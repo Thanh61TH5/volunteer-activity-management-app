@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import {UserFilled} from "@element-plus/icons-vue";
+
 const client = useSupabaseClient();
 const isOpenUserMenu = ref(false);
 const isOpenSideBar = ref(false);
@@ -67,10 +69,9 @@ async function signOut() {
         <div class="flex items-center">
           <div class="flex relative items-center ms-3">
             <div>
-              <button type="button" @click="openUserMenu" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+              <button type="button" @click="openUserMenu" class="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                 <span class="sr-only">Open user menu</span>
-                <img class="w-8 h-8 rounded-full border border-white" src="/user_avt.jpg" alt="user photo">
-              </button>
+                <el-avatar :icon="UserFilled" />              </button>
             </div>
             <div v-if="isOpenUserMenu" class="absolute w-60 top-9 right-0 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">
               <div class="px-4 py-3" role="none">

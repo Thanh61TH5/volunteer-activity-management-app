@@ -10,11 +10,8 @@ definePageMeta({
 
 const client = useSupabaseClient();
 const name = ref("");
-const isOpenModifyForm = ref(true)
-const loadingStore = useLoadingStore();
-const loading = computed(() => loadingStore.isLoading);
 const isModifyUserDialogVisible = ref(true)
-
+const loading = ref(false)
 
 
 const props = defineProps({
@@ -24,21 +21,17 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save']);
 
 const user = ref(props.user);
+const originalUser = ref({ ...user.value });
 
 async function saveUser() {
+  loading.value = true
   emit('save');
-  if(user.value.name === user.value.name || user.value.password === user.value.password) {
-    ElNotification.info({
-      title: 'Thông báo',
-      message: 'Không có thông tin nào thay đổi.',
-    });
-    return ;
-  }
   const { error } = await client
       .from('accounts')
       .update({ name: user.value.name,  password: user.value.password})
       .eq('id',user.value.id)
   if (error) {
+    loading.value = false;
     console.error('Error fetching user data:', error);
     ElNotification.error({
       title: 'Thất bại',
@@ -46,6 +39,7 @@ async function saveUser() {
     });
     return ;
   } else {
+    loading.value=false
     await new Promise((resolve) => setTimeout(resolve, 1000));
     ElNotification.success({
       title: 'Thành công',
@@ -56,16 +50,24 @@ async function saveUser() {
   }
 }
 
-const closeForm = () => {
+const handleClose = (done: () => void) => {
+  user.value = { ...originalUser.value };
   emit('close');
-};
+  done()
+}
+
+
+watch(() => props.user, (newValue) => {
+  user.value = { ...newValue };
+  originalUser.value = { ...newValue };
+});
 
 
 </script>
 
 <template>
-  <div
-      class="" v-if="isModifyUserDialogVisible">
+  <el-dialog :before-close="handleClose" :v-loading ="loading"
+      class="p-5" v-model="isModifyUserDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa người dùng</h1>
     <span>
       <hr class="w-full">
@@ -130,12 +132,15 @@ const closeForm = () => {
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click="saveUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
+        <button @click.prevent="saveUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
           Lưu
+        </button>
+        <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
+          Hủy
         </button>
       </div>
     </Form>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

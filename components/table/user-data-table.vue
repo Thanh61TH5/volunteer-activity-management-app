@@ -9,11 +9,8 @@ interface User {
   role: string;
 }
 const loading = ref(false);
-const isOpenModifyForm = ref(false);
-const isOpenAddForm = ref(false);
 const client = useSupabaseClient();
 const search = ref('');
-const selectedUser = ref(null);
 const users = ref<User[]>([]);
 const pageSize = 20;
 const currentPage = ref(1);

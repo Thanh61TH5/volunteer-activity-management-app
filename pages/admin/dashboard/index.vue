@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import PieChart from "~/components/chart/pie-chart.vue";
-import BarChart from "~/components/chart/bar-chart.vue";
-
-
 definePageMeta({
   layout: "sidebar-admin",
   middleware: "auth"
 })
+import PieChart from "~/components/chart/pie-chart.vue";
+import BarChart from "~/components/chart/bar-chart.vue";
+import TotalNeederSupport from "~/pages/admin/dashboard/total-needer-support.vue";
+import TotalVolunteer from "~/pages/admin/dashboard/total-volunteer.vue";
 
 
 const client = useSupabaseClient()
 const totalUsers = ref(0)
+const isDialogDashboard1Visible = ref(false);
+const isDialogDashboard2Visible = ref(false);
 
 async function fetchTotalUsers() {
   const {data, error, count} = await client
@@ -29,14 +31,22 @@ async function fetchTotalUsers() {
     console.log(count)
   }
 }
-const centerDialogVisible = ref(false)
+async function handleCount1() {
+  isDialogDashboard1Visible.value = true
+}
+async function handleCount2() {
+  isDialogDashboard2Visible.value = true
+}
 fetchTotalUsers()
+
+
+
 </script>
 
 <template>
   <div class="flex flex-col space-y-10">
     <div class="grid lg:grid-cols-3 grid-cols-1 gap-12">
-      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out">
+      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
         <div class="flex justify-between items-center">
           <p class="font-medium text-gray-800">Thống kê số lượng tình nguyện viên</p>
           <Icon name="mdi:account-multiple-plus" class="text-green-500 w-12 h-12"/>
@@ -50,7 +60,7 @@ fetchTotalUsers()
         </div>
       </div>
 
-      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out">
+      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount2">
         <div class="flex justify-between items-center">
           <p class="font-medium text-gray-800">Thống kê số lượng người cần hỗ trợ</p>
           <Icon name="mdi:account-multiple-plus" class="text-yellow-500 w-12 h-12"/>
@@ -83,7 +93,7 @@ fetchTotalUsers()
         <pie-chart/>
       </div>
       <div class="rounded  p-3 shadow-md">
-        <bar-chart/>
+        <pie-chart/>
       </div>
     </div>
     <div class="rounded  p-3 shadow-md">
@@ -91,6 +101,12 @@ fetchTotalUsers()
       <table-user-data-table/>
     </div>
   </div>
+  <total-volunteer v-model="isDialogDashboard1Visible"
+                   @ok="handleCount1"
+  />
+  <total-needer-support v-model="isDialogDashboard2Visible"
+                        @ok="handleCount2"
+  />
 </template>
 
 <style scoped>
