@@ -69,9 +69,10 @@ async function signOut() {
         <div class="flex items-center">
           <div class="flex relative items-center ms-3">
             <div>
-              <button type="button" @click="openUserMenu" class="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+              <button type="button" @click="openUserMenu" class="flex text-sm border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                 <span class="sr-only">Open user menu</span>
-                <el-avatar :icon="UserFilled" />              </button>
+              <Icon class="w-10 h-10 text-gray-400" name="mdi:account"/>
+              </button>
             </div>
             <div v-if="isOpenUserMenu" class="absolute w-60 top-9 right-0 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">
               <div class="px-4 py-3" role="none">
@@ -93,7 +94,7 @@ async function signOut() {
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2 font-medium">
         <li>
-          <NuxtLink to="/admin/dashboard/" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <NuxtLink to="/admin/statistics/" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <Icon class="text-gray-800 w-5 h-5 ml-5" name="heroicons-outline:chart-bar"/>
             <span class="ms-3">Thống kê</span>
           </NuxtLink>
@@ -172,7 +173,7 @@ async function signOut() {
   </aside>
 
   <div class="p-4 sm:ml-64">
-    <div class="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 mt-14 min-h-screen">
+    <div class="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 mt-14 min-h-screen mt-20">
       <div class="flex justify-center items-center">
         <slot/>
       </div>

@@ -13,7 +13,6 @@ const client = useSupabaseClient();
 const email = ref("");
 const isOpenModifyForm = ref(true)
 const loadingStore = useLoadingStore();
-const loading = computed(() => loadingStore.isLoading);
 
 async function getUserDataByEmail(email: string) {
   if (user.value) {
@@ -41,8 +40,8 @@ if (user.value) {
 async function editUser() {
   const {error}  = await client
       .from('accounts')
-      .upsert({ id: userData.id, name: userData.name })
-      .select()
+      .update({name: userData.name })
+      .eq('id',userData.id)
   if (error) {
     console.error('Error fetching user data:', error);
     return null;

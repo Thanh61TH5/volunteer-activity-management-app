@@ -1,12 +1,12 @@
 <script setup lang="ts">
+
 definePageMeta({
   layout: "sidebar-admin",
   middleware: "auth"
 })
-import PieChart from "~/components/chart/pie-chart.vue";
-import BarChart from "~/components/chart/bar-chart.vue";
-import TotalNeederSupport from "~/pages/admin/dashboard/total-needer-support.vue";
-import TotalVolunteer from "~/pages/admin/dashboard/total-volunteer.vue";
+
+import TotalNeederSupport from "~/pages/admin/statistics/total-needer-support.vue";
+import TotalVolunteer from "~/pages/admin/statistics/total-volunteer.vue";
 
 
 const client = useSupabaseClient()
@@ -38,8 +38,6 @@ async function handleCount2() {
   isDialogDashboard2Visible.value = true
 }
 fetchTotalUsers()
-
-
 
 </script>
 
@@ -90,10 +88,13 @@ fetchTotalUsers()
     </div>
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12 ">
       <div class="rounded  p-3 shadow-md">
-        <pie-chart/>
+        <div>
+          <div>
+            <canvas ref="barChart"></canvas>
+          </div>
+        </div>
       </div>
       <div class="rounded  p-3 shadow-md">
-        <pie-chart/>
       </div>
     </div>
     <div class="rounded  p-3 shadow-md">
@@ -101,12 +102,12 @@ fetchTotalUsers()
       <table-user-data-table/>
     </div>
   </div>
-  <total-volunteer v-model="isDialogDashboard1Visible"
-                   @ok="handleCount1"
-  />
-  <total-needer-support v-model="isDialogDashboard2Visible"
-                        @ok="handleCount2"
-  />
+    <total-volunteer v-model="isDialogDashboard1Visible"
+                     @ok="handleCount1"
+    />
+    <total-needer-support v-model="isDialogDashboard2Visible"
+                          @ok="handleCount2"
+    />
 </template>
 
 <style scoped>

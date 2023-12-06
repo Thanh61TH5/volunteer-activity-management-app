@@ -18,6 +18,7 @@ const emit = defineEmits(['close','add']);
 
 
 async function addUser() {
+  emit('add')
   if(name.value==="" || email.value ==="" || password.value ==="" || selectedRole.value === "") {
     ElNotification.error({
       title: 'Lỗi',
@@ -63,13 +64,13 @@ async function addUser() {
     console.error('Error fetching user data:', error);
     return;
   } else {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     ElNotification.success({
       title: 'Thành công',
       message: 'Thêm người dùng thành công',
     })
-    emit('add')
+    await fetchUserData();
+    return true;
 
   }
 }
