@@ -4,16 +4,14 @@ import { useLoadingStore } from '~/store';
 import {ref} from "vue";
 
 definePageMeta({
-  layout:"dashboard-admin",
+  layout:"sidebar-admin",
   middleware:"auth"
 })
 
 const client = useSupabaseClient();
 const name = ref("");
-const isOpenModifyForm = ref(true)
-const loadingStore = useLoadingStore();
-const loading = computed(() => loadingStore.isLoading);
-
+const isModifyUserDialogVisible = ref(true)
+const loading = ref(false)
 
 
 const props = defineProps({
@@ -23,41 +21,54 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save']);
 
 const user = ref(props.user);
+const originalUser = ref({ ...user.value });
 
 async function saveUser() {
+  loading.value = true
   emit('save');
   const { error } = await client
       .from('accounts')
       .update({ name: user.value.name,  password: user.value.password})
       .eq('id',user.value.id)
   if (error) {
+    loading.value = false;
     console.error('Error fetching user data:', error);
     ElNotification.error({
       title: 'Thất bại',
       message: 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
     });
+    return ;
   } else {
+    loading.value=false
     await new Promise((resolve) => setTimeout(resolve, 1000));
     ElNotification.success({
       title: 'Thành công',
       message: 'Sửa thông tin người dùng thành công',
     });
     await fetchUserData();
-    return true; // Trả về true khi thành công
+    return true;
   }
 }
 
-const closeForm = () => {
+const handleClose = (done: () => void) => {
+  user.value = { ...originalUser.value };
   emit('close');
-};
+  done()
+}
+
+
+watch(() => props.user, (newValue) => {
+  user.value = { ...newValue };
+  originalUser.value = { ...newValue };
+});
 
 
 </script>
 
 <template>
-  <div
-      class="rounded shadow-md rounded-lg bg-white p-6" v-if="isOpenModifyForm">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa tài khoản</h1>
+  <el-dialog :before-close="handleClose" :v-loading ="loading"
+      class="p-5" v-model="isModifyUserDialogVisible">
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa người dùng</h1>
     <span>
       <hr class="w-full">
     </span>
@@ -121,15 +132,15 @@ const closeForm = () => {
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click="saveUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
+        <button @click.prevent="saveUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
           Lưu
         </button>
-        <button @click="closeForm" type="button" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
+        <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
           Hủy
         </button>
       </div>
     </Form>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

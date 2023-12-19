@@ -4,7 +4,7 @@ import { useLoadingStore } from '~/store';
 import {ref} from "vue";
 
 definePageMeta({
-  layout:"dashboard-admin",
+  layout:"sidebar-admin",
   middleware:"auth"
 })
 
@@ -13,12 +13,19 @@ const name = ref("");
 const email = ref("");
 const password = ref("");
 const selectedRole = ref("");
-const isOpenAddForm = ref(true);
-const addingUser = ref(false);
-const emit = defineEmits(['close', 'add']);
+const isAddUserDialogVisible = ref(true);
+const emit = defineEmits(['close','add']);
 
 
 async function addUser() {
+  emit('add')
+  if(name.value==="" || email.value ==="" || password.value ==="" || selectedRole.value === "") {
+    ElNotification.error({
+      title: 'Lỗi',
+      message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
+    })
+    return;
+  }
   const {data: accData, error: accError} = await client
       .from('accounts')
       .select('email')
@@ -48,7 +55,6 @@ async function addUser() {
       message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
     })
     return;
-    addingUser.value = false;
   }
 
   const {error} = await client
@@ -58,29 +64,35 @@ async function addUser() {
     console.error('Error fetching user data:', error);
     return;
   } else {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     ElNotification.success({
       title: 'Thành công',
       message: 'Thêm người dùng thành công',
     })
-    emit('add')
+    await fetchUserData();
+    return true;
 
   }
 }
 
-const closeForm = () => {
+const handleClose = (done: () => void) => {
+  name.value ="";
+  email.value ="";
+  password.value ="";
+  selectedRole.value =""
+
   emit('close');
-  isOpenAddForm.value = false
-};
+  done()
+}
+
 
 
 </script>
 
 <template>
-  <div
-      class="rounded shadow-md rounded-lg bg-white p-6" v-if="isOpenAddForm">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Thêm tài khoản</h1>
+  <el-dialog :before-close="handleClose"
+             class="p-5" v-model="isAddUserDialogVisible">
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Thêm người dùng</h1>
     <span>
       <hr class="w-full">
     </span>
@@ -106,7 +118,7 @@ const closeForm = () => {
             for="email"
             class="py-2 text-gray-800 focus:text-gray-600">Email
         </label>
-        <input
+        <Field
             type="email"
             name="email"
             id="email"
@@ -124,7 +136,7 @@ const closeForm = () => {
             for="password"
             class="py-2 text-gray-800 focus:text-gray-600">Mật khẩu
         </label>
-        <input
+        <Field
             type="password"
             name="password"
             id="password"
@@ -162,15 +174,15 @@ const closeForm = () => {
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click.prevent="addUser" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
-          Lưu
+        <button @click.prevent="addUser" type="submit" class="bg-green-500 text-white rounded py-2 px-5 hover:bg-green-400 transition duration-200 ease-in-out">
+          Thêm
         </button>
-        <button @click="closeForm" type="button" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
+        <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
           Hủy
         </button>
       </div>
     </Form>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

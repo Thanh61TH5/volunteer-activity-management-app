@@ -4,7 +4,7 @@ import { useLoadingStore } from '~/store';
 import {ref} from "vue";
 
 definePageMeta({
-  layout:"dashboard-admin",
+  layout:"sidebar-admin",
   middleware:"auth"
 })
 
@@ -50,10 +50,13 @@ async function resetPassword() {
 
       const { error } = await client
           .from('accounts')
-          .upsert({ id: userData.id, password: password.value })
-          .select();
+          .update({password: password.value })
+          .eq('id',userData.id)
       loadingStore.setLoading(false);
-      useNuxtApp().$toast.success("Đặt mật khẩu thành công.");
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Đặt mật khẩu thành công.',
+      })
 
     } catch (error) {
       console.log(error);
@@ -61,13 +64,19 @@ async function resetPassword() {
   }
   else if(password.value === oldPassword.value) {
     loadingStore.setLoading(false);
-    useNuxtApp().$toast.error("Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.");
+    ElNotification.error({
+      title: 'Lỗi',
+      message: 'Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.',
+    })
     console.log(password);
     return;
   }
   else {
     loadingStore.setLoading(false);
-    useNuxtApp().$toast.error("Mật khẩu cũ không đúng. Vui lòng thử lại.");
+    ElNotification.error({
+      title: 'Lỗi',
+      message: 'Mật khẩu cũ không đúng. Vui lòng thử lại.',
+    })
     console.log(password);
     return;
   }

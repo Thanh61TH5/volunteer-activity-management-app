@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import {UserFilled} from "@element-plus/icons-vue";
+
 const client = useSupabaseClient();
 const isOpenUserMenu = ref(false);
 const isOpenSideBar = ref(false);
@@ -57,9 +59,9 @@ async function signOut() {
         <div class="flex items-center justify-start rtl:justify-end">
           <button @click="openSideBar" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
             <span class="sr-only">Open sidebar</span>
-            <Icon name="material-symbols:account-circle-full"/>
+            <Icon name="tabler:align-justified" class="w-5 h-5"/>
           </button>
-          <a href="https://flowbite.com" class="flex ms-2 md:me-24">
+          <a href="#" class="flex ms-2 md:me-24">
             <img src="/logo.jpg" class="h-8 me-3" alt="logo" />
             <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Hỗ trợ người già neo đơn</span>
           </a>
@@ -67,9 +69,9 @@ async function signOut() {
         <div class="flex items-center">
           <div class="flex relative items-center ms-3">
             <div>
-              <button type="button" @click="openUserMenu" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+              <button type="button" @click="openUserMenu" class="flex text-sm border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                 <span class="sr-only">Open user menu</span>
-                <img class="w-8 h-8 rounded-full" src="/user_avt.jpg" alt="user photo">
+              <Icon class="w-10 h-10 text-gray-400" name="mdi:account"/>
               </button>
             </div>
             <div v-if="isOpenUserMenu" class="absolute w-60 top-9 right-0 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">
@@ -92,10 +94,10 @@ async function signOut() {
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2 font-medium">
         <li>
-          <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <NuxtLink to="/admin/statistics/" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <Icon class="text-gray-800 w-5 h-5 ml-5" name="heroicons-outline:chart-bar"/>
             <span class="ms-3">Thống kê</span>
-          </a>
+          </NuxtLink>
         </li>
         <li>
           <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -171,12 +173,12 @@ async function signOut() {
   </aside>
 
   <div class="p-4 sm:ml-64">
-    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14 min-h-screen">
+    <div class="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 mt-14 min-h-screen mt-20">
       <div class="flex justify-center items-center">
         <slot/>
       </div>
-      <Footer/>
     </div>
+    <Footer/>
   </div>
 
 </template>

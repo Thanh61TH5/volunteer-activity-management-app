@@ -106,30 +106,81 @@ const toggleShowPass= () => {
   showPassword.value = !showPassword.value
 }
 
+//auth
+
+
 const signIn = async () => {
   loadingStore.setLoading(true);
+
+  async function getUserDataByEmail(email) {
+    if (user.value) {
+      const { data, error } = await client
+          .from('accounts')
+          .select('*')
+          .eq('email', email)
+          .single();
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+      }
+
+      return data;
+    }
+    return null;
+  }
+
+  let userData = null;
+  if (user.value) {
+    userData = await getUserDataByEmail(user.value.email);
+  }
+
+  // signIn
   const { error } = await client.auth.signInWithPassword({
     email: email.value,
     password: password.value,
   });
-  if (user.value) {
-    await router.push("/admin");
-    loadingStore.setLoading(false);
-    ElNotification.success({
-      title: 'Thành công',
-      message: 'Đăng nhập thành công',
-    });
+
+  if (user.value && userData) {
+    if (userData.role === 'Admin') {
+      await router.push("/admin/");
+      loadingStore.setLoading(false);
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Đăng nhập thành công',
+      });
+    } else if (userData.role === 'Tình nguyện viên') {
+      await router.push("/volunteer/");
+      loadingStore.setLoading(false);
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Đăng nhập thành công',
+      });
+    }
+    else if (userData.role === 'Người cần hỗ trợ') {
+      await router.push("/volunteer/");
+      loadingStore.setLoading(false);
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Đăng nhập thành công',
+      });
+    }
   } else {
-    errorMsg.value = error.message;
+    if (error && error.message) {
+      errorMsg.value = error.message;
+      ElNotification.error({
+        title: 'Thất bại',
+        message: 'Thông tin đăng nhập không chính xác. Mời nhập lại',
+      });
+    } else {
+      errorMsg.value = 'Đã xảy ra lỗi trong quá trình đăng nhập.';
+    }
+
     loadingStore.setLoading(false);
-    ElNotification.error({
-      title: 'Thất bại',
-      message: 'Thông tin đăng nhập không chính xác. Mời nhập lại',
-    });
-
   }
-
 };
+
+
 </script>
 
 <script>
