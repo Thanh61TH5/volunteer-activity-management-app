@@ -14,65 +14,73 @@ const email = ref("");
 const password = ref("");
 const selectedRole = ref("");
 const isAddUserDialogVisible = ref(true);
+const loading = ref(false);
 const emit = defineEmits(['close','add']);
 
 
 async function addUser() {
   emit('add')
-  if(name.value==="" || email.value ==="" || password.value ==="" || selectedRole.value === "") {
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
-    })
-    return;
+  try {
+    loading.value= true;
+    if(name.value==="" || email.value ==="" || password.value ==="" || selectedRole.value === "") {
+      ElNotification.error({
+        title: 'Lỗi',
+        message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
+      })
+      return;
+    }
+    const {data: accData, error: accError} = await client
+        .from('accounts')
+        .select('email')
+        .eq('email', email.value);
+
+    if (accError) {
+      console.error("Oopsie-doodle, there was an error checking 'TaiKhoan' table:", accError);
+    } else if (accData.length > 0) {
+      // Email already exists in 'TaiKhoan' table
+      ElNotification.error({
+        title: 'Lỗi',
+        message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
+      })
+      return;
+    }
+    const {data: authData, error: authError} = await client
+        .from('auth.users')
+        .select('email')
+        .eq('email', email.value);
+
+    if (authError) {
+      console.error("Oopsie-doodle, there was an error checking Supabase auth:", authError);
+    } else if (authData.length > 0) {
+      // Email already exists in Supabase auth
+      ElNotification.error({
+        title: 'Lỗi',
+        message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
+      })
+      return;
+    }
+
+    const {error} = await client
+        .from('accounts')
+        .insert({name: name.value, email: email.value, password: password.value, role: selectedRole.value})
+    if (error) {
+      console.error('Error fetching user data:', error);
+      return;
+    } else {
+
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Thêm người dùng thành công',
+      })
+      await fetchUserData();
+      return true;
+    }
+  }catch (error) {
+    console.error('Error adding user:', error);
+  } finally {
+    loading.value = false;
   }
-  const {data: accData, error: accError} = await client
-      .from('accounts')
-      .select('email')
-      .eq('email', email.value);
 
-  if (accError) {
-    console.error("Oopsie-doodle, there was an error checking 'TaiKhoan' table:", accError);
-  } else if (accData.length > 0) {
-    // Email already exists in 'TaiKhoan' table
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
-    })
-    return;
-  }
-  const {data: authData, error: authError} = await client
-      .from('auth.users')
-      .select('email')
-      .eq('email', email.value);
-
-  if (authError) {
-    console.error("Oopsie-doodle, there was an error checking Supabase auth:", authError);
-  } else if (authData.length > 0) {
-    // Email already exists in Supabase auth
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Tài khoản đã tồn tại. Vui lòng đăng ký bằng tài khoản khác.',
-    })
-    return;
-  }
-
-  const {error} = await client
-      .from('accounts')
-      .insert({name: name.value, email: email.value, password: password.value, role: selectedRole.value})
-  if (error) {
-    console.error('Error fetching user data:', error);
-    return;
-  } else {
-
-    ElNotification.success({
-      title: 'Thành công',
-      message: 'Thêm người dùng thành công',
-    })
-    await fetchUserData();
-    return true;
-
-  }
 }
 
 const handleClose = (done: () => void) => {
@@ -180,6 +188,9 @@ const handleClose = (done: () => void) => {
         <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
           Hủy
         </button>
+      </div>
+      <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
+        <p class="text-white">Loading...</p>
       </div>
     </Form>
   </el-dialog>

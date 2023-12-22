@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import {flag} from "arg";
+
 definePageMeta({
   layout: "sidebar-admin",
   middleware: "auth"
 })
 const emit = defineEmits(['ok','close'])
-
+const loading = ref(false);
 const client = useSupabaseClient();
 const value1 = ref('');
 const value2 = ref('')
@@ -109,22 +111,27 @@ const currentPageData = computed(() => {
 })
 
 const handleCount = () => {
+
+  loading.value = true;
   const date1 = new Date(value1.value);
   const date2 = new Date(value2.value);
 
   startYear.value = date1.getFullYear();
-  startMonth.value = date1.getMonth() + 1; // Months are zero-based
+  startMonth.value = date1.getMonth() + 1;
 
   endYear.value = date2.getFullYear();
-  endMonth.value = date2.getMonth() + 1; // Months are zero-based
-  fetchUserData()
-};
+  endMonth.value = date2.getMonth() + 1;
+  fetchUserData().then(()=> {
+    loading.value = false;
+  })
 
+};
+loading.value = false;
 
 </script>
 <template>
-  <el-dialog v-model="isDialogDashboard1Visible" :before-close="handleClose">
-    <div class="flex flex-col justify-center items-center">
+  <el-dialog class="relative"  v-model="isDialogDashboard1Visible" :before-close="handleClose">
+    <div class="flex flex-col justify-center items-center z-1">
       <h1 class="text-gray-600 sm:text-xl text-md font-medium pb-2">Thống kê số lượng tình nguyện viên theo tháng</h1>
       <div class="demo-date-picker">
         <div class="block flex flex-col justify-center items-center space-y-5">
@@ -135,6 +142,7 @@ const handleCount = () => {
               start-placeholder="Tháng bắt đầu"
               end-placeholder="Tháng kết thúc"
               format='YYYY/MM'
+              class="z-1"
           />
         </div>
         <div class="block flex flex-col justify-center items-center space-y-5">
@@ -151,15 +159,15 @@ const handleCount = () => {
 
 
       <div class="flex flex-col items-center justify-center mb-5">
-        <button class="bg-blue-500 rounded text-white px-5 py-2 hover:bg-blue-400 m-5" @click="handleCount">
-          Thống kê
+        <button :disabled="loading"  class="bg-blue-500 rounded text-white px-5 py-2 hover:bg-blue-400 m-5" @click="handleCount">
+         Thống kê
         </button>
-        <div class="border border-gray-500 rounded p-3">
+        <div class="border border-gray-500 rounded p-3 z-1">
           <p>Kết quả: {{tableData.length}}</p>
         </div>
       </div>
 
-      <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
+      <el-table class="z-1" v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
       pageSize: 10,
       layout: 'total, sizes, prev, pager, next, jumper',
       total: tableData.length
@@ -174,7 +182,10 @@ const handleCount = () => {
       <div class="text-center" v-else>
         <p>Không tìm thấy dữ liệu người dùng</p>
       </div>
-      <el-pagination class="mt-10" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
+      <el-pagination class="mt-10 z-1" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
+    </div>
+    <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
+      <p class="text-white">Đang thống kê...</p>
     </div>
   </el-dialog>
 </template>

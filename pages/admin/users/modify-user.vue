@@ -24,31 +24,45 @@ const user = ref(props.user);
 const originalUser = ref({ ...user.value });
 
 async function saveUser() {
-  loading.value = true
   emit('save');
-  const { error } = await client
-      .from('accounts')
-      .update({ name: user.value.name,  password: user.value.password})
-      .eq('id',user.value.id)
-  if (error) {
+  try {
+    loading.value = true;
+    if (user.value.name === "" || user.value.password === "") {
+      ElNotification.error({
+        title: 'Thất bại',
+        message: 'Vui lòng điền thông tin đầy đủ.',
+      });
+      return;
+    } else if (
+        user.value.name === originalUser.name &&
+        user.value.password === originalUser.password
+    ) {
+      ElNotification.warning({
+        title: 'Thông báo',
+        message: 'Thông tin người dùng không thay đổi.',
+      });
+      return false;
+    } else {
+      const { error } = await client
+          .from('accounts')
+          .update({ name: user.value.name, password: user.value.password })
+          .eq('id', user.value.id);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Sửa thông tin người dùng thành công',
+      });
+      await fetchUserData();
+      return true;
+    }
+  } catch (error) {
+    console.error('Error modify user:', error);
+  } finally {
     loading.value = false;
-    console.error('Error fetching user data:', error);
-    ElNotification.error({
-      title: 'Thất bại',
-      message: 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
-    });
-    return ;
-  } else {
-    loading.value=false
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    ElNotification.success({
-      title: 'Thành công',
-      message: 'Sửa thông tin người dùng thành công',
-    });
-    await fetchUserData();
-    return true;
   }
 }
+
+
 
 const handleClose = (done: () => void) => {
   user.value = { ...originalUser.value };
@@ -138,6 +152,9 @@ watch(() => props.user, (newValue) => {
         <button @click.prevent="handleClose" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
           Hủy
         </button>
+      </div>
+      <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
+        <p class="text-white">Loading...</p>
       </div>
     </Form>
   </el-dialog>

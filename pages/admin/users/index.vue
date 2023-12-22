@@ -68,7 +68,6 @@ const handleAdd = () => {
 
 };
 const handleSaveEdit = async () => {
-  isModifyUserDialogVisible.value = false;
 };
 
 const handleSaveAdd = async () => {

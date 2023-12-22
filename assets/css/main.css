@@ -20,3 +20,7 @@ Field:checked ~ .checkmark:after {
     background: rgb(255,255,255);
     background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 0%, rgba(163,206,255,1) 100%);
 }
+
+.loading {
+    background-color: rgba(0,0,0,0.5);
+}

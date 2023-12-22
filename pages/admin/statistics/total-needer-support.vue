@@ -4,7 +4,7 @@ definePageMeta({
   middleware: "auth"
 })
 const emit = defineEmits(['ok','close'])
-
+const loading = ref(false);
 const client = useSupabaseClient();
 const value1 = ref('');
 const value2 = ref('')
@@ -109,6 +109,7 @@ const currentPageData = computed(() => {
 })
 
 const handleCount = () => {
+  loading.value = true;
   const date1 = new Date(value1.value);
   const date2 = new Date(value2.value);
 
@@ -117,17 +118,19 @@ const handleCount = () => {
 
   endYear.value = date2.getFullYear();
   endMonth.value = date2.getMonth() + 1; // Months are zero-based
-  fetchUserData()
+  fetchUserData().then(() => {
+    loading.value = false;
+  })
 };
 
 
 </script>
 <template>
   <el-dialog v-model="isDialogDashboard1Visible" :before-close="handleClose">
-    <div class="flex flex-col justify-center items-center">
+    <div class="flex flex-col justify-center items-center z-1">
       <h1 class="text-gray-600 sm:text-xl text-md font-medium pb-2">Thống kê số lượng người cần hỗ trợ theo tháng</h1>
       <div class="demo-date-picker">
-        <div class="block flex flex-col justify-center items-center space-y-5">
+        <div class="block flex flex-col justify-center items-center space-y-5 z-1">
           <span class="demonstration">Mời chọn mốc thời gian bắt đầu</span>
           <el-date-picker
               v-model="value1"
@@ -135,6 +138,7 @@ const handleCount = () => {
               start-placeholder="Tháng bắt đầu"
               end-placeholder="Tháng kết thúc"
               format='YYYY/MM'
+              class="z-1"
           />
         </div>
         <div class="block flex flex-col justify-center items-center space-y-5">
@@ -145,6 +149,7 @@ const handleCount = () => {
               start-placeholder="Tháng bắt đầu"
               end-placeholder="Tháng kết thúc"
               format='YYYY/MM'
+              class="z-1"
           />
         </div>
       </div>
@@ -175,6 +180,9 @@ const handleCount = () => {
         <p>Không tìm thấy dữ liệu người dùng</p>
       </div>
       <el-pagination class="mt-10" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
+    </div>
+    <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
+      <p class="text-white">Đang thống kê...</p>
     </div>
   </el-dialog>
 </template>
