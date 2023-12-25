@@ -30,6 +30,7 @@ onMounted(async () => {
     console.error(error);
   } else {
     volunteerData.value = data;
+    console.log(volunteerData.value)
   }
 });
 
@@ -39,6 +40,14 @@ function notifyLogin() {
     message: 'Hãy đăng nhập để lưu tin bạn nhé!',
   });
 }
+
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const viewPostDetail = (postId) => {
+  router.push(`/list-volunteer/${postId}`);
+};
 </script>
 
 <template>
@@ -75,6 +84,7 @@ function notifyLogin() {
           <div class="text-white">
             <NuxtLink to="/login" class="bg-green-500 rounded-full px-4 py-1 hover:opacity-80" @click="notifyLogin">Lưu tin</NuxtLink>
           </div>
+          <button @click="viewPostDetail(volunteer.id)">View Details</button>
         </div>
       </div>
     </div>
