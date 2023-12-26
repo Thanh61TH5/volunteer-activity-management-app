@@ -1,5 +1,5 @@
 <template>
-    <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+    <div class="relative min-h-screen lg:mx-32 p-5 sm:pt-24">
       <carousel/>
       <card-sp class="py-10"/>
       <card-top-volunteer class="pb-10"/>
@@ -17,8 +17,6 @@ button, input {
 }
 </style>
 <script setup>
-
-
 
 definePageMeta({
   middleware:"no-auth"

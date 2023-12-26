@@ -48,10 +48,6 @@ export default ({
       ],
     },
   },
-  pages: {
-    '/list-volunteer/index': '@/list-volunteer/index.vue',
-    '/list-volunteer/:id': '@/list-volunteer/[id].vue',
-  },
   css: [
     '~/assets/css/main.css'
   ]

@@ -1,6 +1,6 @@
 <template>
-  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
-    <card-sp class="pb-10"/>
+  <div class="relative min-h-screen lg:mx-32 p-5 sm:pt-24">
+   <h1>hello Thanh</h1>
   </div>
 </template>
 
@@ -16,9 +16,7 @@ button, input {
 </style>
 <script setup>
 
-
-
 definePageMeta({
-  middleware:"no-auth"
+  middleware:"auth"
 });
 </script>

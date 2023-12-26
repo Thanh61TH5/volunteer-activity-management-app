@@ -1,10 +1,15 @@
 <template>
   <div class="lg:block lg:fixed bg-white hidden border-b border-neutral-200 top-0 right-0 left-0 fixed z-50">
     <nav class=" w-full bg-white flex justify-between items-center lg:px-32 py-3 space-x-32 z-50">
-      <div class="flex space-x-6 w-2/5 flex-start">
-          <NuxtLink to="/home/sp-seeker/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Việc cần hỗ trợ</NuxtLink>
+      <div class="flex space-x-6 w-2/5 flex-start" v-if="user">
+        <NuxtLink to="/volunteer/list-sp-seeker/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Việc cần hỗ trợ</NuxtLink>
+        <NuxtLink to="/list-volunteer/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Tình nguyện viên</NuxtLink>
+        <NuxtLink to="/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi</NuxtLink>
+      </div>
+      <div class="flex space-x-6 w-2/5 flex-start" v-else>
+          <NuxtLink to="/list-sp-seeker/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Việc cần hỗ trợ</NuxtLink>
           <NuxtLink to="/list-volunteer/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Tình nguyện viên</NuxtLink>
-          <NuxtLink to="/home/about/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi</NuxtLink>
+          <NuxtLink to="/" class="text-gray-500 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi</NuxtLink>
       </div>
       <div class="flex space-x-6 w-3/5 justify-between">
         <div></div>
@@ -19,15 +24,33 @@
                 placeholder="Tìm kiếm tình nguyện viên hoặc người cần hỗ trợ ..."
             />
           </div>
+            <el-menu v-if="user"
+                :default-active="activeIndex"
+                mode="horizontal"
+                :ellipsis="false"
+                @select="handleSelect"
+            >
+              <el-menu-item index="0">
+              </el-menu-item>
+              <el-sub-menu index="2">
+                <template #title>{{userData.email}}</template>
+                <el-menu-item index="2-1">item one</el-menu-item>
+                <el-menu-item index="2-2">item two</el-menu-item>
+                <el-menu-item index="2-3">item three</el-menu-item>
+                <el-sub-menu index="2-4">
+                  <template #title>item four</template>
+                  <el-menu-item index="2-4-1">item one</el-menu-item>
+                  <el-menu-item index="2-4-2">item two</el-menu-item>
+                  <el-menu-item index="2-4-3">item three</el-menu-item>
+                </el-sub-menu>
+              </el-sub-menu>
+            </el-menu>
 
-          <nuxt-link to="/login"
-                     class="py-2  rounded-full text-gray-500 transition duration-300 ease-linear hover:text-blue-400">
+          <nuxt-link to="/login" class="py-2  rounded-full text-gray-500 transition duration-300 ease-linear hover:text-blue-400" v-else>
             Đăng nhập
           </nuxt-link>
 
-          <NuxtLink
-              to="/register"
-              class="bg-gradient-to-r from-cyan-400 to-blue-400 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-cyan-100 px-5 py-2 rounded-full text-white transition duration-500 ease-linear">
+          <NuxtLink to="/register" class="bg-gradient-to-r from-cyan-400 to-blue-400 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-cyan-100 px-5 py-2 rounded-full text-white transition duration-500 ease-linear" v-else>
             Đăng ký
           </NuxtLink>
         </div>
@@ -60,19 +83,37 @@
 
   </nav>
   <div class=" lg:hidden block flex-col space-y-6 w-full pl-5 py-5" v-if="openNav">
-    <NuxtLink to="/home/sp-seeker/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Việc cần hỗ trợ</NuxtLink>
-    <NuxtLink to="/home/volunteer/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Tình nguyện viên</NuxtLink>
-    <NuxtLink to="/home/about/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi</NuxtLink>
+    <NuxtLink to="/list-sp-seeker/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Việc cần hỗ trợ</NuxtLink>
+    <NuxtLink to="/list-volunteer/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Tình nguyện viên</NuxtLink>
+    <NuxtLink to="/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi</NuxtLink>
   </div>
 </template>
 
 <script setup>
 const user = useSupabaseUser();
+const client = useSupabaseClient();
 const openNav = ref(false)
-
+const userData = ref([]);
+console.log(user.value.email)
 function navToggle() {
   openNav.value = !openNav.value
 }
+
+onMounted(async () => {
+  try{
+    if (user.value) {
+      const { data, error } = await client
+          .from('accounts')
+          .select('*')
+          .eq('email', user.value.email)
+          .single();
+
+      userData.value = data
+    console.log(userData.value)
+  }}catch (error) {
+    console.log(error)
+  }
+})
 </script>
 
 <style scoped>

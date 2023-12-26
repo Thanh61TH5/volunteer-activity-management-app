@@ -1,17 +1,26 @@
-<script setup lang="ts">
-
-const supabase = useSupabaseClient()
-async function signOut() {
-
-  const { error } = await supabase.auth.signOut()
-}
-</script>
-
 <template>
-<h1>Hello Volunteer</h1>
-  <button @click="signOut">Thoát</button>
+  <div class="relative min-h-screen lg:mx-32 p-5 sm:pt-24">
+    <carousel/>
+    <NuxtLink to="/volunteer/test/">Click me!</NuxtLink>
+
+    <card-sp class="py-10"/>
+    <card-top-volunteer class="pb-10"/>
+  </div>
 </template>
 
-<style scoped>
+<style>
+span {
+  display: block;
+  margin: 10px 0;
+}
 
+button, input {
+  display: block;
+}
 </style>
+<script setup>
+
+definePageMeta({
+  middleware:"auth"
+});
+</script>

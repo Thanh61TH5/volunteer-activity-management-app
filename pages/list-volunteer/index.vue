@@ -1,44 +1,58 @@
 <template>
-  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
-    <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
-      <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
-           v-for="(volunteer, index) in volunteerData"
-           :key="index">
-        <div class=" mb-5 p-2">
-          <div class="flex flex-col justify-center items-center">
-            <img :src="volunteer.avatar" class="w-24 h-24 rounded-full" alt="avatar"/>
-            <div>
-              <div class="py-2" >
-                <p class="font-bold text-gray-700">{{volunteer.support_job_name}}</p>
-                <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
+    <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+      <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
+        <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
+             v-for="(volunteer, index) in volunteerData"
+             :key="index">
+          <div class=" mb-5 p-2">
+            <NuxtLink :to = '"/list-volunteer/" + volunteer.id'>
+              <div class="flex flex-col justify-center items-center">
+                <img :src="volunteer.avatar" class="w-24 h-24 rounded-full" alt="avatar"/>
+                <div>
+                  <div class="py-2" >
+                    <p class="font-bold text-gray-700">{{volunteer.support_job_name}}</p>
+                    <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
+                  </div>
+                  <div class="py-2 ">
+                    <p class="text-gray-400">Thời gian rảnh rỗi:</p>
+                    <p>{{ volunteer.free_time }}</p>
+                  </div>
+                  <div class="py-2">
+                    <p class="text-gray-400">Địa chỉ:</p>
+                    <p>{{ volunteer.address }}</p>
+                  </div>
+                </div>
               </div>
-              <div class="py-2 ">
-                <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                <p>{{ volunteer.free_time }}</p>
-              </div>
-              <div class="py-2">
-                <p class="text-gray-400">Địa chỉ:</p>
-                <p>{{ volunteer.address }}</p>
-              </div>
-            </div>
-          </div>
-          <span class="w-full text-gray-400">
+              <span class="w-full text-gray-400">
           <hr>
         </span>
-          <div class="flex  pt-5 space-x-5 justify-between">
-            <div class="flex items-center">
-              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-              <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
+            </NuxtLink>
+            <div class="flex flex-col justify-center  pt-5 sm:justify-between sm:flex space-y-5">
+              <div class="flex items-center justify-center mx-10">
+                <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
+                <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
+              </div>
+              <div class="flex items-center justify-center text-white mx-10">
+                <button  class="bg-green-500 rounded-full sm:px-5 px-24 py-2 hover:opacity-80" @click="notifySave = true ">Lưu tin</button>
+              </div>
             </div>
-            <div class="text-white">
-              <NuxtLink to="/login" class="bg-green-500 rounded-full px-4 py-1 hover:opacity-80" @click="notifyLogin">Lưu tin</NuxtLink>
-            </div>
-            <button @click="viewPostDetail(volunteer.id)">View Details</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <el-dialog v-model="notifySave" center class="rounded-lg ">
+    <span class="text-center">
+      Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
+    </span>
+    <template #footer>
+      <span class="dialog-footer  flex justify-center items-center space-x-3">
+        <el-button @click="notifySaveCancel">Hủy bỏ</el-button>
+        <el-button type="primary" @click="notifySaveOk">
+          Tiếp tục
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style>
@@ -61,6 +75,7 @@ definePageMeta({
 
 const client = useSupabaseClient();
 const volunteerData = ref([]);
+const notifySave = ref(false);
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -94,18 +109,15 @@ onMounted(async () => {
   }
 });
 
-function notifyLogin() {
-  ElNotification.info({
-    title: 'Thông báo',
-    message: 'Hãy đăng nhập để lưu tin bạn nhé!',
-  });
-}
-
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
-
-const viewPostDetail = (postId) => {
-  router.push(`/list-volunteer/${postId}`);
+const notifySaveOk = () => {
+  notifySave.value = false;
+  router.push('/login');
 };
+
+const notifySaveCancel = () => {
+  notifySave.value = false;
+};
+
 </script>
