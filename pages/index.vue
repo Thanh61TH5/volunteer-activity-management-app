@@ -17,8 +17,4 @@ button, input {
 }
 </style>
 <script setup>
-
-definePageMeta({
-  middleware:"no-auth"
-});
 </script>

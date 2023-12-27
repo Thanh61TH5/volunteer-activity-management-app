@@ -1,10 +1,6 @@
 <template>
   <div class="relative min-h-screen lg:mx-32 p-5 sm:pt-24">
-    <carousel/>
-    <NuxtLink to="/volunteer/test/">Click me!</NuxtLink>
-
-    <card-sp class="py-10"/>
-    <card-top-volunteer class="pb-10"/>
+    <h1>hi</h1>
   </div>
 </template>
 

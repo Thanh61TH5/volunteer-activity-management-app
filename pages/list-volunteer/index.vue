@@ -33,14 +33,14 @@
                 <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
               </div>
               <div class="flex items-center justify-center text-white mx-10">
-                <button  class="bg-green-500 rounded-full sm:px-5 px-24 py-2 hover:opacity-80" @click="notifySave = true ">Lưu tin</button>
+                <button  class="bg-green-500 rounded-full sm:px-5 px-24 py-2 hover:opacity-80" @click="notifySaveAction ">Lưu tin</button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  <el-dialog v-model="notifySave" center class="rounded-lg ">
+  <el-dialog v-model="notifySave" center class="rounded-lg " >
     <span class="text-center">
       Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
     </span>
@@ -67,13 +67,8 @@ button, input {
 </style>
 <script setup>
 
-
-
-definePageMeta({
-  middleware:"no-auth"
-});
-
 const client = useSupabaseClient();
+const user = useSupabaseUser();
 const volunteerData = ref([]);
 const notifySave = ref(false);
 const formatDate = (dateString) => {
@@ -111,6 +106,14 @@ onMounted(async () => {
 
 
 const router = useRouter();
+const notifySaveAction = () => {
+  if(user.value) {
+    alert('Ok')
+  }
+  else{
+    notifySave.value = true;
+  }
+}
 const notifySaveOk = () => {
   notifySave.value = false;
   router.push('/login');

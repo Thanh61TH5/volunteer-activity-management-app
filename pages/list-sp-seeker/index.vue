@@ -55,12 +55,6 @@ button, input {
 
 
 
-definePageMeta({
-  middleware:"no-auth"
-});
-
-
-
 const client = useSupabaseClient();
 const spSeekerData = ref([]);
 const formatDate = (dateString) => {
