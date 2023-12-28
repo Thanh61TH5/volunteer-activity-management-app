@@ -14,9 +14,23 @@ const formatDate = (dateString) => {
 const calculateDays = (startDate, endDate) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const timeDifference = end.getTime() - start.getTime();
+  const today = new Date();
+
+  let timeDifference;
+
+  if (today > start && today <= end) {
+    timeDifference = end.getTime() - today.getTime();
+  } else if (today < start) {
+    timeDifference = end.getTime() - start.getTime();
+  } else {
+    timeDifference = 0;
+  }
+
   const daysDifference = timeDifference / (1000 * 3600 * 24);
-  return Math.floor(daysDifference);
+  if(daysDifference === 0 ) {
+    return ('Hết hạn')
+  }
+  return ('Còn' + Math.floor(daysDifference) + 'ngày');
 };
 
 const calculateAge = (currentDay, birthday) => {
@@ -44,18 +58,14 @@ const notifySaveCancel = () => {
   notifySave.value = false;
 };
 
-
 </script>
 
 <template>
-  <div>
-    <p class="font-bold text-gray-700 py-5 text-xl">TOP TÌNH NGUYỆN VIÊN</p>
-  </div>
   <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
     <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
          v-for="(volunteer, index) in volunteerData"
          :key="index">
-      <div class=" mb-5 p-10">
+      <div class=" mb-5 p-2">
         <div class="flex flex-col justify-center items-center">
           <img :src="volunteer.avatar" class="w-24 h-24 rounded-full" alt="avatar"/>
           <div>
@@ -79,26 +89,13 @@ const notifySaveCancel = () => {
         <div class="flex  pt-5 space-x-5 justify-between">
           <div class="flex items-center">
             <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-            <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
+            <p class="days ml-2">{{ calculateDays(volunteer.start_date, volunteer.end_date) }}</p>
           </div>
           <div class="text-white">
-            <button class="py-2 px-5 bg-green-500 rounded-full text-center hover:opacity-80" @click="notifySave = true "> Lưu tin</button>
+            <NuxtLink to="/login" class="bg-green-500 rounded-full px-4 py-1 hover:opacity-80" @click="notifyLogin">Lưu tin</NuxtLink>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <el-dialog v-model="notifySave" center class="rounded-lg ">
-    <span class="text-center">
-      Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
-    </span>
-    <template #footer>
-      <span class="dialog-footer  flex justify-center items-center space-x-3">
-        <el-button @click="notifySaveCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifySaveOk">
-          Tiếp tục
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
 </template>

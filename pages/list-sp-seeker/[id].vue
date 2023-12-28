@@ -18,7 +18,7 @@
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Khu vực: </label>
-              <p class=" text-gray-600"> {{ formatDate(spSeekerData.end_date) }}</p>
+              <p class=" text-gray-600"> {{spSeekerData.area}}</p>
             </div>
           </div>
           <div class="py-5 flex justify-between items-center space-x-10">
@@ -97,6 +97,7 @@
         </div>
       </div>
     </div>
+
     <div class="grid grid-cols-7">
       <div class="col-span-5 col-start-2 bg-white border border-gray-100 shadow-md rounded-lg p-5 ">
         <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
@@ -106,7 +107,7 @@
           <div>
             <label class="font-medium text-gray-600" for="name_job">Tổng sao đánh giá: </label>
             <el-rate
-                v-model="value"
+                v-model="feedbackData.score"
                 disabled
                 show-score
                 text-color="#ff9900"
@@ -114,16 +115,18 @@
             />
           </div>
           <div>
-            <div class="flex space-x-5">
-              <p>Tên người đánh giá: /</p>
-              <p>Thời gian:/</p>
-              <el-rate
-                  v-model="score"
-                  disabled
-                  text-color="#ff9900"
-              />
-            </div>
-            <p>Nội dung: </p>
+            <div class="flex space-x-5"  v-for="(feedback, index) in feedbackData" :key="index">
+              <div class="w-full rounded-lg border border-gray-200">
+                <p>Tên người đánh giá: {{feedback.id_reviewer}}/</p>
+                <p>{{feedback.created_at}}</p>
+                <el-rate
+                    :v-model="feedback.score"
+                    disabled
+                    text-color="#ff9900"
+                />
+              </div>
+              </div>
+
           </div>
         </div>
       </div>
@@ -167,13 +170,13 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 const value = ref(3.7)
-const score = ref();
 const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
 const postId = route.params.id;
 console.log("Post ID:", postId);
 const spSeekerData = ref([]);
+const feedbackData = ref([]);
 const notifySave = ref(false);
 const notifyJoin = ref(false)
 onMounted(async () => {
@@ -181,6 +184,10 @@ onMounted(async () => {
   spSeekerData.value = data;
 });
 
+onMounted(async () => {
+  const {data} = await supabase.from('feedbacks').select('*').eq('id_profile', postId).single();
+  console.log(data)
+});
 
 const notifySaveOk = () => {
   notifySave.value = false;
