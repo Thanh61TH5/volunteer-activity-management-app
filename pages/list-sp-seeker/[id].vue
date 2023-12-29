@@ -1,7 +1,42 @@
 <template>
-  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24 mt-10 pb-10 space-y-5">
-    <div class="grid sm:grid-cols-7 grid gap-4 min-h-96">
-      <div class="sm:col-span-3 sm:col-start-2 space-y-4">
+  <div class="min-h-screen mx-3 lg:mx-32 sm:pt-24 mt-10 pb-10 space-y-3">
+    <div class="sm:flex w-full ">
+
+      <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5 sm:w-2/5  m-3">
+        <div class="w-full flex justify-center items-center py-5">
+          <img :src="spSeekerData.avt" alt="avatar"
+               class=" flex justify-center rounded-full w-32 h-32 border-2 border-gray-300">
+        </div>
+        <h1 class="text-gray-600 font-bold text-lg py-5">Thông tin chung:</h1>
+        <div class="space-y-5">
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Họ và tên: </label>
+            <p class=" text-gray-600"> {{ spSeekerData.name }}</p>
+          </div>
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Ngày sinh: </label>
+            <p class=" text-gray-600"> {{ formatDate(spSeekerData.birthday) }}</p>
+          </div>
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Giới tính: </label>
+            <p class=" text-gray-600"> {{ spSeekerData.gender }}</p>
+          </div>
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Địa chỉ: </label>
+            <p class=" text-gray-600"> {{ spSeekerData.address }}</p>
+          </div>
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Số điện thoại: </label>
+            <p class=" text-gray-600"> {{ spSeekerData.phone }}</p>
+          </div>
+          <div class="flex flex-wrap">
+            <label class="font-medium text-gray-600" for="name_job">Người thân: </label>
+            <p class=" text-gray-600"> {{ spSeekerData.contact_family_info }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class=" sm:w-3/5  m-3 space-y-5">
         <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5">
           <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
             <p>Công việc cần hỗ trợ: </p>
@@ -35,21 +70,21 @@
 
         <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5">
           <h1 class="text-gray-600 font-bold text-lg py-5">Thông tin khác:</h1>
-          <div class="grid lg:grid-cols-2 gap-4">
+          <div class="">
             <div>
               <label class="font-medium text-gray-600" for="name_job">Sở thích: </label>
               <p class=" text-gray-600"> {{ spSeekerData.hobbies }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Mô tả sức khỏe: </label>
-              <p class=" text-gray-600"> {{ spSeekerData.health_description }}</p>
+              <p class=" text-gray-600"> {{ spSeekerData.helth_description }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Mô tả bản thân: </label>
               <p class=" text-gray-600"> {{ spSeekerData.self_description }}</p>
             </div>
             <div>
-              <label class="font-medium text-gray-600" for="name_job">Thời gian rảnh rỗi: </label>
+              <label class="font-medium text-gray-600" for="name_job">Thời gian cần hỗ trợ: </label>
               <p class=" text-gray-600"> {{ spSeekerData.support_time }}</p>
             </div>
             <div>
@@ -63,67 +98,50 @@
           </div>
         </div>
       </div>
-      <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5 col-span-2 col-start-5">
-        <div class="w-full flex justify-center items-center py-5">
-          <img :src="spSeekerData.avt" alt="avatar"
-               class=" flex justify-center rounded-full w-32 h-32 border-2 border-gray-300">
-        </div>
-        <h1 class="text-gray-600 font-bold text-lg py-5">Thông tin chung:</h1>
-        <div class="space-y-5">
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Họ và tên: </label>
-            <p class=" text-gray-600"> {{ spSeekerData.name }}</p>
-          </div>
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Ngày sinh: </label>
-            <p class=" text-gray-600"> {{ formatDate(spSeekerData.birthday) }}</p>
-          </div>
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Giới tính: </label>
-            <p class=" text-gray-600"> {{ spSeekerData.gender }}</p>
-          </div>
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Địa chỉ: </label>
-            <p class=" text-gray-600"> {{ spSeekerData.address }}</p>
-          </div>
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Số điện thoại: </label>
-            <p class=" text-gray-600"> {{ spSeekerData.phone }}</p>
-          </div>
-          <div class="flex space-x-3">
-            <label class="font-medium text-gray-600" for="name_job">Người thân: </label>
-            <p class=" text-gray-600"> {{ spSeekerData.contact_family_info }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="grid grid-cols-7">
-      <div class="col-span-5 col-start-2 bg-white border border-gray-100 shadow-md rounded-lg p-5 ">
-        <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
-          <p>Chi tiết đánh giá: </p>
-        </div>
+    <div class="m-3">
+      <div class="bg-white border border-gray-100 shadow-md rounded-lg p-5 ">
         <div class="">
-          <div>
-            <label class="font-medium text-gray-600" for="name_job">Tổng sao đánh giá: </label>
+          <div class="flex flex-wrap  items-center">
+            <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>
             <el-rate
-                v-model="feedbackData.score"
+                v-model="totalScore.avg_score"
                 disabled
                 show-score
                 text-color="#ff9900"
                 score-template="{value} sao"
             />
           </div>
+          <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
+            <p>Chi tiết đánh giá: </p>
+          </div>
           <div>
-            <div class="flex space-x-5"  v-for="(feedback, index) in feedbackData" :key="index">
-              <div class="w-full rounded-lg border border-gray-200">
-                <p>Tên người đánh giá: {{feedback.id_reviewer}}/</p>
-                <p>{{feedback.created_at}}</p>
-                <el-rate
-                    :v-model="feedback.score"
-                    disabled
-                    text-color="#ff9900"
-                />
+            <div class="flex space-x-5 my-5"  v-for="(feedback, index) in feedbackData" :key="index">
+              <div class="w-full rounded-lg border border-gray-200 space-y-5 p-5">
+                <div class="flex flex-wrap items-center">
+                  <p class="text-gray-500 pr-3">Số sao:</p>
+                  <el-rate
+                      v-model="feedback.score"
+                      disabled
+                      show-score
+                      text-color="#ff9900"
+                      score-template="{value} sao"
+
+                  />
+                </div>
+                <div class="flex flex-wrap">
+                  <p class="text-gray-500 pr-3">Tên người đánh giá:</p>
+                  <p>{{feedback.volunteer_name}}</p>
+                </div>
+                <div class="flex flex-wrap">
+                  <p class="text-gray-500 pr-3">Ngày đánh giá:</p>
+                  <p>{{formatCreateDate(feedback.created_at)}}</p>
+                </div>
+                <div class="">
+                  <p class="text-gray-500 pr-3">Nội dung:</p>
+                  <p>{{feedback.content}}</p>
+                </div>
               </div>
               </div>
 
@@ -169,7 +187,6 @@ const formatDate = (dateString) => {
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
-const value = ref(3.7)
 const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
@@ -177,6 +194,7 @@ const postId = route.params.id;
 console.log("Post ID:", postId);
 const spSeekerData = ref([]);
 const feedbackData = ref([]);
+const totalScore = ref([]);
 const notifySave = ref(false);
 const notifyJoin = ref(false)
 onMounted(async () => {
@@ -185,9 +203,29 @@ onMounted(async () => {
 });
 
 onMounted(async () => {
-  const {data} = await supabase.from('feedbacks').select('*').eq('id_profile', postId).single();
-  console.log(data)
+  const {data} = await supabase.from('get_info_feedback_by_reviewer').select('*').eq('id_profile', postId);
+  feedbackData.value = data;
 });
+
+onMounted(async () => {
+  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
+  if (data.length > 0) {
+    totalScore.value = data[0];
+    console.log(totalScore.value.avg_score);
+  } else {
+    console.error('No data found');
+  }
+});
+
+const formatCreateDate = (timestamp) => {
+  const date = new Date(timestamp);
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
 
 const notifySaveOk = () => {
   notifySave.value = false;

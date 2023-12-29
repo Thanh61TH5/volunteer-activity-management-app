@@ -33,16 +33,20 @@
         </span>
           <template #dropdown>
             <el-dropdown-menu >
-              <el-dropdown-item class="clearfix">
-                <p class="text-base">Tài khoản cá nhân</p>
-              </el-dropdown-item>
+              <NuxtLink to="/sp-seeker/account/">
+                <el-dropdown-item class="clearfix">
+                  <p class="text-base">Tài khoản cá nhân</p>
+                </el-dropdown-item>
+              </NuxtLink>
               <el-dropdown-item class="clearfix">
                 <p class="text-base">Hồ sơ cá nhân</p>
               </el-dropdown-item>
-              <el-dropdown-item class="clearfix">
-                <p class="text-base" v-if="userData.role==='Tình nguyện viên'">Tham gia thiện nguyện</p>
-                <p class="text-base" v-else >Yêu cầu tham gia thiện nguyện</p>
-              </el-dropdown-item>
+              <NuxtLink to="/sp-seeker/">
+                <el-dropdown-item class="clearfix">
+                  <p class="text-base" v-if="userData.role==='Tình nguyện viên'">Tham gia thiện nguyện</p>
+                  <p class="text-base" v-else >Yêu cầu tham gia thiện nguyện</p>
+                </el-dropdown-item>
+              </NuxtLink>
               <span>
                 <hr>
               </span>

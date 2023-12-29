@@ -1,8 +1,8 @@
 <template>
-    <div class="relative min-h-screen lg:mx-32 p-5 sm:pt-24">
-      <carousel/>
-      <card-sp class="py-10"/>
-      <card-top-volunteer class="pb-10"/>
+    <div class="relative min-h-screen lg:mx-32 sm:pt-24 space-y-10">
+      <carousel class="mt-10"/>
+      <card-sp class=""/>
+      <card-top-volunteer />
     </div>
 </template>
 

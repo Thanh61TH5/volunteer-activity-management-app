@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-blue-100">
-    <navbar-default />
-    <slot class="pt-5 m-32"/>
+  <div class="bg-blue-100 relative top-0 bottom-0 min-h-screen">
+    <navbar-default class="mb-64"/>
+    <slot/>
     <Footer/>
   </div>
 </template>
