@@ -43,7 +43,7 @@ fetchTotalUsers()
 
 <template>
   <div class="flex flex-col space-y-10">
-    <div class="grid lg:grid-cols-3 grid-cols-1 gap-12">
+    <div class="grid lg:grid-cols-2 grid-cols-1 gap-12">
       <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
         <div class="flex justify-between items-center">
           <p class="font-medium text-gray-800">Thống kê số lượng tình nguyện viên</p>
@@ -72,19 +72,6 @@ fetchTotalUsers()
         </div>
       </div>
 
-      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out">
-        <div class="flex justify-between items-center">
-          <p class="font-medium text-gray-800">Thống kê số lượng người đã được hỗ trợ</p>
-          <Icon name="mdi:account-check" class="text-blue-500 w-12 h-12"/>
-        </div>
-        <span class="w-full">
-        <hr>
-      </span>
-        <div class="py-2">
-          <p class="text-gray-600 text-sm">Chức năng cho phép quản trị viên thống kê số lượng người đã được hỗ trợ theo
-            tháng.</p>
-        </div>
-      </div>
     </div>
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12 ">
       <div class="rounded  p-3 shadow-md">

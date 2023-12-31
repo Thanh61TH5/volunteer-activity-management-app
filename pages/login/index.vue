@@ -150,7 +150,7 @@ const signIn = async () => {
         message: 'Đăng nhập thành công',
       });
     } else if (userData.role === 'Tình nguyện viên') {
-      await router.push("/volunteer/");
+      await router.push("/");
       loadingStore.setLoading(false);
       ElNotification.success({
         title: 'Thành công',
@@ -158,7 +158,7 @@ const signIn = async () => {
       });
     }
     else if (userData.role === 'Người cần hỗ trợ') {
-      await router.push("/volunteer/");
+      await router.push("/");
       loadingStore.setLoading(false);
       ElNotification.success({
         title: 'Thành công',

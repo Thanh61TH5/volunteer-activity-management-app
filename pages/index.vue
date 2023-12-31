@@ -1,7 +1,9 @@
 <template>
-  <div class="relative min-h-screen">
-   <NuxtPage/>
-  </div>
+    <div class="relative min-h-screen lg:mx-32 sm:pt-24 space-y-10">
+      <carousel class="mt-10"/>
+      <card-sp class=""/>
+      <card-top-volunteer />
+    </div>
 </template>
 
 <style>
@@ -15,10 +17,4 @@ button, input {
 }
 </style>
 <script setup>
-
-
-
-definePageMeta({
-  middleware:"no-auth"
-});
 </script>

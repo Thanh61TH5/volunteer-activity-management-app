@@ -1,6 +1,6 @@
 <template>
   <div
-      class="sm:w-full  max-w-md  mx-auto  sm:bg-white/60 px-6 pt-10  sm:shadow-xl sm:ring-1 ring-gray-900/5 sm:rounded-xl pb-8 mt-10">
+      class="sm:w-full  max-w-md  mx-auto  sm:bg-white/60 px-6 pt-10  sm:shadow-xl sm:ring-1 ring-gray-900/5 sm:rounded-xl pb-8 sm:mt-10">
     <div class="w-full">
       <NuxtLink class="relative" to="/">
         <div class="bg-gray-100 p-5 rounded-full w-5 h-5  hover:cursor-pointer btn-back-home">
