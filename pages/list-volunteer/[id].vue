@@ -45,11 +45,12 @@
           <div class="grid lg:grid-cols-2 gap-4">
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian có thể hỗ trợ: </label>
-              <p class=" text-gray-600"> {{ volunteerData.free_time }}</p>
+              <p class="text-gray-600">Giờ: {{ volunteerData.free_time_start }} đến {{volunteerData.free_time_end }}</p>
+              <p class="text-gray-600">Ngày: {{ formatDate(volunteerData.free_day_start) }} đến {{formatDate(volunteerData.free_day_end) }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Hạn hồ sơ: </label>
-              <p class=" text-gray-600"> {{ formatDate(volunteerData.end_date) }}</p>
+              <p class=" text-gray-600"> {{ formatDate(volunteerData.end_date_post) }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Khu vực: </label>
@@ -76,10 +77,10 @@
 
         <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5">
           <h1 class="text-gray-600 font-bold text-lg py-5">Thông tin khác:</h1>
-          <div class="">
+          <div class="space-y-5">
             <div>
               <label class="font-medium text-gray-600" for="name_job">Kinh nghiệm thiện nguyện: </label>
-              <p class=" text-gray-600"> {{ volunteerData.volunteer_exp }}</p>
+              <p class=" text-gray-600"> {{ volunteerData.volunteer_exp_description }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Mô tả bản thân: </label>
@@ -87,7 +88,8 @@
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian có thể hỗ trợ: </label>
-              <p class=" text-gray-600"> {{ volunteerData.free_time }}</p>
+              <p class="text-gray-600">Giờ: {{ volunteerData.free_time_start }} đến {{volunteerData.free_time_end }}</p>
+              <p class="text-gray-600">Ngày: {{ formatDate(volunteerData.free_day_start) }} đến {{formatDate(volunteerData.free_day_end) }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Công việc có thể hỗ trợ: </label>
@@ -95,7 +97,7 @@
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Hạn hồ sơ: </label>
-              <p class=" text-gray-600"> {{ formatDate(volunteerData.end_date) }}</p>
+              <p class=" text-gray-600"> {{ formatDate(volunteerData.end_date_post) }}</p>
             </div>
           </div>
         </div>
@@ -133,8 +135,8 @@
                   />
                 </div>
                 <div class="flex flex-wrap">
-                  <p class="text-gray-500 mx-5">Tên người đánh giá:</p>
-                  <p>{{feedback.sp_name}}</p>
+                  <p class="text-gray-500">Tên người đánh giá:</p>
+                  <p>{{feedback.name_reviewer}}</p>
                 </div>
                 <div class="flex flex-wrap">
                   <p class="text-gray-500">Ngày đánh giá:</p>
@@ -146,7 +148,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -200,12 +201,12 @@ const totalScore = ref([]);
 const notifySave = ref(false);
 const notifyJoin = ref(false)
 onMounted(async () => {
-  const {data} = await supabase.from('volunteer_profile').select('*').eq('id', postId).single();
+  const {data} = await supabase.from('get_profile_volunteer').select('*').eq('id', postId).single();
   volunteerData.value = data;
 });
 
 onMounted(async () => {
-  const {data} = await supabase.from('get_info_feedback_by_reviewer').select('*').eq('id_profile', postId);
+  const {data} = await supabase.from('get_info_feedbacks').select('*').eq('id_profile', postId);
   feedbackData.value = data;
 });
 

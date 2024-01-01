@@ -25,7 +25,7 @@ const calculateAge = (currentDay, birthday) => {
 };
 
 onMounted(async () => {
-  const { data, error } = await client.from('volunteer_profile').select();
+  const { data, error } = await client.from('get_profile_volunteer').select();
   if (error) {
     console.error(error);
   } else {
@@ -79,7 +79,7 @@ const viewPostDetail = (postId) => {
         <div class="flex  pt-5 space-x-5 justify-between">
           <div class="flex items-center">
             <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-            <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
+            <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
           </div>
           <div class="text-white">
             <NuxtLink to="/login" class="bg-green-500 rounded-full px-4 py-1 hover:opacity-80" @click="notifyLogin">Lưu tin</NuxtLink>

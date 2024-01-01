@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import {ErrorMessage, Field, Form} from "vee-validate";
-import { useLoadingStore } from '~/store';
-import {ref} from "vue";
-
 definePageMeta({
-  layout:"sidebar-admin",
   middleware:"auth"
 })
-
+const emit = defineEmits(['close','save'])
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const password = ref("");
 const oldPassword = ref("");
 const confirmNewPassword = ref("");
 const isOpenForm = ref(true);
-
-
-const loadingStore = useLoadingStore();
-const loading = computed(() => loadingStore.isLoading);
+const loading = ref(false)
 
 async function getUserDataByEmail(email: string) {
   if (user.value) {
@@ -26,12 +19,10 @@ async function getUserDataByEmail(email: string) {
         .select('*')
         .eq('email', email)
         .single();
-
     if (error) {
       console.error('Error fetching user data:', error);
       return null;
     }
-
     return userData;
   }
   return null;
@@ -43,8 +34,8 @@ if (user.value) {
 }
 
 async function resetPassword() {
-  loadingStore.setLoading(true);
-  if (userData.password === oldPassword.value) {
+  emit('save')
+  loading.value = true;if (userData.password === oldPassword.value) {
     try {
       await client.auth.updateUser({ password: password.value })
 
@@ -52,54 +43,53 @@ async function resetPassword() {
           .from('accounts')
           .update({password: password.value })
           .eq('id',userData.id)
-      loadingStore.setLoading(false);
+      if(userData.password === password.value) {
+        loading.value = false;
+        ElNotification.error({
+          title: 'Lỗi',
+          message: 'Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.',
+        })
+        console.log(password);
+        return;
+      }
+      loading.value = false;
       ElNotification.success({
         title: 'Thành công',
         message: 'Đặt mật khẩu thành công.',
       })
-
     } catch (error) {
       console.log(error);
     }
   }
-  else if(password.value === oldPassword.value) {
-    loadingStore.setLoading(false);
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.',
-    })
-    console.log(password);
-    return;
-  }
   else {
-    loadingStore.setLoading(false);
+    loading.value = false;
     ElNotification.error({
       title: 'Lỗi',
       message: 'Mật khẩu cũ không đúng. Vui lòng thử lại.',
     })
-    console.log(password);
     return;
   }
 }
-
 function close() {
   isOpenForm.value = false
 }
-
-
+const handleClose = (done: () => void) => {
+  emit('close');
+  done()
+}
 </script>
 
 <template>
-  <div
-      class="w-full rounded-lg bg-white p-6" v-if="isOpenForm">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Đặt lại mật khẩu</h1>
+  <el-dialog :before-close="handleClose" :v-loading ="loading"
+             class="p-5" v-model="isOpenForm">
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Đổi mật khẩu</h1>
     <span>
       <hr class="w-full">
     </span>
-    <Form @submit.prevent="resetPassword">
-      <div class="relative mt-6">
+    <Form>
+      <div class="relative  mt-6">
         <label
-            for="oldPassword"
+            for="username"
             class="py-2 text-gray-800 focus:text-gray-600">Mật khẩu cũ
         </label>
         <Field
@@ -111,6 +101,7 @@ function close() {
             rules="required|password"
         />
       </div>
+
       <ErrorMessage class="error" name="oldPassword" />
 
       <div class="relative mt-6">
@@ -127,6 +118,7 @@ function close() {
             rules="required|password"
         />
       </div>
+
       <ErrorMessage class="error" name="password" />
 
       <div class="relative mt-6">
@@ -144,19 +136,23 @@ function close() {
         />
 
       </div>
+
       <ErrorMessage class="error" name="confirmPassword" />
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click="resetPassword" type="submit" class="bg-blue-500 text-white rounded py-2 px-5 hover:bg-blue-400 transition duration-200 ease-in-out">
+        <button @click.prevent="resetPassword" type="submit" class="bg-blue-500 text-white rounded w-20 py-2 px-2 hover:bg-blue-400 transition duration-200 ease-in-out">
           Lưu
         </button>
-        <button type="button" @click="close" class="bg-red-500 text-white rounded py-2 px-5 hover:bg-red-400 transition duration-200 ease-in-out">
+        <button @click.prevent="handleClose" class="bg-red-500 text-white rounded w-20 py-2 px-2 hover:bg-red-400 transition duration-200 ease-in-out">
           Hủy
         </button>
       </div>
+      <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
+        <p class="text-white">Đang xử lý...</p>
+      </div>
     </Form>
-  </div>
+  </el-dialog>
 </template>
 
 <style scoped>

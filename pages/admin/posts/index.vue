@@ -4,12 +4,7 @@ definePageMeta({
   middleware:"auth"
 })
 
-
-import ModifyUser from "~/pages/admin/users/modify-user.vue";
-import AddUser from "~/pages/admin/users/add-user.vue";
-
 import { computed, ref } from 'vue'
-
 
 interface User {
   id: number;
@@ -19,16 +14,12 @@ interface User {
   role: string;
 }
 const loading = ref(false);
-const isOpenModifyForm = ref(false);
-const isOpenAddForm = ref(false);
 const client = useSupabaseClient();
 const search = ref('');
 const selectedUser = ref(null);
 const users = ref<User[]>([]);
 const pageSize = 20;
 const currentPage = ref(1);
-const isAddUserDialogVisible = ref(false);
-const isModifyUserDialogVisible = ref(false);
 
 
 const tableData = computed(() =>
@@ -41,12 +32,10 @@ const tableData = computed(() =>
     )
 );
 
-
 async function fetchUserData() {
   const { data: usersData, error } = await client
-      .from('accounts')
+      .from('profiles')
       .select('*')
-      .eq('status','TRUE')
       .order('id', { ascending: true });
   if (error) {
     console.log(error)
@@ -57,47 +46,23 @@ async function fetchUserData() {
 
 fetchUserData();
 
+async function handleApprove(id:number){
 
-const handleEdit = (id: number) => {
-  selectedUser.value = tableData.value.find(user => user.id === id);
-  isModifyUserDialogVisible.value = true
-};
-
-const handleAdd = () => {
-  isAddUserDialogVisible.value = true;
-
-};
-const handleSaveEdit = async () => {
-};
-
-const handleSaveAdd = async () => {
-
-
-};
-
-async function handleDelete(id:number){
-  const confirmResult = await ElMessageBox.confirm('Bạn có chắc chắn muốn xóa người dùng này?', 'Xác nhận', {
-    confirmButtonText: 'Có',
-    cancelButtonText: 'Không',
-    type: 'warning'
-  });
-
-  if (confirmResult === 'confirm') {
     loading.value = true;
     const { error } = await client
-        .from('accounts')
-        .update({ status: 'FALSE' })
+        .from('profiles')
+        .update({ status: 'TRUE' })
         .eq('id',id)
     await new Promise((resolve) => setTimeout(resolve, 1000));
     loading.value = false;
     ElNotification.success({
       title: 'Thành công',
-      message: 'Xóa người dùng thành công.',
+      message: 'Duyệt tin đăng thành công.',
       offset: 100,
     })
     // Fetch updated user data
     await fetchUserData();
-  }
+
 };
 
 function handlePageChange(newPage: number) {
@@ -114,10 +79,9 @@ const currentPageData = computed(() => {
 
 <template>
   <div class=" w-full z-1 bg-white p-10 my-10 rounded-lg" :loading="loading">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý người dùng</h1>
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý tin đăng</h1>
     <div class="flex justify-between py-2 w-full">
-      <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin người dùng..." />
-      <button @click="handleAdd" class="bg-green-500 rounded text-white hover:bg-green-400 py-2 px-2 mr-2.5 text-sm">Thêm người dùng</button>
+      <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin tin đăng..." />
     </div>
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
       pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
@@ -125,14 +89,16 @@ const currentPageData = computed(() => {
       total: tableData.length // Tổng số lượng dữ liệu
     }">
       <el-table-column label="ID" prop="id" />
-      <el-table-column label="Họ tên" prop="name" />
-      <el-table-column label="Email" prop="email" />
-      <el-table-column label="Mật khẩu" prop="password" />
-      <el-table-column label="Loại tài khoản" prop="role" />
+      <el-table-column label="ID người dùng" prop="id_user" />
+      <el-table-column label="Ngày tạo" prop="created_at" />
+      <el-table-column label="Loại hồ sơ" prop="type" />
+      <el-table-column label="Ngày đăng tin" prop="start_date" />
+      <el-table-column label="Ngày hết hạn" prop="end_date" />
+      <el-table-column label="Trạng thái" prop="status" />
       <el-table-column align="right">
         <template #default="scope">
-          <el-button @click="handleEdit(scope.row.id)">Sửa</el-button>
-          <el-button type="danger" @click="handleDelete(scope.row.id)">Xóa</el-button>
+          <el-button type="danger" v-if="scope.row.status === 'TRUE'">Đã duyệt</el-button>
+          <el-button type="primary" v-else @click="handleApprove(scope.row.id)">Duyệt</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -141,19 +107,7 @@ const currentPageData = computed(() => {
       <p>Không tìm thấy dữ liệu người dùng</p>
     </div>
     <el-pagination class="mt-10" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
-      <modify-user v-model="isModifyUserDialogVisible"
-                   v-loading ="loading"
-                   :user="selectedUser"
-                   :fetchUserData="fetchUserData"
-                   @close="isModifyUserDialogVisible = false"
-                   @save="handleSaveEdit"
-      />
 
-    <AddUser v-model="isAddUserDialogVisible"
-        :fetchUserData="fetchUserData"
-        @close="isAddUserDialogVisible = false"
-        @add="handleSaveAdd"
-    />
   </div>
 </template>
 

@@ -42,7 +42,7 @@ fetchTotalUsers()
 </script>
 
 <template>
-  <div class="flex flex-col space-y-10">
+  <div class="flex flex-col space-y-10 bg-white my-10 p-8 rounded-lg w-full ">
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12">
       <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
         <div class="flex justify-between items-center">

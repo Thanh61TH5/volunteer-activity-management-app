@@ -52,6 +52,15 @@ async function resetPassword() {
           .from('accounts')
           .update({password: password.value })
           .eq('id',userData.id)
+      if(password.value === oldPassword.value) {
+        loadingStore.setLoading(false);
+        ElNotification.error({
+          title: 'Lỗi',
+          message: 'Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.',
+        })
+        console.log(password);
+        return;
+      }
       loadingStore.setLoading(false);
       ElNotification.success({
         title: 'Thành công',
@@ -61,15 +70,6 @@ async function resetPassword() {
     } catch (error) {
       console.log(error);
     }
-  }
-  else if(password.value === oldPassword.value) {
-    loadingStore.setLoading(false);
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Mật khẩu mới trùng với mật khẩu cũ. Vui lòng thử lại.',
-    })
-    console.log(password);
-    return;
   }
   else {
     loadingStore.setLoading(false);

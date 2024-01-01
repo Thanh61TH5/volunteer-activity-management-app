@@ -3,40 +3,42 @@
   <div class="">
     <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
       <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white px-5"
-           v-for="(spSeeker, index) in spSeekerData"
+           v-for="(volunteer, index) in volunteerData"
            :key="index">
-        <NuxtLink :to = '"/list-sp-seeker/" + spSeeker.id' class=" mb-5 p-2">
+
+        <NuxtLink :to = '"/list-volunteer/" + volunteer.id' class=" mb-5 p-2">
           <div class="flex flex-col justify-center items-center">
-            <img :src="spSeeker.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
+            <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
             <div>
               <div class="py-2" >
-                <p class="font-bold text-gray-700">{{spSeeker.support_job_name}}</p>
-                <span class="">{{ spSeeker.name }} {{ calculateAge(new Date(), spSeeker.birthday) }} tuổi </span>
+                <p class="font-bold text-gray-700">{{volunteer.support_job_name}}</p>
+                <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
               </div>
               <div class="py-2 ">
                 <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                <p>{{ spSeeker.free_time }}</p>
+                <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{volunteer.free_time_end }}</p>
+                <p class="text-gray-600">Ngày: {{ formatDate(volunteer.free_day_start) }} đến {{formatDate(volunteer.free_day_end) }}</p>
               </div>
               <div class="py-2">
                 <p class="text-gray-400">Địa chỉ:</p>
-                <p>{{ spSeeker.address }}</p>
+                <p>{{ volunteer.address }}</p>
               </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between py-5 sm:flex">
+            <div class="flex text-gray-400 items-center">
+              <Icon name="material-symbols:location-on-outline"/>
+              <p> {{volunteer.area}}</p>
+            </div>
+            <div class="flex items-center text-gray-400">
+              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
+              <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
             </div>
           </div>
           <span class="w-full text-gray-400">
           <hr>
         </span>
-          <div class="flex items-center justify-between py-5 sm:flex">
-            <div class="flex text-gray-400 items-center">
-              <Icon name="material-symbols:location-on-outline"/>
-              <p> {{spSeeker.area}}</p>
-            </div>
-            <div class="flex items-center text-gray-400">
-              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date, spSeeker.end_date) }} ngày</p>
-            </div>
-          </div>
-          <div class="text-white flex space-x-2 flex justify-center">
+          <div class="flex flex-col items-center justify-center space-y-5 sm:flex  pt-5 text-white">
             <NuxtLink to="/login" class="bg-green-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifySave">Lưu tin</NuxtLink>
           </div>
         </NuxtLink>
@@ -60,7 +62,7 @@ button, input {
 
 
 const client = useSupabaseClient();
-const spSeekerData = ref([]);
+const volunteerData = ref([]);
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -104,8 +106,8 @@ onMounted(async () => {
   if (error) {
     console.error(error);
   } else {
-    spSeekerData.value = data;
-    console.log(spSeekerData.value)
+    volunteerData.value = data;
+    console.log(volunteerData.value)
   }
 });
 

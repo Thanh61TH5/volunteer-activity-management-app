@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-blue-100 relative top-0 bottom-0 min-h-screen">
-    <navbar-default class="mb-64"/>
+  <div class="bg-blue-100 relative top-0 bottom-0 min-h-screen ">
+    <navbar-default/>
     <slot/>
-    <Footer/>
+    <Footer class="absolute bottom-10"/>
   </div>
 </template>
 <script setup>

@@ -1,3 +1,6 @@
+body {
+    background-color: rgb(219 234 254 / 1);
+}
 .error {
     color: red;
     font-size: 13px;

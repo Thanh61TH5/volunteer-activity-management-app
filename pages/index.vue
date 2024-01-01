@@ -17,4 +17,6 @@ button, input {
 }
 </style>
 <script setup>
+definePageMeta({
+})
 </script>

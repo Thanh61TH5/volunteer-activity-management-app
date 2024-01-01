@@ -17,7 +17,6 @@ async function getUserDataByEmail(email: string) {
       console.error('Error fetching user data:', error);
       return null;
     }
-
     return data;
   }
   return null;
@@ -40,8 +39,6 @@ async function signOut() {
   }catch (error){
     console.log(error)
   }
-
-
 }
 </script>
 

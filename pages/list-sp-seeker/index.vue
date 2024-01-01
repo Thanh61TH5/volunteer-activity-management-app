@@ -13,8 +13,9 @@
                 <span class="">{{ spSeeker.name }} {{ calculateAge(new Date(), spSeeker.birthday) }} tuổi </span>
               </div>
               <div class="py-2 ">
-                <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                <p>{{ spSeeker.support_time }}</p>
+                <p class="text-gray-400">Thời gian cần hỗ trợ:</p>
+                <p class="text-gray-600">Giờ: {{ spSeeker.support_time_start }} đến {{spSeeker.support_time_end }}</p>
+                <p class="text-gray-600">Ngày: {{ formatDate(spSeeker.support_day_start) }} đến {{formatDate(spSeeker.support_day_end) }}</p>
               </div>
               <div class="py-2">
                 <p class="text-gray-400">Địa chỉ:</p>
@@ -28,7 +29,7 @@
           <div class="flex flex-col items-center justify-center space-y-5 sm:flex  pt-5">
             <div class="flex items-center">
               <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date, spSeeker.end_date) }} ngày</p>
+              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date_post, spSeeker.end_date_post) }} ngày</p>
             </div>
             <div class="text-white flex space-x-2">
               <NuxtLink to="/login" class="bg-green-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifySave">Lưu tin</NuxtLink>
@@ -96,7 +97,7 @@ const calculateAge = (currentDay, birthday) => {
 };
 
 onMounted(async () => {
-  const { data, error } = await client.from('support_seeker_profile').select();
+  const { data, error } = await client.from('get_profile_sp').select();
   if (error) {
     console.error(error);
   } else {

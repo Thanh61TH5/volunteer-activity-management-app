@@ -5,7 +5,6 @@ import {ref} from "vue";
 
 
 definePageMeta({
-  layout:"sidebar-admin",
   middleware:"auth"
 })
 
@@ -55,7 +54,7 @@ function  cancel() {
 
 <template>
   <div
-      class=" rounded-lg bg-white p-10 w-full my-14 min-h-screen">
+      class="lg:mx-32  rounded-lg bg-white p-10">
     <div class="flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-2xl text-lg font-medium">Quản lý tài khoản</h1>
       <div class="flex space-x-3">

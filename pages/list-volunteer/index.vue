@@ -7,7 +7,7 @@
           <div class=" mb-5 p-2">
             <NuxtLink :to = '"/list-volunteer/" + volunteer.id'>
               <div class="flex flex-col justify-center items-center">
-                <img :src="volunteer.avatar" class="w-24 h-24 rounded-full" alt="avatar"/>
+                <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
                 <div>
                   <div class="py-2" >
                     <p class="font-bold text-gray-700">{{volunteer.support_job_name}}</p>
@@ -15,7 +15,8 @@
                   </div>
                   <div class="py-2 ">
                     <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                    <p>{{ volunteer.free_time }}</p>
+                    <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{volunteer.free_time_end }}</p>
+                    <p class="text-gray-600">Ngày: {{ formatDate(volunteer.free_day_start) }} đến {{formatDate(volunteer.free_day_end) }}</p>
                   </div>
                   <div class="py-2">
                     <p class="text-gray-400">Địa chỉ:</p>
@@ -30,7 +31,7 @@
             <div class="flex flex-col justify-center  pt-5 sm:justify-between sm:flex space-y-5">
               <div class="flex items-center justify-center mx-10">
                 <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-                <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date, volunteer.end_date) }} ngày</p>
+                <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
               </div>
               <div class="flex items-center justify-center text-white mx-10">
                 <button  class="bg-green-500 rounded-full sm:px-5 px-24 py-2 hover:opacity-80" @click="notifySaveAction ">Lưu tin</button>
@@ -95,7 +96,7 @@ const calculateAge = (currentDay, birthday) => {
 };
 
 onMounted(async () => {
-  const { data, error } = await client.from('volunteer_profile').select();
+  const { data, error } = await client.from('get_profile_volunteer').select();
   if (error) {
     console.error(error);
   } else {

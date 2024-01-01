@@ -56,7 +56,7 @@ function  cancel() {
 
 <template>
   <div v-if="isOpenModifyForm"
-      class="w-full rounded-lg bg-white p-6">
+      class="w-full rounded-lg bg-white p-6 bg-white">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa tài khoản</h1>
     <span>
       <hr class="w-full">

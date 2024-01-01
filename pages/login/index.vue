@@ -111,7 +111,10 @@ const toggleShowPass= () => {
 
 const signIn = async () => {
   loadingStore.setLoading(true);
-
+  const { error } = await client.auth.signInWithPassword({
+    email: email.value,
+    password: password.value,
+  });
   async function getUserDataByEmail(email) {
     if (user.value) {
       const { data, error } = await client
@@ -136,14 +139,10 @@ const signIn = async () => {
   }
 
   // signIn
-  const { error } = await client.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  });
 
   if (user.value && userData) {
     if (userData.role === 'Admin') {
-      await router.push("/admin/");
+      await router.push("admin");
       loadingStore.setLoading(false);
       ElNotification.success({
         title: 'Thành công',

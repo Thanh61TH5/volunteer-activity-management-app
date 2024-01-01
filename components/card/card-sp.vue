@@ -14,7 +14,7 @@
                 <span class="">{{ spSeeker.name }} {{ calculateAge(new Date(), spSeeker.birthday) }} tuổi </span>
               </div>
               <div class="py-2 ">
-                <p class="text-gray-400">Thời gian rảnh rỗi:</p>
+                <p class="text-gray-400">Thời gian cần hỗ trợ:</p>
                 <p>{{ spSeeker.support_time }}</p>
               </div>
               <div class="py-2">
@@ -23,14 +23,20 @@
               </div>
             </div>
           </div>
+          <div class="flex items-center justify-between py-5 sm:flex">
+            <div class="flex text-gray-400 items-center">
+              <Icon name="material-symbols:location-on-outline"/>
+              <p> {{spSeeker.area}}</p>
+            </div>
+            <div class="flex items-center text-gray-400">
+              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
+              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date, spSeeker.end_date) }} ngày</p>
+            </div>
+          </div>
           <span class="w-full text-gray-400">
           <hr>
         </span>
           <div class="flex flex-col items-center justify-center space-y-5 sm:flex  pt-5">
-            <div class="flex items-center">
-              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date, spSeeker.end_date) }} ngày</p>
-            </div>
             <div class="text-white flex space-x-2">
               <NuxtLink to="/login" class="bg-green-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifySave">Lưu tin</NuxtLink>
               <NuxtLink to="/login" class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifyJoin">Tham gia</NuxtLink>
