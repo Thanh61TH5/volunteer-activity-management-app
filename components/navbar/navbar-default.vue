@@ -53,7 +53,7 @@
                   <p class="text-base">Hồ sơ cá nhân</p>
                 </el-dropdown-item>
               </NuxtLink>
-              <NuxtLink to="/sp-seeker/">
+              <NuxtLink to="/sp-seeker/request/">
                 <el-dropdown-item class="clearfix">
                   <p class="text-base" v-if="userData.role==='Tình nguyện viên'">Tham gia thiện nguyện</p>
                   <p class="text-base" v-else >Yêu cầu tham gia thiện nguyện</p>
