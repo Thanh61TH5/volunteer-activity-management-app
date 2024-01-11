@@ -80,7 +80,7 @@
               <label class="font-medium text-gray-600 px-1" for="name_job">Thời gian cần hỗ trợ: </label>
               <div class=" font-600 px-1">
                 <p class="text-gray-600 flex"><p class="pr-2 ">Giờ:</p> <p class="font-medium">{{ formatTime(spSeekerData.support_time_start) }}</p> <p class="mx-2">đến</p> <p class="font-medium">{{formatTime(spSeekerData.support_time_end) }}</p></p>
-                <p class="text-gray-600 flex"><p class=" pr-2 ">Các thứ trong tuần:</p> <p class="font-medium">{{spSeekerData.support_weekday}}</p></p>
+                <p class="text-gray-600 flex"><p class="pr-2 ">Các thứ trong tuần:</p> <p class="font-medium">{{ (spSeekerData.support_weekday) }}</p></p>
               </div>
             </div>
             <div class="flex flex-wrap">

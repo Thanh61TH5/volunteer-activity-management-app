@@ -68,9 +68,9 @@ watch(() => props.user, (newValue) => {
 
 </script>
 
-<template>
-  <el-dialog :before-close="handleClose" :v-loading ="loading"
-             class="p-5" v-model="isModifyUserDialogVisible">
+<template class="">
+  <el-dialog class="p-5" :before-close="handleClose" :v-loading ="loading"
+              v-model="isModifyUserDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Sửa tài khoản</h1>
     <span>
       <hr class="w-full">

@@ -1,0 +1,11 @@
+{
+  "days": [
+    {"name": "Thứ Hai"},
+    {"name": "Thứ Ba"},
+    {"name": "Thứ Tư"},
+    {"name": "Thứ Năm"},
+    {"name": "Thứ Sáu"},
+    {"name": "Thứ Bảy"},
+    {"name": "Chủ Nhật"}
+  ]
+}
