@@ -40,9 +40,7 @@ const cities = ref(dataCity.cities);
 const onFileChange = (event: { target: { files: string | any[]; }; }) => {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
-    avt.value = URL.createObjectURL(file);
-
-
+    avt.value = URL.createObjectURL(file)
   }
 
   const {name:fileName} =  event.target.files[0];
@@ -55,8 +53,6 @@ const onFileChange = (event: { target: { files: string | any[]; }; }) => {
     file:event.target.files[0],
     name:`${imgName}-${Date.now().toString()}.${extension}`
   }
-
-
 };
 
 function formatTime(timeString: { split: (arg0: string) => { (): any; new(): any; slice: { (arg0: number, arg1: number): [any, any]; new(): any; }; }; }) {
@@ -95,6 +91,8 @@ async function saveUser() {
           personal_situation: personal_situation.value,
           support_job_name: support_job_name.value,
           support_weekday: weekday.value,
+          support_time_end: support_time_end.value,
+          support_time_start: support_time_start.value,
           contact_family_info: contact_family_info.value
         })
         .eq('id', profile.value.id);
@@ -416,6 +414,25 @@ watch(() => props.profile, (newValue) => {
             for="support_job_name"
             class="py-2 text-gray-800 focus:text-gray-600"> Thời gian cần hỗ trợ:
         </label>
+        <div class="demo-time-range">
+          <el-time-select
+              v-model="support_time_start"
+              :max-time="support_time_end"
+              class=""
+              placeholder="Thời gian bắt đầu"
+              start="08:30"
+              step="00:15"
+              end="18:30"
+          />
+          <el-time-select
+              v-model="support_time_end"
+              :min-time="support_time_start"
+              placeholder="Thời gian kết thúc"
+              start="08:30"
+              step="00:15"
+              end="18:30"
+          />
+        </div>
       </div>
       <ErrorMessage class="error" name="support_job_name" />
 
