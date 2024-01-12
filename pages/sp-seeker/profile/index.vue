@@ -14,10 +14,18 @@
               @click="editProfile"
           >Sửa hồ sơ
           </button>
-          <button
-              class="px-5 bg-green-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="postProfile">
-            Đăng tin
-          </button>
+          <div>
+            <!-- Nút đăng tin -->
+            <button class="cancel-post-button px-5 bg-green-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="postProfile">
+              Đăng tin
+            </button>
+          </div>
+          <div >
+            <!-- Nút hủy đăng tin -->
+            <button class="post-button px-5 bg-red-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="cancelPostProfile">
+              Hủy đăng tin
+            </button>
+          </div>
         </div>
         <h1 class="text-gray-600 font-bold text-lg py-5">Thông tin chung:</h1>
         <div class="space-y-5">
@@ -141,13 +149,12 @@
       </div>
     </div>
   </div>
-  <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @post="postProfile" @close="cancelForm" :profile="spSeekerData"/>
-
+  <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="spSeekerData"/>
+  <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="spSeekerData"/>
 </template>
 
 <script setup>
 import ModifyProfile from "~/components/form/modify-profile.vue";
-
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -185,18 +192,24 @@ const feedbackData = ref([]);
 const totalScore = ref([]);
 const notifySave = ref(false);
 const notifyJoin = ref(false);
-const openEditForm = ref(false)
+const openEditForm = ref(false);
+const openPostForm = ref(false)
 
 function editProfile() {
   openEditForm.value = true
 }
 
-function cancelForm() {
+function cancelEditForm() {
   openEditForm.value = false
 }
 
 function postProfile() {
+  openPostForm.value = true
+  spSeekerData.value.status = true;
+}
 
+function cancelPostForm() {
+  openPostForm.value = false
 }
 async function getUserDataByEmail(email) {
   const { data, error } = await supabase
@@ -252,6 +265,34 @@ onMounted(async () => {
   }
 });
 
+async function cancelPostProfile() {
+  const confirmed = await ElMessageBox.confirm(
+      'Bạn chắc chắn muốn hủy đăng tin?',
+      {
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy',
+        type: 'warning',
+      }
+  );
+
+  if (confirmed) {
+    const { error } = await supabase
+        .from('profiles')
+        .update({ status: false })
+        .eq('id', spSeekerData.value.id);
+
+    if (!error) {
+      // Cập nhật giá trị của status
+      spSeekerData.value.status = false;
+
+      ElMessage({
+        type: 'success',
+        message: 'Hủy đăng tin thành công',
+      });
+    }
+  }
+}
+// Gọi fetchData khi component được mounted
 const formatCreateDate = (timestamp) => {
   const date = new Date(timestamp);
 

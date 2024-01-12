@@ -26,7 +26,6 @@ const personal_situation = ref(profile.value.personal_situation);
 const support_job_name = ref(profile.value.support_job_name);
 const contact_family_info = ref(profile.value.contact_family_info);
 const support_time_start = ref(profile.value.support_time_start);
-console.log(support_time_start.value)
 const support_time_end = ref(profile.value.support_time_end);
 const originalProfile = ref({ ...profile.value });
 const avatar = ref(null)
@@ -74,17 +73,27 @@ watch(day, (newVal) => {
 
 console.log(days);
 console.log(cities);
-async function saveUser() {
+async function saveProfile() {
   emit('save');
   try {
     loading.value = true;
 
-    // Cập nhật dữ liệu trong bảng "avatars"
-    const { data: dataImg, error: errorImg } = await client.storage
-        .from('avatars')
-        .upload(`avatars/${avatarFile.value.name}`, avatarFile.value.file);
+    if (avatarFile.value.file) {
+      const { data: dataImg, error: errorImg } = await client.storage
+          .from('avatars')
+          .upload(`avatars/${avatarFile.value.name}`, avatarFile.value.file);
+      const { error: profileError } = await client
+          .from('profiles')
+          .update({
+            avt: storeURL + avatarFile.value.name,
+          })
+          .eq('id', profile.value.id);
 
-    // Cập nhật dữ liệu trong bảng "support_seeker_profile"
+      if (errorImg) {
+        console.error('Error uploading avatar image:', errorImg);
+      }
+    }
+
     const { error: profileSpError } = await client
         .from('support_seeker_profile')
         .update({
@@ -97,11 +106,9 @@ async function saveUser() {
         })
         .eq('id', profile.value.id);
 
-    // Cập nhật dữ liệu trong bảng "profiles"
     const { error: profileError } = await client
         .from('profiles')
         .update({
-          avt: storeURL + avatarFile.value.name,
           name: name.value,
           birthday: birthday.value,
           gender: gender.value,
@@ -115,7 +122,7 @@ async function saveUser() {
         })
         .eq('id', profile.value.id);
 
-    // Kiểm tra lỗi và xử lý nếu cần
+
     if (profileSpError) {
       console.error('Error modifying user in support_seeker_profile:', profileSpError);
     }
@@ -468,7 +475,7 @@ watch(() => props.profile, (newValue) => {
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">
-        <button @click.prevent="saveUser" type="submit" class="bg-blue-500 text-white rounded w-20 py-2 px-2 hover:bg-blue-400 transition duration-200 ease-in-out">
+        <button @click.prevent="saveProfile" type="submit" class="bg-blue-500 text-white rounded w-20 py-2 px-2 hover:bg-blue-400 transition duration-200 ease-in-out">
           Lưu
         </button>
         <button @click.prevent="handleClose" class="bg-red-500 text-white rounded w-20 py-2 px-2 hover:bg-red-400 transition duration-200 ease-in-out">

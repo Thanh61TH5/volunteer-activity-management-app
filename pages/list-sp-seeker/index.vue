@@ -97,7 +97,7 @@ const calculateAge = (currentDay, birthday) => {
 };
 
 onMounted(async () => {
-  const { data, error } = await client.from('get_profile_sp').select();
+  const { data, error } = await client.from('get_profile_sp').select().eq('status',true);
   if (error) {
     console.error(error);
   } else {
