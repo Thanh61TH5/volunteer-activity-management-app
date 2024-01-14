@@ -54,7 +54,7 @@ function  cancel() {
 
 <template>
   <div
-      class=" rounded-lg bg-white p-10 my-14 sm:mx-32 mx-5">
+      class=" rounded-lg bg-white p-10 my-14 sm:mx-32 mx-5 shadow-md">
     <div class="flex flex-col sm:flex">
       <h1 class="text-gray-600 sm:text-2xl text-xl font-medium py-2">Quản lý tài khoản</h1>
       <div class="flex space-x-3 py-3">

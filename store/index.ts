@@ -8,5 +8,3 @@ export const useLoadingStore = defineStore('loading', {
         },
     },
 });
-
-y

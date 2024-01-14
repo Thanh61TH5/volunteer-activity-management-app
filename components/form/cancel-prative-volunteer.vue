@@ -5,44 +5,39 @@ const name = ref("");
 const isDialogVisible = ref(true)
 const loading = ref(false)
 const postSuccess = ref(false);
+const reason = ref('');
 const props = defineProps({
   profile: Object,
 });
 const emit = defineEmits(['close', 'post','hideParentButton']);
 const profile = ref(props.profile);
 const originalProfile = ref({ ...profile.value });
-const start_date_post = ref(profile.value.start_date_post);
-const end_date_post = ref(profile.value.end_date_post);
+const reasons = [
+  {
+    reason: 'Bận việc cá nhân',
+    label: 'Bận việc cá nhân',
+  },
+  {
+    reason: 'Bị ốm',
+    label: 'Bị ốm',
+  },
+  {
+    reason: 'Thời gian duyệt quá lâu',
+    label: 'Thời gian duyệt quá lâu',
+  },
+  {
+    reason: 'Thay đổi kế hoạch thiện nguyện',
+    label: 'Thay đổi kế hoạch thiện nguyện',
+  }
+]
+
 console.log(new Date())
 async function postProfile() {
   try {
     loading.value = true;
-    const enteredStartDate = new Date(start_date_post.value);
-    const enteredEndDate = new Date(end_date_post.value);
 
-    if (enteredStartDate > enteredEndDate || enteredStartDate < new Date() || enteredEndDate < new Date()) {
-      ElNotification.error({
-        title: 'Lỗi',
-        message: 'Thời gian nhập vào không hợp lệ. Hãy thử lại.',
-      });
-    } else {
-      const { error } = await client
-          .from('profiles')
-          .update({ start_date_post: enteredStartDate, end_date_post: enteredEndDate, status: true })
-          .eq('id', profile.value.id);
-
-      if (!error) {
-        ElNotification.success({
-          title: 'Thành công',
-          message: 'Đăng tin thành công',
-        });
-        postSuccess.value = true;
-
-        // Emit the 'post' event only when post is successful
-        emit('hideParentButton')
-      }
     }
-  } catch (error) {
+   catch (error) {
     console.error('Error post profile:', error);
     ElNotification.error({
       title: 'Lỗi',
@@ -69,28 +64,27 @@ watch(() => props.profile, (newValue) => {
 
 <template class="">
   <el-dialog  class="p-5" :before-close="handleClose" :v-loading ="loading" :style="{ width: '65%' }"
-             v-model="isDialogVisible">
+              v-model="isDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Nhập thời hạn đăng tin:</h1>
     <span>
       <hr class="w-full">
     </span>
-    <Form>
-      <div class="sm:flex sm:justify-center sm:items-center flex-col">
-        <el-date-picker
-            v-model="start_date_post"
-            type="date"
-            placeholder="Chọn ngày bắt đầu"
-            class="m-3"
-            format="DD/MM/YYYY"
-        />
-        <el-date-picker
-            v-model="end_date_post"
-            type="date"
-            placeholder="Chọn ngày hết hạn"
-            class="m-3"
-            format="DD/MM/YYYY"
-        />
+    <Form class="flex flex-col items-center">
+      <div class="relative mt-6 flex items-center space-x-3 ">
+          <label
+              for="health_level"
+              class="py-2 mr-2 text-gray-800 focus:text-gray-600">Lý do hủy tham gia thiện nguyện:
+          </label>
+        <el-select v-model="reason" placeholder="Lựa chọn lý do">
+          <el-option
+              v-for="item in reasons"
+              :key="item.reason"
+              :label="item.label"
+              :value="item.reason"
+          />
+        </el-select>
       </div>
+      <ErrorMessage class="error" name="health_level" />
 
       <!--Submit button-->
       <div class="flex justify-center space-x-5 py-5">

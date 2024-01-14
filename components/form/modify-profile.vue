@@ -11,6 +11,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['close', 'save']);
 const profile = ref(props.profile);
+const type = ref(profile.value.type);
 const avt = ref(profile.value.avt);
 const name = ref(profile.value.name);
 const birthday = ref(profile.value.birthday);
@@ -18,15 +19,20 @@ const gender = ref(profile.value.gender);
 const address = ref(profile.value.address);
 const level = ref(profile.value.health_level)
 const phone = ref(profile.value.phone);
-const weekday = ref(profile.value.support_weekday);
+const sp_weekday = ref(profile.value.support_weekday);
+const free_weekday = ref(profile.value.free_weekday);
 const self_description = ref(profile.value.self_description);
 const hobbies = ref(profile.value.hobbies);
 const helth_description = ref(profile.value.helth_description);
 const personal_situation = ref(profile.value.personal_situation);
+const job = ref(profile.value.job);
 const support_job_name = ref(profile.value.support_job_name);
 const contact_family_info = ref(profile.value.contact_family_info);
 const support_time_start = ref(profile.value.support_time_start);
 const support_time_end = ref(profile.value.support_time_end);
+const free_time_start = ref(profile.value.free_time_start);
+const free_time_end = ref(profile.value.free_time_end);
+const volunteer_exp_description = ref(profile.value.volunteer_exp_description)
 const originalProfile = ref({ ...profile.value });
 const avatar = ref(null)
 const avatarFile = ref("");
@@ -68,8 +74,10 @@ const options = ref(
 );
 
 watch(day, (newVal) => {
-  weekday.value = newVal.join(' | ');
+  sp_weekday.value = newVal.join(' | ');
+  free_weekday.value = newVal.join(' | ');
 });
+
 
 console.log(days);
 console.log(cities);
@@ -94,17 +102,33 @@ async function saveProfile() {
       }
     }
 
-    const { error: profileSpError } = await client
-        .from('support_seeker_profile')
-        .update({
-          personal_situation: personal_situation.value,
-          support_job_name: support_job_name.value,
-          support_weekday: weekday.value,
-          support_time_end: support_time_end.value,
-          support_time_start: support_time_start.value,
-          contact_family_info: contact_family_info.value
-        })
-        .eq('id', profile.value.id);
+    if(profile.value.type === 'Người cần hỗ trợ'){
+      const { error: profileSpError } = await client
+          .from('support_seeker_profile')
+          .update({
+            personal_situation: personal_situation.value,
+            support_job_name: support_job_name.value,
+            support_weekday: sp_weekday.value,
+            support_time_end: support_time_end.value,
+            support_time_start: support_time_start.value,
+            contact_family_info: contact_family_info.value
+          })
+          .eq('id', profile.value.id);
+    }
+    else {
+      const { error: profileSpError } = await client
+          .from('volunteer_profile')
+          .update({
+            job: job.value,
+            support_job_name: support_job_name.value,
+            free_weekday: free_weekday.value,
+            free_time_end: free_time_end.value,
+            free_time_start: free_time_start.value,
+            volunteer_exp_description: volunteer_exp_description.value
+          })
+          .eq('id', profile.value.id);
+    }
+
 
     const { error: profileError } = await client
         .from('profiles')
@@ -167,7 +191,8 @@ const handleClose = (done: () => void) => {
 watch(() => props.profile, (newValue) => {
   profile.value = { ...newValue };
   originalProfile.value = { ...newValue };
-  weekday.value = newValue.weekday;
+  sp_weekday.value = newValue.sp_weekday;
+  free_weekday.value = newValue.free_weekday;
 });
 
 </script>
@@ -247,6 +272,22 @@ watch(() => props.profile, (newValue) => {
         </ul>
       </div>
       <ErrorMessage class="error" name="gender" />
+
+      <div class="relative mt-6" v-if="profile.type==='Tình nguyện viên'">
+        <label
+            for="job"
+            class="py-2 text-gray-800 focus:text-gray-600">Nghề nghiệp
+        </label>
+        <Field
+            type="text"
+            name="job"
+            id="job"
+            class="peer mt-1 w-full p-2 rounded border outline-none  placeholder:text-sm"
+            v-model="job"
+            rules="required"
+        />
+      </div>
+      <ErrorMessage class="error" name="job" />
 
       <div class="relative mt-6">
         <label
@@ -377,7 +418,7 @@ watch(() => props.profile, (newValue) => {
       <ErrorMessage class="error" name="helth_description" />
 
       <h1 class="text-gray-600 font-medium text-lg pt-5">Thông tin thiện nguyện:</h1>
-      <div class="relative mt-6">
+      <div class="relative mt-6" v-if="profile.type === 'Người cần hỗ trợ'">
         <label
             for="helth_description"
             class="py-2 text-gray-800 focus:text-gray-600">Hoàn cảnh cá nhân:
@@ -400,11 +441,33 @@ watch(() => props.profile, (newValue) => {
       <ErrorMessage class="error" name="personal_situation" />
 
 
+      <div class="relative mt-6" v-if="profile.type === 'Tình nguyện viên'">
+        <label
+            for="volunteer_exp_description"
+            class="py-2 text-gray-800 focus:text-gray-600"> Mô tả kinh nghiệm thiện nguyện:
+        </label>
+        <Field
+            as="textarea"
+            name="volunteer_exp_description"
+            id="volunteer_exp_description"
+            class="peer mt-1 w-full p-2 rounded border outline-none  placeholder:text-sm"
+            v-model="volunteer_exp_description"
+            rules="required"
+        />
+      </div>
+      <ErrorMessage class="error" name="volunteer_exp_description" />
+
       <div class="relative mt-6">
         <label
+            v-if="profile.type === 'Người cần hỗ trợ'"
             for="support_job_name"
             class="py-2 text-gray-800 focus:text-gray-600"> Tên việc cần hỗ trợ:
         </label>
+        <label
+            v-if="profile.type === 'Tình nguyện viên'"
+          for="support_job_name"
+          class="py-2 text-gray-800 focus:text-gray-600"> Tên việc có thể hỗ trợ:
+      </label>
         <Field
             type="text"
             name="support_job_name"
@@ -416,9 +479,9 @@ watch(() => props.profile, (newValue) => {
       </div>
       <ErrorMessage class="error" name="support_job_name" />
 
-      <div class="relative mt-6">
+      <div class="relative mt-6"  v-if="profile.type === 'Người cần hỗ trợ'">
         <label
-            for="support_job_name"
+            for=""
             class="py-2 text-gray-800 focus:text-gray-600"> Thời gian cần hỗ trợ:
         </label>
         <div class="demo-time-range">
@@ -441,10 +504,36 @@ watch(() => props.profile, (newValue) => {
           />
         </div>
       </div>
-      <ErrorMessage class="error" name="support_job_name" />
+
+      <div class="relative mt-6" v-if="profile.type === 'Tình nguyện viên'">
+        <label
+            for=""
+            class="py-2 text-gray-800 focus:text-gray-600"> Thời gian có thể hỗ trợ:
+        </label>
+        <div class="demo-time-range">
+          <el-time-select
+              v-model="free_time_start"
+              :max-time="free_time_end"
+              class=""
+              placeholder="Thời gian bắt đầu"
+              start="08:30"
+              step="00:15"
+              end="18:30"
+          />
+          <el-time-select
+              v-model="free_time_end"
+              :min-time="free_time_start"
+              placeholder="Thời gian kết thúc"
+              start="08:30"
+              step="00:15"
+              end="18:30"
+          />
+        </div>
+      </div>
+
 
       <div class="relative mt-6 space-x-3 flex flex-col">
-          <label for="health_level" class="py-2 mr-2 text-gray-800 focus:text-gray-600">
+          <label for="" class="py-2 mr-2 text-gray-800 focus:text-gray-600">
             Chọn thứ trong trong tuần:
           </label>
           <el-select-v2
@@ -454,10 +543,12 @@ watch(() => props.profile, (newValue) => {
 
               multiple
           />
-        <input type="text" v-model="weekday" readonly  class="p-2 border border-gray-200 rounded-lg m-2"/>
+        <input v-if="profile.type === 'Người cần hỗ trợ'" type="text" v-model="sp_weekday" readonly  class="p-2 border border-gray-200 rounded-lg m-2"/>
+        <input  v-if="profile.type === 'Tình nguyện viên'" type="text" v-model="free_weekday" readonly  class="p-2 border border-gray-200 rounded-lg m-2"/>
+
       </div>
 
-      <div class="relative mt-6">
+      <div class="relative mt-6" v-if="profile.type === 'Người cần hỗ trợ'">
         <label
             for="contact_family_info"
             class="py-2 text-gray-800 focus:text-gray-600"> Thông tin liên hệ người thân:
