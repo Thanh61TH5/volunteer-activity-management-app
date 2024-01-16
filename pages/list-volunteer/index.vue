@@ -1,59 +1,53 @@
 <template>
-    <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
-      <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
-        <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
-             v-for="(volunteer, index) in volunteerData"
-             :key="index">
-          <div class=" mb-5 p-2">
-            <NuxtLink :to = '"/list-volunteer/" + volunteer.id'>
-              <div class="flex flex-col justify-center items-center">
-                <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
-                <div>
-                  <div class="py-2" >
-                    <p class="font-bold text-gray-700">{{volunteer.support_job_name}}</p>
-                    <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
-                  </div>
-                  <div class="py-2 ">
-                    <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                    <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{volunteer.free_time_end }}</p>
-                    <p class="text-gray-600">Ngày: {{ formatDate(volunteer.free_day_start) }} đến {{formatDate(volunteer.free_day_end) }}</p>
-                  </div>
-                  <div class="py-2">
-                    <p class="text-gray-400">Địa chỉ:</p>
-                    <p>{{ volunteer.address }}</p>
-                  </div>
+  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+    <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
+      <div
+          class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
+          v-for="(volunteer, index) in volunteerData"
+          :key="index"
+      >
+        <div class="mb-5 p-2">
+          <NuxtLink :to="'/list-volunteer/' + volunteer.id">
+            <div class="flex flex-col justify-center items-center">
+              <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar" />
+              <div>
+                <div class="py-2">
+                  <p class="font-bold text-gray-700">{{ volunteer.support_job_name }}</p>
+                  <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
+                </div>
+                <div class="py-2">
+                  <p class="text-gray-400">Thời gian rảnh rỗi:</p>
+                  <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{ volunteer.free_time_end }}</p>
+                  <p class="text-gray-600">Ngày: {{ formatDate(volunteer.free_day_start) }} đến {{ formatDate(volunteer.free_day_end) }}</p>
+                </div>
+                <div class="py-2">
+                  <p class="text-gray-400">Địa chỉ:</p>
+                  <p>{{ volunteer.address }}</p>
                 </div>
               </div>
-              <span class="w-full text-gray-400">
-          <hr>
-        </span>
-            </NuxtLink>
-            <div class="flex flex-col justify-center  pt-5 sm:justify-between sm:flex space-y-5">
-              <div class="flex items-center justify-center mx-10">
-                <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-                <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
-              </div>
-              <div class="flex items-center justify-center text-white mx-10">
-                <button  class="bg-green-500 rounded-full sm:px-5 px-24 py-2 hover:opacity-80" @click="notifySaveAction ">Lưu tin</button>
-              </div>
+            </div>
+            <span class="w-full text-gray-400">
+              <hr />
+            </span>
+          </NuxtLink>
+          <div class="flex flex-col justify-center pt-5 sm:justify-between sm:flex space-y-5">
+            <div class="flex items-center justify-center mx-10">
+              <Icon name="material-symbols:av-timer" class="w-5 h-5" />
+              <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
+            </div>
+            <div class="flex items-center justify-center text-white mx-10">
+              <button
+                  class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80"
+                  @click="() => Save(volunteer)"
+              >
+                Lưu tin
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  <el-dialog v-model="notifySave" center class="rounded-lg " >
-    <span class="text-center">
-      Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
-    </span>
-    <template #footer>
-      <span class="dialog-footer  flex justify-center items-center space-x-3">
-        <el-button @click="notifySaveCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifySaveOk">
-          Tiếp tục
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
+  </div>
 </template>
 
 <style>
@@ -67,7 +61,7 @@ button, input {
 }
 </style>
 <script setup>
-
+import { useCartStore } from '~/store/index.ts';
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const volunteerData = ref([]);
@@ -95,33 +89,93 @@ const calculateAge = (currentDay, birthday) => {
   return Math.floor(timeDifference);
 };
 
+let volunteer;
 onMounted(async () => {
-  const { data, error } = await client.from('get_profile_volunteer').select();
+  const { data, error } = await client.from('get_profile_volunteer').select().eq('status', true);
   if (error) {
     console.error(error);
   } else {
-    volunteerData.value = data;
-    console.log(volunteerData.value)
+    volunteerData.value = data || [];
   }
 });
 
+const Save = async (volunteer) => {
+  if (user.value) {
+    // User is authenticated
 
-const router = useRouter();
-const notifySaveAction = () => {
-  if(user.value) {
-    alert('Ok')
-  }
-  else{
-    notifySave.value = true;
-  }
-}
-const notifySaveOk = () => {
-  notifySave.value = false;
-  router.push('/login');
-};
+    // Step 1: Get id_accounts
+    const email = user.value.email; // Assuming user email is used as a reference
+    const { data: accountsData, error: accountsError } = await client
+        .from('accounts')
+        .select('id')
+        .eq('email', email)
+        .single();
 
-const notifySaveCancel = () => {
-  notifySave.value = false;
+    if (accountsError) {
+      console.error(accountsError);
+      return;
+    }
+
+    const idAccounts = accountsData.id;
+
+    // Step 2: Get id_cart
+    const { data: cartData, error: cartError } = await client
+        .from('cart')
+        .select('id')
+        .eq('id_user', idAccounts)
+        .single();
+
+    if (cartError) {
+      console.error(cartError);
+      return;
+    }
+
+    const idCart = cartData.id;
+
+    // Step 3: Check if the entry already exists in cart_details
+    const { data: existingCartDetails, error: existingCartDetailsError } = await client
+        .from('cart_details')
+        .select()
+        .eq('id_cart', idCart)
+        .eq('id_profile', volunteer.id)
+        .single();
+
+    if (existingCartDetails) {
+      // Entry already exists
+      ElNotification.info({
+        title: 'Thông báo',
+        message: 'Tin đã được thêm vào giỏ hàng trước đó.',
+      });
+    } else {
+      // Step 4: Insert data into cart_details
+      const { error: insertError } = await client
+          .from('cart_details')
+          .insert([
+            {
+              id_cart: idCart,
+              id_profile: volunteer.id,
+            },
+          ]);
+
+      if (insertError) {
+        console.error(insertError);
+        return;
+      }
+
+      // Notify success
+      ElNotification.success({
+        title: 'Thông báo',
+        message: 'Đã lưu tin thành công vào giỏ hàng.',
+      });
+      useCartStore().incrementCartCount();
+    }
+  } else {
+    // User is not authenticated
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để lưu tin bạn nhé!',
+    });
+  }
 };
 
 </script>

@@ -8,3 +8,15 @@ export const useLoadingStore = defineStore('loading', {
         },
     },
 });
+
+export const useCartStore = defineStore({
+    id: 'cart',
+    state: () => ({
+        cartCount: 0,
+    }),
+    actions: {
+        incrementCartCount() {
+            this.cartCount += 1;
+        },
+    },
+});

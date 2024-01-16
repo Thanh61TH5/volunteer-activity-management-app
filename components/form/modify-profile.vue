@@ -2,6 +2,8 @@
 import {ErrorMessage, Field, Form} from "vee-validate";
 import dataCity from '~/static/cities.json';
 import data from '~/static/days.json';
+import {  formatDate } from '~/assets/utils/format.ts';
+
 
 const client = useSupabaseClient();
 const isModifyDialogVisible = ref(true)
@@ -42,6 +44,14 @@ const area = ref(profile.value.area)
 const days = ref(data.days);
 const cities = ref(dataCity.cities);
 
+
+const { value: formattedBirthday } = computed(() => {
+  if (birthday.value) {
+    const date = new Date(birthday.value);
+    return formatDate(date);
+  }
+  return '';
+});
 const onFileChange = (event: { target: { files: string | any[]; }; }) => {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
@@ -60,11 +70,6 @@ const onFileChange = (event: { target: { files: string | any[]; }; }) => {
   }
 };
 
-function formatTime(timeString: { split: (arg0: string) => { (): any; new(): any; slice: { (arg0: number, arg1: number): [any, any]; new(): any; }; }; }) {
-  // Assuming timeString is in the format 'HH:mm:ss'
-  const [hours, minutes] = timeString.split(':').slice(0, 2); // Extract hours and minutes
-  return `${hours}:${minutes}`;
-}
 
 const options = ref(
     days.value.map(day => ({
@@ -236,20 +241,19 @@ watch(() => props.profile, (newValue) => {
       </div>
       <ErrorMessage class="error" name="name" />
       <div class="relative mt-6">
-        <label
-            for="birthday"
-            class="py-2 text-gray-800 focus:text-gray-600">Ngày sinh
-        </label>
-        <input
-            type="text"
+        <label for="birthday" class="py-2 text-gray-800 focus:text-gray-600">Ngày sinh</label>
+        <Field
+            type="date"
             name="birthday"
             id="birthday"
             class="peer mt-1 w-full p-2 rounded border outline-none  placeholder:text-sm"
             v-model="birthday"
             rules="required"
-        />
+          />
       </div>
       <ErrorMessage class="error" name="birthday" />
+
+
 
       <div class="relative mt-6">
         <label

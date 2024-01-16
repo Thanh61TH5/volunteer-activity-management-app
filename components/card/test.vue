@@ -6,23 +6,25 @@
       <div class="sm:flex">
         <div class="border border-gray-100 shadow-md rounded-lg bg-white sm:px-20 px-5 py-10 m-3">
           <h1 class="text-gray-600 sm:text-2xl text-xl font-medium py-2">Quản lý hồ sơ</h1>
-          <div class="w-full flex justify-center items-center py-5">
-            <img :src="volunteerData.avt" alt="avatar"
+          <div class=" flex justify-center py-5">
+            <img :src="spSeekerData.avt" alt="avatar"
                  class=" flex justify-center rounded-full w-32 h-32 border-2 border-gray-300">
           </div>
           <div class="py-5 flex justify-center items-center space-x-10">
             <button
-                class=" w-40 px-5 bg-blue-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out"
+                class=" px-5 bg-blue-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out"
                 @click="editProfile"
             >Sửa hồ sơ
             </button>
             <div v-if="isPost">
-              <button class="cancel-post-button px-5 w-40 bg-green-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="postProfile">
+              <!-- Nút đăng tin -->
+              <button class="cancel-post-button px-5 bg-green-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="postProfile">
                 Đăng tin
               </button>
             </div>
             <div v-else>
-              <button class="post-button px-5 w-40 bg-red-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="cancelPostProfile">
+              <!-- Nút hủy đăng tin -->
+              <button class="post-button px-5 bg-red-500 rounded-lg text-white text-center py-2 hover:opacity-80 transition duration-200 ease-in-out" @click="cancelPostProfile">
                 Hủy đăng tin
               </button>
             </div>
@@ -31,47 +33,43 @@
           <div class="space-y-5">
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Họ và tên: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.name }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.name }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Ngày sinh: </label>
-              <p class=" text-gray-600 px-1"> {{ formatBirthday(volunteerData.birthday) }}</p>
+              <p class=" text-gray-600 px-1"> {{ formatDate(spSeekerData.birthday) }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Giới tính: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.gender }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.gender }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Địa chỉ: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.address }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.address }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Khu vực: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.area }}</p>
-            </div>
-            <div class="flex flex-wrap">
-              <label class="font-medium text-gray-600 px-1" for="name_job">Công việc hiện tại: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.job }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.area }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Số điện thoại: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.phone }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.phone }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Mô tả bản thân: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.self_description }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.self_description }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Sở thích: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.hobbies }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.hobbies }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Xếp loại sức khỏe: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.health_level }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.health_level }}</p>
             </div>
             <div class="flex flex-wrap">
               <label class="font-medium text-gray-600 px-1" for="name_job">Mô tả sức khỏe: </label>
-              <p class=" text-gray-600 px-1"> {{ volunteerData.helth_description }}</p>
+              <p class=" text-gray-600 px-1"> {{ spSeekerData.helth_description }}</p>
             </div>
           </div>
           <span class="py-5">
@@ -81,26 +79,30 @@
             <h1 class="text-gray-600 font-bold text-lg pb-5">Thông tin thiện nguyện:</h1>
             <div class="space-y-5">
               <div class="flex flex-wrap">
-                <label class="font-medium text-gray-600 px-1" for="name_job">Mô tả kinh nghiệm tình nguyện: </label>
-                <p class=" text-gray-600 px-1"> {{ volunteerData.volunteer_exp_description }}</p>
+                <label class="font-medium text-gray-600 px-1" for="name_job">Hoàn cảnh cá nhân: </label>
+                <p class=" text-gray-600 px-1"> {{ spSeekerData.personal_situation }}</p>
               </div>
               <div class="flex flex-wrap">
-                <label class="font-medium text-gray-600 px-1" for="name_job">Công việc có thể hỗ trợ: </label>
-                <p class=" text-gray-600 px-1"> {{ volunteerData.support_job_name }}</p>
+                <label class="font-medium text-gray-600 px-1" for="name_job">Công việc cần hỗ trợ: </label>
+                <p class=" text-gray-600 px-1"> {{ spSeekerData.support_job_name }}</p>
               </div>
               <div >
-                <label class="font-medium text-gray-600 px-1" for="name_job">Thời gian có thể hỗ trợ: </label>
+                <label class="font-medium text-gray-600 px-1" for="name_job">Thời gian cần hỗ trợ: </label>
                 <div class=" font-600 px-1">
-                  <p class="text-gray-600 flex"><p class="pr-2 ">Giờ:</p> <p class="font-medium">{{ formatFreeTime(volunteerData.free_time_start) }}</p> <p class="mx-2">đến</p> <p class="font-medium">{{formatFreeTime(volunteerData.free_time_end) }}</p></p>
-                  <p class="text-gray-600 flex"><p class="pr-2 ">Các thứ trong tuần:</p> <p class="font-medium">{{ (volunteerData.free_weekday) }}</p></p>
+                  <p class="text-gray-600 flex"><p class="pr-2 ">Giờ:</p> <p class="font-medium">{{ formatTime(spSeekerData.support_time_start) }}</p> <p class="mx-2">đến</p> <p class="font-medium">{{formatTime(spSeekerData.support_time_end) }}</p></p>
+                  <p class="text-gray-600 flex"><p class="pr-2 ">Các thứ trong tuần:</p> <p class="font-medium">{{ (spSeekerData.support_weekday) }}</p></p>
                 </div>
+              </div>
+              <div class="flex flex-wrap">
+                <label class="font-medium text-gray-600 px-1" for="name_job">Liên hệ gia đình: </label>
+                <p class=" text-gray-600"> {{ spSeekerData.contact_family_info }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="m-3">
+      <div class="m-3 ">
         <div class="bg-white border border-gray-100 shadow-md rounded-lg sm:px-20 p-10 ">
           <div class="">
             <div class="flex flex-wrap  items-center">
@@ -149,30 +151,48 @@
         </div>
       </div>
     </div>
-    <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="volunteerData"/>
-    <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="volunteerData" @hideParentButton="hideParentButton"/>
+    <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="spSeekerData"/>
+    <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="spSeekerData" @hideParentButton="hideParentButton"/>
   </div>
+
 </template>
 
 <script setup>
 import ModifyProfile from "~/components/form/modify-profile.vue";
-import { formatTime, formatDate } from '~/assets/utils/format.ts';
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
 
-// Function to format birthday
-const formatBirthday = (birthday) => {
-  return formatDate(new Date(birthday));
+  return `${day}/${month}/${year}`;
 };
 
-// Function to format free_time_start and free_time_end
-const formatFreeTime = (startTime, endTime) => {
-  const formattedStartTime = formatTime(startTime);
-  const formattedEndTime = formatTime(endTime);
-  return `${formattedStartTime} đến ${formattedEndTime}`;
+
+const formatTime = (timeString) => {
+  // Check if timeString is defined
+  if (!timeString) {
+    return '';
+  }
+
+  const [hours, minutes] = timeString.split(':').map(Number);
+
+  let period = '';
+  if (hours >= 0 && hours < 12) {
+    period = 'sáng';
+  } else if (hours >= 12 && hours < 18) {
+    period = 'chiều';
+  } else {
+    period = 'tối';
+  }
+
+  const formattedTime = `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  return formattedTime;
 };
 
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
-const volunteerData = ref([]);
+const spSeekerData = ref([]);
 const feedbackData = ref([]);
 const totalScore = ref([]);
 const notifySave = ref(false);
@@ -219,25 +239,25 @@ onMounted(async () => {
 
     if (userData && userData.id) {
       const { data } = await supabase
-          .from('get_profile_volunteer')
+          .from('get_profile_sp')
           .select()
           .eq('id_user', userData.id)
           .single();
 
-      volunteerData.value = data;
-      if(volunteerData.value.status === false) {
+      spSeekerData.value = data;
+      if(spSeekerData.value.status === false) {
         isPost.value = true
       }
       else{
         isPost.value = false
       }
-      console.log('volunteerData:', volunteerData.value);
+      console.log('spSeekerData:', spSeekerData.value);
 
-      if (volunteerData.value) {
+      if (spSeekerData.value) {
         const feedbackQuery = await supabase
             .from('get_info_feedbacks')
             .select('*')
-            .eq('id_profile', volunteerData.value.id);
+            .eq('id_profile', spSeekerData.value.id);
 
         if (feedbackQuery.data) {
           feedbackData.value = feedbackQuery.data;
@@ -246,7 +266,7 @@ onMounted(async () => {
         const {data} = await supabase
             .from('total_stars_per_profile')
             .select('*')
-            .eq('id_profile', volunteerData.value.id);
+            .eq('id_profile', spSeekerData.value.id);
 
         if (data.length > 0) {
           totalScore.value = data[0];
@@ -274,7 +294,7 @@ async function cancelPostProfile() {
     const { error } = await supabase
         .from('profiles')
         .update({ status: false })
-        .eq('id', volunteerData.value.id);
+        .eq('id', spSeekerData.value.id);
 
     if (!error) {
       isPost.value = true

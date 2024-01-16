@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import {ErrorMessage, Field, Form} from "vee-validate";
+import { ElNotification, ElSelect, ElOption } from "element-plus";
+import { ErrorMessage, Field, Form } from "vee-validate";
 const client = useSupabaseClient();
-const name = ref("");
-const isDialogVisible = ref(true)
-const loading = ref(false)
-const postSuccess = ref(false);
+const isDialogVisible = ref(true);
+const loading = ref(false);
 const reason = ref('');
 const props = defineProps({
-  profile: Object,
+  request: Object,
 });
-const emit = defineEmits(['close', 'post','hideParentButton']);
-const profile = ref(props.profile);
-const originalProfile = ref({ ...profile.value });
+const emit = defineEmits(['close', 'save']);
+const request = ref(props.request);
 const reasons = [
   {
     reason: 'Bận việc cá nhân',
@@ -31,38 +29,60 @@ const reasons = [
   }
 ]
 
-console.log(new Date())
 async function postProfile() {
+  emit('save');
   try {
     loading.value = true;
 
+    // Check if the request object has the "id" property
+    if (request.value.id) {
+      console.log(request.value.id)
+      // Check if id_profile is defined
+      if (request.value.id_profile !== undefined) {
+        const { data: checkData, error } = await client.from('profiles').select('end_date_post').eq('id', request.value.id_profile).single();
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        if (checkData && new Date(checkData.end_date_post) < new Date()) {
+          ElNotification.info({
+            title: 'Thông báo',
+            message: 'Đã hết hạn hủy tham gia. Hãy liên hệ với người cần hỗ trợ hoặc quản trị viên nếu bạn cần.',
+          });
+        } else {
+          await client.from('requests').update({ status: 'Đã hủy', cancel_date: new Date(), cancel_reason: reason.value }).eq('id', request.value.id);
+          ElNotification.success({
+            title: 'Thành công',
+            message: 'Hủy tham gia thành công.',
+          });
+        }
+      } else {
+        console.error('id_profile is undefined. Cannot make the API call.');
+      }
+    } else {
+      console.error('Request object does not have an "id" property or it is undefined.');
     }
-   catch (error) {
+  } catch (error) {
     console.error('Error post profile:', error);
     ElNotification.error({
       title: 'Lỗi',
-      message: 'Lỗi đăng tin. Hãy liên hệ với quản trị viên.',
+      message: 'Đã có lỗi xảy ra. Vui lòng thử lại',
     });
   } finally {
     loading.value = false;
   }
 }
+
+
 const handleClose = (done: () => void) => {
-  profile.value = { ...originalProfile.value };
   emit('close');
-  done()
+  done();
 }
-
-
-watch(() => props.profile, (newValue) => {
-  profile.value = { ...newValue };
-  originalProfile.value = { ...newValue };
-});
-
-
 </script>
 
-<template class="">
+<template>
   <el-dialog  class="p-5" :before-close="handleClose" :v-loading ="loading" :style="{ width: '65%' }"
               v-model="isDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Nhập thời hạn đăng tin:</h1>
@@ -71,10 +91,10 @@ watch(() => props.profile, (newValue) => {
     </span>
     <Form class="flex flex-col items-center">
       <div class="relative mt-6 flex items-center space-x-3 ">
-          <label
-              for="health_level"
-              class="py-2 mr-2 text-gray-800 focus:text-gray-600">Lý do hủy tham gia thiện nguyện:
-          </label>
+        <label
+            for="health_level"
+            class="py-2 mr-2 text-gray-800 focus:text-gray-600">Lý do hủy tham gia thiện nguyện:
+        </label>
         <el-select v-model="reason" placeholder="Lựa chọn lý do">
           <el-option
               v-for="item in reasons"

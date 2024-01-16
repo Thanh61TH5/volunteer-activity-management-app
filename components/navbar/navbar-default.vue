@@ -21,8 +21,8 @@
         />
       </div>
       <div class="flex space-x-6">
-        <div class="flex justify-center items-center hover:cursor-pointer" @click="drawer = true" >
-          <el-badge :value="1" class="item" type="primary">
+        <div class="flex justify-center items-center hover:cursor-pointer" @click="drawer = true">
+          <el-badge :value="cartCount" class="item" type="primary">
             <Icon name="icons8:shopping-cart" class="w-8 h-8 text-gray-500"/>
           </el-badge>
         </div>
@@ -155,6 +155,9 @@ const drawer = ref(false);
 const openDetail = ref(false);
 const signOut = ref(false)
 
+import { useCartStore } from '~/store/index.ts';
+
+
 async function confirmSignOut() {
   try {
     const {error} = await client.auth.signOut()
@@ -185,12 +188,39 @@ onMounted(async () => {
           .single();
 
       userData.value = data
-      console.log(userData.value)
     }
   } catch (error) {
     console.log(error)
   }
 })
+
+const { cartCount } = toRefs(useCartStore());
+
+
+watchEffect(async () => {
+
+  // Check if user is authenticated
+  if (user.value && userData.value.id) {
+    // Fetch total_profile from the get_count_profile_cart table
+    const { data: cartData, error: cartError } = await client
+        .from('get_count_profile_cart')
+        .select('total_profile')
+        .eq('id_user', userData.value.id)
+        .single();
+
+    if (cartError) {
+      console.error('Error fetching total_profile:', cartError);
+      cartCount.value = 0; // Set 0 in case of an error
+    } else {
+      const totalProfile = cartData ? cartData.total_profile : 0;
+      console.log('Total Profile:', totalProfile);
+      cartCount.value = totalProfile;
+      cartCount.value = useCartStore().cartCount;
+    }
+  } else {
+    cartCount.value = 0;
+  }
+}, [user, userData, cartCount]);
 
 function openDetailCart() {
   openDetail.value = !openDetail.value

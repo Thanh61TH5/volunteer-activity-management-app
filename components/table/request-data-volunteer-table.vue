@@ -3,6 +3,7 @@
 
 
 import CancelPrativeVolunteer from "~/components/form/cancel-prative-volunteer.vue";
+import {ref} from "vue";
 
 interface Request {
   id: number;
@@ -23,7 +24,8 @@ const user = useSupabaseUser();
 const requests = ref<Request[]>([]);
 const pageSize = 10;
 const currentPage = ref(1);
-const openCancelForm = ref(false)
+const openCancelForm = ref(false);
+
 
 
 const tableData = computed(() =>
@@ -34,49 +36,24 @@ const tableData = computed(() =>
       const senderCancelReasonMatch = !search.value ||
           data.cancel_reason.toLowerCase().includes(search.value.toLowerCase());
 
-      const senderIdProfileMatch = !search.value ||
-          (data.id_profile.toLowerCase().includes(search.value.toLowerCase()));
-
       const sentDateMatch = !search.value ||
           data.sent_date.toLowerCase().includes(search.value.toLowerCase());
 
       const approvalDateMatch = !search.value ||
           (data.approval_date && data.approval_date.toLowerCase().includes(search.value.toLowerCase()));
 
-      return senderNameMatch || sentDateMatch || approvalDateMatch || senderCancelReasonMatch || senderIdProfileMatch;
+      const idProfileMatch = !search.value ||
+          (data.id_profile && data.id_profile.toString().toLowerCase().includes(search.value.toLowerCase()));
+
+      return senderNameMatch || sentDateMatch || approvalDateMatch || senderCancelReasonMatch || idProfileMatch;
     })
 );
 
-async function cancelRequest(id: number) {
-  try {
-    openCancelForm.value = true
-    // const { data: checkData, error } = await client.from('profiles').select('end_date_post').eq('id', id).single();
-    //
-    // if (error) {
-    //   console.error(error);
-    //   return;
-    // }
-    //
-    // if (checkData && new Date(checkData.end_date_post) < new Date()) {
-    //   ElNotification.info({
-    //     title: 'Thông báo',
-    //     message: 'Đã hết hạn hủy tham gia. Hãy liên hệ với người cần hỗ trợ hoặc quản trị viên nếu bạn cần.',
-    //   });
-    // } else {
-    //   await client.from('requests').update({ status: 'Đã hủy', cancel_date: new Date() }).eq('id', id);
-    //   fetchUserData();
-    //   ElNotification.success({
-    //     title: 'Thành công',
-    //     message: 'Hủy tham gia thành công.',
-    //   });
-    // }
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
+const selectedRequestData = ref(null);
+const cancelRequest = (id: number) => {
+  selectedRequestData.value = tableData.value.find(request => request.id === id);
+  openCancelForm.value = true;
+};
 async function fetchUserData() {
   try {
     const { data: usersData, error } = await client
@@ -101,7 +78,15 @@ async function fetchUserData() {
     console.error(error);
   }
 }
+function closeForm() {
+  fetchUserData()
+  openCancelForm.value = false
+}
 
+function saveForm() {
+  fetchUserData()
+  openCancelForm.value = false
+}
 
 fetchUserData();
 
@@ -169,7 +154,7 @@ const currentPageData = computed(() => {
         @current-change="handlePageChange"
     ></el-pagination>
   </div>
-  <cancel-prative-volunteer v-if="openCancelForm"/>
+  <cancel-prative-volunteer v-if="openCancelForm" :request="selectedRequestData" @close="closeForm" @save="saveForm" :fetchUserData="fetchUserData"/>
 </template>
 
 <style scoped>

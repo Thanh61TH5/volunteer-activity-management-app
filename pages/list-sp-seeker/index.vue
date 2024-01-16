@@ -15,7 +15,7 @@
               <div class="py-2 ">
                 <p class="text-gray-400">Thời gian cần hỗ trợ:</p>
                 <p class="text-gray-600">Giờ: {{ spSeeker.support_time_start }} đến {{spSeeker.support_time_end }}</p>
-                <p class="text-gray-600">Ngày: {{ formatDate(spSeeker.support_day_start) }} đến {{formatDate(spSeeker.support_day_end) }}</p>
+                <p class="text-gray-600">Thứ trong tuần: {{spSeeker.support_weekday}}</p>
               </div>
               <div class="py-2">
                 <p class="text-gray-400">Địa chỉ:</p>
@@ -32,8 +32,8 @@
               <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date_post, spSeeker.end_date_post) }} ngày</p>
             </div>
             <div class="text-white flex space-x-2">
-              <NuxtLink to="/login" class="bg-green-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifySave">Lưu tin</NuxtLink>
-              <NuxtLink to="/login" class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="notifyJoin">Tham gia</NuxtLink>
+              <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
+              <NuxtLink to="/login" class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="Join">Tham gia</NuxtLink>
             </div>
           </div>
         </NuxtLink>
@@ -53,10 +53,11 @@ button, input {
 }
 </style>
 <script setup>
-
-
+import {formatTime} from "assets/utils/format.ts";
+import { useCartStore } from '~/store/index.ts';
 
 const client = useSupabaseClient();
+const user = useSupabaseUser();
 const spSeekerData = ref([]);
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -66,14 +67,94 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
+let spSeeker;
+onMounted(async () => {
+  const { data, error } = await client.from('get_profile_sp').select().eq('status', true);
+  if (error) {
+    console.error(error);
+  } else {
+    spSeekerData.value = data || [];
+  }
+});
 
-function notifySave() {
-  ElNotification.info({
-    title: 'Thông báo',
-    message: 'Hãy đăng nhập để lưu tin bạn nhé!',
-  });
-}
+const Save = async (spSeeker) => {
+  if (user.value) {
+    // User is authenticated
 
+    // Step 1: Get id_accounts
+    const email = user.value.email; // Assuming user email is used as a reference
+    const { data: accountsData, error: accountsError } = await client
+        .from('accounts')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+    if (accountsError) {
+      console.error(accountsError);
+      return;
+    }
+
+    const idAccounts = accountsData.id;
+
+    // Step 2: Get id_cart
+    const { data: cartData, error: cartError } = await client
+        .from('cart')
+        .select('id')
+        .eq('id_user', idAccounts)
+        .single();
+
+    if (cartError) {
+      console.error(cartError);
+      return;
+    }
+
+    const idCart = cartData.id;
+
+    // Step 3: Check if the entry already exists in cart_details
+    const { data: existingCartDetails, error: existingCartDetailsError } = await client
+        .from('cart_details')
+        .select()
+        .eq('id_cart', idCart)
+        .eq('id_profile', spSeeker.id)
+        .single();
+
+    if (existingCartDetails) {
+      // Entry already exists
+      ElNotification.info({
+        title: 'Thông báo',
+        message: 'Tin đã được thêm vào giỏ hàng trước đó.',
+      });
+    } else {
+      // Step 4: Insert data into cart_details
+      const { error: insertError } = await client
+          .from('cart_details')
+          .insert([
+            {
+              id_cart: idCart,
+              id_profile: spSeeker.id,
+            },
+          ]);
+
+      if (insertError) {
+        console.error(insertError);
+        return;
+      }
+
+      // Notify success
+      ElNotification.success({
+        title: 'Thông báo',
+        message: 'Đã lưu tin thành công vào giỏ hàng.',
+      });
+      useCartStore().incrementCartCount();
+    }
+  } else {
+    // User is not authenticated
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để lưu tin bạn nhé!',
+    });
+  }
+};
 
 function notifyJoin() {
   ElNotification.info({
@@ -96,15 +177,6 @@ const calculateAge = (currentDay, birthday) => {
   return Math.floor(timeDifference);
 };
 
-onMounted(async () => {
-  const { data, error } = await client.from('get_profile_sp').select().eq('status',true);
-  if (error) {
-    console.error(error);
-  } else {
-    spSeekerData.value = data;
-    console.log(spSeekerData.value)
-  }
-});
 
 function notifyLogin() {
   ElNotification.info({
@@ -113,11 +185,4 @@ function notifyLogin() {
   });
 }
 
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const viewPostDetail = (postId) => {
-  router.push(`/list-volunteer/${postId}`);
-};
 </script>
