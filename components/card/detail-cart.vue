@@ -29,7 +29,7 @@
             </div>
               <div class="flex gap-3">
                 <NuxtLink :to="'/list-volunteer/' + item.id_profile" v-if="item.type==='Tình nguyện viên'" class="bg-green-500 rounded-lg text-white px-4 py-1 shadow-md hover:opacity-80 duration-200 ease-in-out" @click="viewProfile(item)">Xem</NuxtLink>
-                <NuxtLink :to="'/list-sp-seeker/' + item.id_profile" v-if="item.type==='Người cần hỗ trợ'" class="bg-green-500 rounded-lg text-white px-4 py-1 shadow-md hover:opacity-80 duration-200 ease-in-out">Xem</NuxtLink>
+                <NuxtLink :to="'/list-sp-seeker/' + item.id_profile" v-if="item.type==='Người cần hỗ trợ'" class="bg-green-500 rounded-lg text-white px-4 py-1 shadow-md hover:opacity-80 duration-200 ease-in-out"  @click="viewProfile(item)">Xem</NuxtLink>
 
                 <button class="bg-red-500 rounded-lg text-white px-4 py-1 shadow-md hover:opacity-80 duration-200 ease-in-out" @click="deleteItem(item)">Xóa</button>
               </div>

@@ -4,7 +4,8 @@
       <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
            v-for="(spSeeker, index) in spSeekerData"
            :key="index">
-        <NuxtLink :to = '"/list-sp-seeker/" + spSeeker.id' class=" mb-5 p-2">
+        <div class=" mb-5 p-2">
+          <NuxtLink  :to = '"/list-sp-seeker/" + spSeeker.id'>
           <div class="flex flex-col justify-center items-center">
             <img :src="spSeeker.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
             <div>
@@ -23,6 +24,7 @@
               </div>
             </div>
           </div>
+          </NuxtLink>
           <span class="w-full text-gray-400">
           <hr>
         </span>
@@ -33,12 +35,13 @@
             </div>
             <div class="text-white flex space-x-2">
               <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
-              <NuxtLink to="/login" class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="Join">Tham gia</NuxtLink>
+              <button class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="requestVolunteer(spSeeker)">Tham gia</button>
             </div>
           </div>
-        </NuxtLink>
+        </div>
       </div>
     </div>
+    <prative-volunteer class="absolute top-0 right-0 left-0" v-if="openJoinForm"  @send="send" @close="cancelRequestForm" :profile="selectedProfile"/>
   </div>
 </template>
 
@@ -55,10 +58,12 @@ button, input {
 <script setup>
 import {formatTime} from "assets/utils/format.ts";
 import { useCartStore } from '~/store/index.ts';
+import PrativeVolunteer from "~/components/form/prative-volunteer.vue";
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const spSeekerData = ref([]);
+const openJoinForm = ref(false);
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -76,7 +81,12 @@ onMounted(async () => {
     spSeekerData.value = data || [];
   }
 });
+let selectedProfile = ref(null);
 
+function requestVolunteer(profile) {
+  selectedProfile.value = profile;
+  openJoinForm.value = true;
+}
 const Save = async (spSeeker) => {
   if (user.value) {
     // User is authenticated
@@ -178,11 +188,12 @@ const calculateAge = (currentDay, birthday) => {
 };
 
 
-function notifyLogin() {
-  ElNotification.info({
-    title: 'Thông báo',
-    message: 'Hãy đăng nhập để lưu tin bạn nhé!',
-  });
+
+function send() {
+  openJoinForm.value = false;
 }
 
+function cancelRequestForm() {
+  openJoinForm.value = false;
+}
 </script>

@@ -9,6 +9,7 @@ export const useLoadingStore = defineStore('loading', {
     },
 });
 
+// @ts-ignore
 export const useCartStore = defineStore({
     id: 'cart',
     state: () => ({

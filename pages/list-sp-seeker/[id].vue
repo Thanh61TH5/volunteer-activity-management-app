@@ -56,6 +56,16 @@
               <label class="font-medium text-gray-600" for="name_job">Khu vực: </label>
               <p class=" text-gray-600"> {{spSeekerData.area}}</p>
             </div>
+            <div class="flex flex-wrap  items-center">
+              <label class="font-medium text-gray-600 pr-1" for="name_job">Đánh giá: </label>
+              <el-rate
+                  v-model="roundedNumber"
+                  disabled
+                  show-score
+                  text-color="#ff9900"
+                  score-template="{value} điểm"
+              />
+            </div>
           </div>
           <div class="py-5 flex justify-between items-center space-x-10">
             <button
@@ -108,7 +118,7 @@
           <div class="flex flex-wrap  items-center">
             <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>
             <el-rate
-                v-model="totalScore.avg_score"
+                v-model="roundedNumber"
                 disabled
                 show-score
                 text-color="#ff9900"
@@ -196,9 +206,10 @@ const postId = route.params.id;
 console.log("Post ID:", postId);
 const spSeekerData = ref([]);
 const feedbackData = ref([]);
-const totalScore = ref([]);
 const notifySave = ref(false);
-const notifyJoin = ref(false)
+const notifyJoin = ref(false);
+const totalScore = ref({ avg_score: 0 });
+let roundedNumber = 0;
 onMounted(async () => {
   const {data} = await supabase.from('get_profile_sp').select('*').eq('id', postId).single();
   spSeekerData.value = data;
@@ -213,7 +224,8 @@ onMounted(async () => {
   const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
   if (data.length > 0) {
     totalScore.value = data[0];
-    console.log(totalScore.value.avg_score);
+    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
+    roundedNumber = parseFloat(roundedNumberString);
   } else {
     console.error('No data found');
   }

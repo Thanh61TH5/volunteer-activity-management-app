@@ -38,8 +38,7 @@
             <div class="flex items-center justify-center text-white mx-10">
               <button
                   class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80"
-                  @click="() => Save(volunteer)"
-              >
+                  @click="() => Save(volunteer)">
                 Lưu tin
               </button>
             </div>

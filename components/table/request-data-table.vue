@@ -6,6 +6,7 @@ interface Request {
   index: number;
   name_sender: string;
   approval_date: string;
+  message: string;
   cancel_date: string;
   cancel_reason: string;
   sent_date: string;
@@ -53,7 +54,7 @@ async function fetchUserData() {
     if (usersData && usersData.length > 0) {
       const userId = usersData[0].id;
       const { data: requestData, error } = await client
-          .from('get_request_info_sender')
+          .from('get_request_info')
           .select('*')
           .eq('id_receiver', userId);
       if (requestData) {
@@ -73,6 +74,7 @@ async function fetchUserData() {
 fetchUserData();
 
 function handlePageChange(newPage: number) {
+  fetchUserData();
   currentPage.value = newPage;
 }
 
@@ -100,10 +102,12 @@ const currentPageData = computed(() => {
         </template>
       </el-table-column>
       <el-table-column label="Tên người gửi" prop="name_sender" />
+      <el-table-column label="Lời nhắn" prop="message" />
+      <el-table-column label="Ngày gửi" prop="sent_date" />
       <el-table-column label="Ngày phê duyệt" prop="approval_date" />
       <el-table-column label="Ngày hủy" prop="cancel_date" />
       <el-table-column label="Lý do hủy" prop="cancel_reason" />
-      <el-table-column label="Ngày gửi" prop="sent_date" />
+
       <!-- Other el-table-column definitions remain unchanged -->
       <el-table-column align="right">
         <template #default="scope">

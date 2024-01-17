@@ -5,9 +5,7 @@ const client = useSupabaseClient();
 const isDialogVisible = ref(true);
 const loading = ref(false);
 const reason = ref('');
-const props = defineProps({
-  request: Object,
-});
+const props = defineProps(['request', 'fetchUserData']);
 const emit = defineEmits(['close', 'save']);
 const request = ref(props.request);
 const reasons = [
@@ -57,6 +55,8 @@ async function postProfile() {
             title: 'Thành công',
             message: 'Hủy tham gia thành công.',
           });
+          await fetchUserData();
+          return true;
         }
       } else {
         console.error('id_profile is undefined. Cannot make the API call.');
@@ -66,10 +66,6 @@ async function postProfile() {
     }
   } catch (error) {
     console.error('Error post profile:', error);
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Đã có lỗi xảy ra. Vui lòng thử lại',
-    });
   } finally {
     loading.value = false;
   }
@@ -85,7 +81,7 @@ const handleClose = (done: () => void) => {
 <template>
   <el-dialog  class="p-5" :before-close="handleClose" :v-loading ="loading" :style="{ width: '65%' }"
               v-model="isDialogVisible">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Nhập thời hạn đăng tin:</h1>
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Hủy yêu cầu tham gia thiện nguyện:</h1>
     <span>
       <hr class="w-full">
     </span>
