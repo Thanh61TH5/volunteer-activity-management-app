@@ -46,7 +46,7 @@
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian cần hỗ trợ: </label>
               <p>Giờ:{{ spSeekerData.support_time_start }} - {{spSeekerData.support_time_end }}</p>
-              <p>Ngày:{{ spSeekerData.support_day_start }} - {{spSeekerData.support_day_end }}</p>
+              <p class="text-gray-600">Thứ trong tuần: {{spSeekerData.support_weekday }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Hạn hồ sơ: </label>

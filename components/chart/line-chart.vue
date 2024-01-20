@@ -14,10 +14,8 @@ const dataByMonth = ref([]);
 const currentYear = new Date().getFullYear(); // Get the current year
 
 async function fetchUserDataByMonth() {
-  // Tạo một mảng chứa số lượng người dùng cho từng tháng trong năm
   const userDataByMonth = new Array(12).fill(0);
 
-  // Truy vấn cơ sở dữ liệu để lấy dữ liệu theo tháng
   const { data, error } = await client
       .from('accounts')
       .select('created_at')

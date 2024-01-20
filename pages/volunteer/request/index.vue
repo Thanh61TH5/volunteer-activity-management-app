@@ -5,7 +5,7 @@ import RequestDataVolunteerTable from "~/components/table/request-data-volunteer
 </script>
 
 <template>
-  <div class="relative min-h-screen lg:mx-32">
+  <div class="relative min-h-screen lg:mx-32 sm:mt-32">
     <request-data-volunteer-table/>
   </div>
 </template>

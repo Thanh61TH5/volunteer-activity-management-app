@@ -46,7 +46,7 @@
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian có thể hỗ trợ: </label>
               <p class="text-gray-600">Giờ: {{ volunteerData.free_time_start }} đến {{volunteerData.free_time_end }}</p>
-              <p class="text-gray-600">Ngày: {{ formatDate(volunteerData.free_day_start) }} đến {{formatDate(volunteerData.free_day_end) }}</p>
+              <p class="text-gray-600">Thứ trong tuần: {{ formatDate(volunteerData.free_weekday) }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Hạn hồ sơ: </label>

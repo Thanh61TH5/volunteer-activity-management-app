@@ -1,10 +1,10 @@
 <template>
-  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
-    <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
+  <div class="relative min-h-screen lg:mx-32 mx-10 sm:pt-24">
+    <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-8 lg:grid-cols-3 lg:gap-6  sm:grid-cols-2 gap-4">
       <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
            v-for="(spSeeker, index) in spSeekerData"
            :key="index">
-        <div class=" mb-5 p-2">
+        <div class=" pt-5 mb-5">
           <NuxtLink  :to = '"/list-sp-seeker/" + spSeeker.id'>
           <div class="flex flex-col justify-center items-center">
             <img :src="spSeeker.avt" class="w-24 h-24 rounded-full" alt="avatar"/>
@@ -15,7 +15,7 @@
               </div>
               <div class="py-2 ">
                 <p class="text-gray-400">Thời gian cần hỗ trợ:</p>
-                <p class="text-gray-600">Giờ: {{ spSeeker.support_time_start }} đến {{spSeeker.support_time_end }}</p>
+                <p class="text-gray-600">Giờ: {{spSeeker.support_time_start}} đến {{spSeeker.support_time_end }}</p>
                 <p class="text-gray-600">Thứ trong tuần: {{spSeeker.support_weekday}}</p>
               </div>
               <div class="py-2">
@@ -186,7 +186,6 @@ const calculateAge = (currentDay, birthday) => {
   const timeDifference = end.getFullYear() - start.getFullYear();
   return Math.floor(timeDifference);
 };
-
 
 
 function send() {

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 
+import PieChart from "~/components/chart/pie-chart.vue";
+
 definePageMeta({
   layout: "sidebar-admin",
   middleware: "auth"
@@ -42,7 +44,7 @@ fetchTotalUsers()
 </script>
 
 <template>
-  <div class="flex flex-col space-y-10 bg-white my-10 p-8 rounded-lg w-full ">
+  <div class="flex flex-col space-y-10 bg-white p-8 rounded-lg w-full mt-10">
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12">
       <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
         <div class="flex justify-between items-center">
@@ -76,12 +78,11 @@ fetchTotalUsers()
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12 ">
       <div class="rounded  p-3 shadow-md">
         <div>
-          <div>
-            <canvas ref="barChart"></canvas>
-          </div>
+           <ChartLineChart/>
         </div>
       </div>
       <div class="rounded  p-3 shadow-md">
+        <chart-cricel/>
       </div>
     </div>
     <div class="rounded  p-3 shadow-md">

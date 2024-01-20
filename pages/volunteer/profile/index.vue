@@ -1,7 +1,7 @@
 
 
 <template>
-  <div class="flex justify-center sm:mx-32">
+  <div class="flex justify-center sm:mx-32 sm:mt-32">
     <div class="min-h-screen pb-10 space-y-3 mx-auto relative">
       <div class="sm:flex">
         <div class="border border-gray-100 shadow-md rounded-lg bg-white sm:px-20 px-5 py-10 m-3">

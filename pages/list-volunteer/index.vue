@@ -6,7 +6,7 @@
           v-for="(volunteer, index) in volunteerData"
           :key="index"
       >
-        <div class="mb-5 p-2">
+        <div class="mb-5 pt-5">
           <NuxtLink :to="'/list-volunteer/' + volunteer.id">
             <div class="flex flex-col justify-center items-center">
               <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar" />
@@ -15,10 +15,10 @@
                   <p class="font-bold text-gray-700">{{ volunteer.support_job_name }}</p>
                   <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
                 </div>
-                <div class="py-2">
-                  <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                  <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{ volunteer.free_time_end }}</p>
-                  <p class="text-gray-600">Ngày: {{ formatDate(volunteer.free_day_start) }} đến {{ formatDate(volunteer.free_day_end) }}</p>
+                <div class="py-2 ">
+                  <p class="text-gray-400">Thời gian có thể hỗ trợ:</p>
+                  <p class="text-gray-600">Giờ: {{ volunteer.free_time_start }} đến {{volunteer.free_time_end }}</p>
+                  <p class="text-gray-600">Thứ trong tuần: {{volunteer.free_weekday}}</p>
                 </div>
                 <div class="py-2">
                   <p class="text-gray-400">Địa chỉ:</p>
@@ -33,7 +33,7 @@
           <div class="flex flex-col justify-center pt-5 sm:justify-between sm:flex space-y-5">
             <div class="flex items-center justify-center mx-10">
               <Icon name="material-symbols:av-timer" class="w-5 h-5" />
-              <p class="days ml-2">Còn {{ calculateDays(volunteer.start_date_post, volunteer.end_date_post) }} ngày</p>
+              <p class="days ml-2">Đến hạn: {{volunteer.end_date_post}}</p>
             </div>
             <div class="flex items-center justify-center text-white mx-10">
               <button

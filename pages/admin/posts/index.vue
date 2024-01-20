@@ -78,15 +78,15 @@ const currentPageData = computed(() => {
 </script>
 
 <template>
-  <div class=" w-full z-1 bg-white p-10 my-10 rounded-lg" :loading="loading">
-    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý tin đăng</h1>
+  <div class=" w-full z-1 bg-white p-10 my-10 rounded-lg sm:mt-20" :loading="loading">
+    <h1 class="text-gray-600 sm:text-xl text-md font-medium">Duyệt tin đăng</h1>
     <div class="flex justify-between py-2 w-full">
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin tin đăng..." />
     </div>
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
-      pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
-      layout: 'total, sizes, prev, pager, next, jumper', // Cấu trúc phân trang
-      total: tableData.length // Tổng số lượng dữ liệu
+      pageSize: 10,
+      layout: 'total, sizes, prev, pager, next, jumper',
+      total: tableData.length
     }">
       <el-table-column label="ID" prop="id" />
       <el-table-column label="ID người dùng" prop="id_user" />

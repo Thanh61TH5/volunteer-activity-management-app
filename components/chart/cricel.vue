@@ -5,9 +5,7 @@
 </template>
 
 <script setup>
-
-import { ref, onMounted, watch } from 'vue';
-import Chart from 'chart.js';
+import Chart from 'chart.js/auto';
 const client = useSupabaseClient();
 const totalUsersVolunteer = ref(0);
 const totalUsersSupport = ref(0);
@@ -46,33 +44,33 @@ async function fetchTotalUsers() {
   }
 }
 
-    const pieChart = ref(null);
+const pieChart = ref(null);
 
-    const updateChart = () => {
-      const ctx = pieChart.value.getContext('2d');
+const updateChart = () => {
+  const ctx = pieChart.value.getContext('2d');
 
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Người cần hỗ trợ', 'Tình nguyện viên'],
-          datasets: [
-            {
-              data: [totalUsersSupport.value, totalUsersVolunteer.value],
-              backgroundColor: ['#FFB6C1','#87CEFA',],
-            },
-          ],
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Người cần hỗ trợ', 'Tình nguyện viên'],
+      datasets: [
+        {
+          data: [totalUsersSupport.value, totalUsersVolunteer.value],
+          backgroundColor: ['#FFB6C1','#87CEFA',],
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-      });
-    };
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+    },
+  });
+};
 
-    onMounted(async () => {
-      await fetchTotalUsers();
-      updateChart();
-    });
-    watch([totalUsersVolunteer, totalUsersSupport], updateChart);
+onMounted(async () => {
+  await fetchTotalUsers();
+  updateChart();
+});
+watch([totalUsersVolunteer, totalUsersSupport], updateChart);
 
 </script>

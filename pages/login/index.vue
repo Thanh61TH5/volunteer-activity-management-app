@@ -70,11 +70,9 @@
             >Đăng ký tại đây.</NuxtLink
             >
           </p>
-
         </Form>
       </div>
     </div>
-
   </div>
   <!--  <div class="sm:block circle-big-right absolute rounded-full backdrop-blur-sm bg-white/10 z-1"></div>-->
   <!--  <div class="sm:block circle-big-left w-96 h-96 absolute rounded-full backdrop-blur-sm bg-white/20 z-1"></div>-->
@@ -87,7 +85,6 @@ definePageMeta({
 });
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import {useLoadingStore} from '~/store'
-
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
@@ -105,9 +102,6 @@ const loading = computed(() => {
 const toggleShowPass= () => {
   showPassword.value = !showPassword.value
 }
-
-//auth
-
 
 const signIn = async () => {
   loadingStore.setLoading(true);
@@ -127,7 +121,6 @@ const signIn = async () => {
         console.error('Error fetching user data:', error);
         return null;
       }
-
       return data;
     }
     return null;

@@ -20,9 +20,13 @@ const formatTime = (timeString: string | undefined): string => {
     return formattedTime;
 };
 
-const formatDate = (date: Date): string => {
-    if (!(date instanceof Date)) {
-        throw new Error('Invalid date object');
+// dateUtils.ts
+// ... (other code)
+
+const formatDate = (date: Date | null | undefined): string => {
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+        // Return an empty string if date is null, undefined, not a Date object, or not a valid date
+        return '';
     }
 
     const day = date.getDate().toString().padStart(2, '0');
@@ -32,4 +36,8 @@ const formatDate = (date: Date): string => {
     return `${day}/${month}/${year}`;
 };
 
+
+
 export { formatTime, formatDate };
+
+

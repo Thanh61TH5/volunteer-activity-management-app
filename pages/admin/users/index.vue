@@ -44,7 +44,7 @@ const tableData = computed(() =>
 
 async function fetchUserData() {
   const { data: usersData, error } = await client
-      .from('accounts')
+      .from('get_user_info')
       .select('*')
       .eq('status','TRUE')
       .order('id', { ascending: true });
@@ -113,7 +113,7 @@ const currentPageData = computed(() => {
 </script>
 
 <template>
-  <div class=" w-full z-1 bg-white p-10 my-10 rounded-lg" :loading="loading">
+  <div class=" sm:mt-20 w-full z-1 bg-white p-10 rounded-lg" :loading="loading">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý người dùng</h1>
     <div class="flex justify-between py-2 w-full">
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin người dùng..." />

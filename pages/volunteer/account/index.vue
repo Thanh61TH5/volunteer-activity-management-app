@@ -53,7 +53,7 @@ function  cancel() {
 
 <template>
   <div
-      class="lg:mx-32  rounded-lg bg-white p-10">
+      class="lg:mx-32 sm:mt-32 rounded-lg bg-white p-10">
     <div class="flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-2xl text-lg font-medium">Quản lý tài khoản</h1>
       <div class="flex space-x-3">

@@ -5,7 +5,7 @@
 
 <template>
   <NuxtLayout>
-    <NuxtPage class="sm:mt-32"/>
+    <NuxtPage class="sm:mt-2"/>
   </NuxtLayout>
 </template>
 

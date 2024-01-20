@@ -1,16 +1,13 @@
 <script setup lang="ts">
-
-
-
 import CancelPrativeVolunteer from "~/components/form/cancel-prative-volunteer.vue";
 import Review from "~/components/form/review.vue";
+import { formatTime, formatDate } from '~/assets/utils/format';
 
+// Function to format birthday
 interface Request {
   id: number;
   index: number;
   id_profile: string;
-  is_done_volunteer: boolean,
-  is_done_sp_seeker: boolean,
   message: string;
   id_sender: number;
   id_receiver:number;
@@ -215,9 +212,21 @@ const currentPageData = computed(() => {
       </el-table-column>
       <el-table-column label="Mã hồ sơ yêu cầu" prop="id_profile" />
       <el-table-column label="Lời nhắn" prop="message" />
-      <el-table-column label="Ngày gửi" prop="sent_date" />
-      <el-table-column label="Ngày phê duyệt" prop="approval_date" />
-      <el-table-column label="Ngày hủy" prop="cancel_date" />
+      <el-table-column label="Ngày gửi" prop="sent_date">
+        <template #default="scope">
+          {{ scope.row.sent_date ? formatDate(new Date(scope.row.sent_date)) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày phê duyệt" prop="approval_date" >
+        <template #default="scope">
+          {{ scope.row.approval_date ? formatDate(new Date(scope.row.approval_date)) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày hủy" prop="cancel_date">
+        <template #default="scope">
+          {{ scope.row.cancel_date ? formatDate(new Date(scope.row.cancel_date)) : '' }}
+        </template>
+      </el-table-column>
       <el-table-column label="Lý do hủy" prop="cancel_reason" />
       <el-table-column label="Trạng thái" prop="status" />
       <!-- Other el-table-column definitions remain unchanged -->
@@ -226,8 +235,8 @@ const currentPageData = computed(() => {
           <div class="flex flex-col space-y-2">
             <div>
               <el-button v-if="scope.row.status === 'Đang chờ duyệt'"
-
-                         class="w-32 border-2 border-red-500"
+                         class="w-32"
+                         type="warning"
                          @click="cancelRequest(scope.row.id)">
                 Hủy tham gia
               </el-button>
@@ -238,16 +247,11 @@ const currentPageData = computed(() => {
                 Đã hủy
               </el-button>
             </div>
-            <el-button  v-if="scope.row.status === 'Đã duyệt' && !isReviewSent && scope.row.is_done_volunteer === 'FALSE'"
-                       type="warning"
+            <el-button  v-if="scope.row.status === 'Đã duyệt' && !isReviewSent"
+                       type="success"
                        class="w-32"
                         @click="doneProfile(scope.row.id)">
 
-              Hoàn thành
-            </el-button>
-            <el-button  v-if="scope.row.is_done_volunteer === 'TRUE'"
-                        type="success"
-                        class="w-32">
               Đánh giá
             </el-button>
           </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-
+import { formatTime, formatDate } from '~/assets/utils/format';
 interface Request {
   id: number;
   index: number;
@@ -103,22 +103,46 @@ const currentPageData = computed(() => {
       </el-table-column>
       <el-table-column label="Tên người gửi" prop="name_sender" />
       <el-table-column label="Lời nhắn" prop="message" />
-      <el-table-column label="Ngày gửi" prop="sent_date" />
-      <el-table-column label="Ngày phê duyệt" prop="approval_date" />
-      <el-table-column label="Ngày hủy" prop="cancel_date" />
+      <el-table-column label="Ngày gửi" prop="sent_date">
+        <template #default="scope">
+          {{ scope.row.sent_date ? formatDate(new Date(scope.row.sent_date)) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày phê duyệt" prop="approval_date" >
+        <template #default="scope">
+          {{ scope.row.approval_date ? formatDate(new Date(scope.row.approval_date)) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày hủy" prop="cancel_date">
+        <template #default="scope">
+          {{ scope.row.cancel_date ? formatDate(new Date(scope.row.cancel_date)) : '' }}
+        </template>
+      </el-table-column>
       <el-table-column label="Lý do hủy" prop="cancel_reason" />
+      <el-table-column label="Trạng thái" prop="status" />
 
       <!-- Other el-table-column definitions remain unchanged -->
       <el-table-column align="right">
         <template #default="scope">
           <el-button
-              v-if="scope.row.status !== 'Đã duyệt'"
-              type="success"
+              v-if="scope.row.status == 'Đang chờ duyệt' && scope.row.status !== 'Đã hủy'"
+              type="primary"
+              class="w-32"
               @click="selectedRequest(scope.row.id)"
           >
             Duyệt
           </el-button>
-          <el-button v-else type="primary" disabled>Đã duyệt</el-button>
+
+          <el-button
+              v-else-if="scope.row.status == 'Đã hủy'"
+              type="danger"
+              disabled
+              class="w-32"
+              @click="selectedRequest(scope.row.id)"
+          >
+            Đã hủy
+          </el-button>
+          <el-button class="w-32" v-else type="success">Đánh giá</el-button>
         </template>
       </el-table-column>
     </el-table>
