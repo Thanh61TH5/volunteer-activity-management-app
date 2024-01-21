@@ -33,7 +33,9 @@ async function sendReview() {
     loading.value = true;
 
     const accountsQuery = await client.from('accounts').select('id').eq('email', user.value.email);
+    const accountsQueryType = await client.from('accounts').select('type').eq('email', user.value.email);
     const accountId = accountsQuery.data?.[0]?.id;
+    const accountsType = accountsQueryType.data?.[0]?.type;
 
     if (accountId) {
       const idReviewer = accountId;
@@ -57,31 +59,49 @@ async function sendReview() {
               id_request: idRequest
             },
           ]);
-      await client.from('requests').update({ status: 'Đã đánh giá'}).eq('id', request.id);
 
       if (error) {
         console.error('Error post profile:', error);
         throw new Error('Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.');
       }
 
+      // Update is_done_sp or is_done_volunteer based on accountsType
+      if (accountsType === 'Người cần hỗ trợ') {
+        const updateResult = await client
+            .from('requests')
+            .update({ is_done_sp: true })
+            .eq('id', idRequest);
+
+        if (updateResult.error) {
+          console.error('Error updating is_done_sp:', updateResult.error);
+          throw new Error('Lỗi cập nhật thông tin đánh giá.');
+        }
+      } else {
+        const updateResult = await client
+            .from('requests')
+            .update({ is_done_volunteer: true })
+            .eq('id', idRequest);
+
+        if (updateResult.error) {
+          console.error('Error updating is_done_volunteer:', updateResult.error);
+          throw new Error('Lỗi cập nhật thông tin đánh giá.');
+        }
+      }
+
       ElNotification.success({
         title: 'Thành công',
         message: 'Yêu cầu đã được gửi thành công.',
       });
-      emit('save')
+      await fetchUserData();
+      emit('save');
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error post profile:', error);
-    ElNotification.error({
-      title: 'Lỗi',
-      message: error.message || 'Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.',
-    });
-  }
-  finally {
+  } finally {
     loading.value = false;
   }
 }
+
 
 
 const handleClose = (done: () => void) => {

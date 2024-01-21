@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { formatTime, formatDate } from '~/assets/utils/format';
+import Review from "~/components/form/review.vue";
 interface Request {
   id: number;
   index: number;
@@ -10,6 +11,8 @@ interface Request {
   cancel_date: string;
   cancel_reason: string;
   sent_date: string;
+  is_done_volunteer:boolean;
+  is_done_sp:boolean;
 }
 
 const loading = ref(false);
@@ -19,6 +22,8 @@ const user = useSupabaseUser();
 const requests = ref<Request[]>([]);
 const pageSize = 10;
 const currentPage = ref(1);
+const openReviewForm = ref(false);
+const isReviewSent = ref(false);
 
 const tableData = computed(() =>
     requests.value.filter((data) => {
@@ -34,7 +39,7 @@ const tableData = computed(() =>
       return senderNameMatch || sentDateMatch || approvalDateMatch;
     })
 );
-
+const selectedRequestData = ref(null);
 async function selectedRequest(id: number) {
   try {
     await client.from('requests').update({ status: 'Đã duyệt', approval_date: new Date() }).eq('id', id);
@@ -71,7 +76,9 @@ async function fetchUserData() {
 }
 
 
+
 fetchUserData();
+
 
 function handlePageChange(newPage: number) {
   fetchUserData();
@@ -83,6 +90,21 @@ const currentPageData = computed(() => {
   const endIndex = startIndex + pageSize;
   return tableData.value.slice(startIndex, endIndex);
 });
+const reviewProfile = (id: number) => {
+  selectedRequestData.value = tableData.value.find(request => request.id === id);
+  fetchUserData()
+  openReviewForm.value = true;
+};
+function closeForm() {
+  fetchUserData()
+  openReviewForm.value = false;
+}
+
+function saveReviewForm() {
+  openReviewForm.value = false;
+  isReviewSent.value = true
+}
+
 </script>
 
 <template>
@@ -108,7 +130,7 @@ const currentPageData = computed(() => {
           {{ scope.row.sent_date ? formatDate(new Date(scope.row.sent_date)) : '' }}
         </template>
       </el-table-column>
-      <el-table-column label="Ngày phê duyệt" prop="approval_date" >
+      <el-table-column label="Ngày duyệt" prop="approval_date" >
         <template #default="scope">
           {{ scope.row.approval_date ? formatDate(new Date(scope.row.approval_date)) : '' }}
         </template>
@@ -142,11 +164,26 @@ const currentPageData = computed(() => {
           >
             Đã hủy
           </el-button>
-          <el-button class="w-32" v-else type="success">Đánh giá</el-button>
+          <el-button
+              class="w-32"
+              type="success"
+              v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_sp ==false"
+              @click="reviewProfile(scope.row.id)"
+          >
+            Đánh giá
+          </el-button>
+          <el-button
+              class="w-32"
+              type="warning"
+              v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_sp ==true"
+              disabled
+          >
+            Đã hoàn thành
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    <review v-if="openReviewForm" :request="selectedRequestData" @close="closeForm" @save="saveReviewForm" :fetchUserData="fetchUserData"/>
     <div class="text-center" v-else>
       <p>Không tìm thấy dữ liệu</p>
     </div>

@@ -7,6 +7,7 @@ const isOpenUserMenu = ref(false);
 const isOpenSideBar = ref(false);
 const router = useRouter();
 const user = useSupabaseUser();
+const signOut = ref(false)
 
 async function getUserDataByEmail(email: string) {
   if (user.value) {
@@ -40,9 +41,11 @@ function openSideBar() {
 
 }
 
-async function signOut() {
+
+async function confirmSignOut() {
   try {
     const {error} = await client.auth.signOut()
+    signOut.value = false;
     await router.push('/login')
 
   } catch (error) {
@@ -50,6 +53,11 @@ async function signOut() {
   }
 
 }
+
+
+const cancelSignOut = () => {
+  signOut.value = false;
+};
 
 function closeSideBar() {
   isOpenSideBar.value = false;
@@ -98,10 +106,10 @@ function closeSideBar() {
           </NuxtLink>
         </li>
         <li>
-          <button @click="signOut"
+          <button @click="signOut =true"
                   class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-5"/>
-            <span class=" px-3 whitespace-nowrap">Đăng xuất</span>
+            <span class=" px-3 whitespace-nowrap" >Đăng xuất</span>
           </button>
         </li>
         <li>
@@ -138,7 +146,7 @@ function closeSideBar() {
           </NuxtLink>
         </li>
         <li>
-          <button @click="signOut"
+          <button @click="signOut =true"
                   class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-5"/>
             <span class=" px-3 whitespace-nowrap">Đăng xuất</span>
@@ -154,7 +162,7 @@ function closeSideBar() {
           </NuxtLink>
         </li>
         <li>
-          <button @click="signOut"
+          <button @click="signOut =true"
                   class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
             <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-5"/>
             <span class=" px-3 whitespace-nowrap">Đăng xuất</span>
@@ -198,7 +206,7 @@ function closeSideBar() {
                   <span>
                 <hr>
               </span>
-                  <el-dropdown-item class="clearfix" @click="signOut">
+                  <el-dropdown-item class="clearfix" @click="signOut =true">
                     <p class="text-base">Đăng xuất</p>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -217,7 +225,19 @@ function closeSideBar() {
     </div>
     <Footer/>
   </div>
-
+  <el-dialog v-model="signOut" center class="rounded-lg " >
+    <span class="text-center">
+      Bạn có chắc muốn đăng xuất không?
+    </span>
+    <template #footer>
+      <span class="dialog-footer  flex justify-center items-center space-x-3">
+        <el-button @click="cancelSignOut">Hủy bỏ</el-button>
+        <el-button type="primary" @click="confirmSignOut">
+          Đăng xuất
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>

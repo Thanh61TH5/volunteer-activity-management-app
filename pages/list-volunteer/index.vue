@@ -1,5 +1,11 @@
 <template>
   <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/list-volunteer' }">Tình nguyện viên</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
       <div
           class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
@@ -13,7 +19,7 @@
               <div>
                 <div class="py-2">
                   <p class="font-bold text-gray-700">{{ volunteer.support_job_name }}</p>
-                  <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
+                  <span class="">{{ volunteer.name }} | {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
                 </div>
                 <div class="py-2 ">
                   <p class="text-gray-400">Thời gian có thể hỗ trợ:</p>
@@ -33,7 +39,7 @@
           <div class="flex flex-col justify-center pt-5 sm:justify-between sm:flex space-y-5">
             <div class="flex items-center justify-center mx-10">
               <Icon name="material-symbols:av-timer" class="w-5 h-5" />
-              <p class="days ml-2">Đến hạn: {{volunteer.end_date_post}}</p>
+              <p class="days ml-2">Đến hạn: {{formatDate(volunteer.end_date_post)}}</p>
             </div>
             <div class="flex items-center justify-center text-white mx-10">
               <button
@@ -73,18 +79,10 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
-const calculateDays = (startDate, endDate) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const timeDifference = end.getTime() - start.getTime();
-  const daysDifference = timeDifference / (1000 * 3600 * 24);
-  return Math.floor(daysDifference);
-};
-
 const calculateAge = (currentDay, birthday) => {
   const start = new Date(currentDay);
   const end = new Date(birthday);
-  const timeDifference = end.getFullYear() - start.getFullYear();
+  const timeDifference = start.getFullYear() - end.getFullYear();
   return Math.floor(timeDifference);
 };
 

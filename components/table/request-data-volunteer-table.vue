@@ -17,6 +17,8 @@ interface Request {
   cancel_reason: string;
   sent_date: string;
   status: string;
+  is_done_volunteer:boolean;
+  is_done_sp:boolean;
 }
 
 const loading = ref(false);
@@ -29,6 +31,7 @@ const currentPage = ref(1);
 const openCancelForm = ref(false);
 const openReviewForm = ref(false);
 const isReviewSent = ref(false);
+const isCancelSent = ref(false);
 
 
 const isBeforeToday = (dateString: string | number | Date) => {
@@ -46,8 +49,6 @@ const tableData = computed(() =>
       const senderNameMatch = !search.value ||
           data.name_receiver.toLowerCase().includes(search.value.toLowerCase());
 
-      const senderCancelReasonMatch = !search.value ||
-          data.cancel_reason.toLowerCase().includes(search.value.toLowerCase());
 
       const statusMatch = !search.value ||
           data.status.toLowerCase().includes(search.value.toLowerCase());
@@ -66,7 +67,7 @@ const tableData = computed(() =>
           (data.id_profile && data.id_profile.toString().toLowerCase().includes(search.value.toLowerCase()));
 
 
-      return senderNameMatch || sentDateMatch || approvalDateMatch || senderCancelReasonMatch || idProfileMatch || statusMatch || cancelDateMatch;
+      return senderNameMatch || sentDateMatch || approvalDateMatch  || idProfileMatch || statusMatch || cancelDateMatch;
     })
 );
 
@@ -100,10 +101,12 @@ async function fetchUserData() {
 
 const cancelRequest = (id: number) => {
   selectedRequestData.value = tableData.value.find(request => request.id === id);
+  fetchUserData()
   openCancelForm.value = true;
 };
 const reviewProfile = (id: number) => {
   selectedRequestData.value = tableData.value.find(request => request.id === id);
+  fetchUserData()
   openReviewForm.value = true;
 };
 function closeForm() {
@@ -113,9 +116,7 @@ function closeForm() {
 }
 
 function saveForm() {
-  fetchUserData()
   openCancelForm.value = false;
-
 }
 
 function saveReviewForm() {
@@ -123,60 +124,6 @@ function saveReviewForm() {
   isReviewSent.value = true
 }
 
-async function doneProfile(requestId: number) {
-  ElMessageBox({
-    title: 'Xác nhận',
-    message: h('p', null, [
-      h('span', null, 'Bạn có chắc đã hoàn thành yêu cầu thiện nguyện không '),
-    ]),
-    showCancelButton: true,
-    confirmButtonText: 'Xác nhận',
-    cancelButtonText: 'Hủy',
-    beforeClose: (action, instance, done) => {
-      if (action === 'confirm') {
-        instance.confirmButtonLoading = true
-        instance.confirmButtonText = 'Đang xác nhận...'
-        setTimeout(() => {
-          done()
-          setTimeout(() => {
-            instance.confirmButtonLoading = false
-          }, 300)
-        }, 3000)
-      } else {
-        done()
-      }
-    },
-    // ... (code xác nhận trước)
-  }).then(async (action) => {
-    if (action === 'confirm') {
-      // Gọi hàm cập nhật giá trị is_done_volunteer
-      await updateIsDoneVolunteer(requestId);
-      fetchUserData();
-    }
-
-  });
-}
-
-async function updateIsDoneVolunteer(requestId: number) {
-  try {
-    // Gửi yêu cầu cập nhật giá trị is_done_volunteer = true
-    await client
-        .from('requests')
-        .update({ is_done_volunteer: true })
-        .eq('id', requestId);
-
-    ElNotification.success({
-      title: 'Thông báo',
-      message: 'Xác nhận hoàn thành công.',
-    });
-  } catch (error) {
-    console.error('Lỗi cập nhật trạng thái:', error);
-    ElNotification.error({
-      title: 'Lỗi',
-      message: 'Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại.',
-    });
-  }
-}
 
 
 
@@ -210,14 +157,14 @@ const currentPageData = computed(() => {
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Mã hồ sơ yêu cầu" prop="id_profile" />
+      <el-table-column label="Mã hồ sơ" prop="id_profile" />
       <el-table-column label="Lời nhắn" prop="message" />
       <el-table-column label="Ngày gửi" prop="sent_date">
         <template #default="scope">
           {{ scope.row.sent_date ? formatDate(new Date(scope.row.sent_date)) : '' }}
         </template>
       </el-table-column>
-      <el-table-column label="Ngày phê duyệt" prop="approval_date" >
+      <el-table-column label="Ngày duyệt" prop="approval_date" >
         <template #default="scope">
           {{ scope.row.approval_date ? formatDate(new Date(scope.row.approval_date)) : '' }}
         </template>
@@ -234,25 +181,34 @@ const currentPageData = computed(() => {
         <template #default="scope">
           <div class="flex flex-col space-y-2">
             <div>
-              <el-button v-if="scope.row.status === 'Đang chờ duyệt'"
-                         class="w-32"
+              <el-button v-if="scope.row.status === 'Đang chờ duyệt' "
+                         style="width: 100px"
                          type="warning"
                          @click="cancelRequest(scope.row.id)">
                 Hủy tham gia
               </el-button>
-              <el-button v-if="scope.row.status === 'Đã hủy'"
+              <el-button v-if="scope.row.status === 'Đã hủy' "
                          disabled
-                         class="w-32"
+                         style="width: 100px"
                          type="danger">
                 Đã hủy
               </el-button>
             </div>
-            <el-button  v-if="scope.row.status === 'Đã duyệt' && !isReviewSent"
-                       type="success"
-                       class="w-32"
-                        @click="doneProfile(scope.row.id)">
-
+            <el-button
+                class="w-32"
+                type="success"
+                v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_volunteer ==false"
+                @click="reviewProfile(scope.row.id)"
+            >
               Đánh giá
+            </el-button>
+            <el-button
+                class="w-32"
+                type="warning"
+                v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_volunteer ==true"
+                disabled
+            >
+              Đã hoàn thành
             </el-button>
           </div>
         </template>

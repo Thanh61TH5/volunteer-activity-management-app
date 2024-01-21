@@ -1,8 +1,8 @@
 <script setup>
 
 const banners = ref([
-  { img: "/chrimas.PNG" },
-  { img: "/family.PNG" }
+  { img: "/banner_1.png" },
+  { img: "/banner_2.png" }
 ]);
 </script>
 

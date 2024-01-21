@@ -1,8 +1,9 @@
 <template>
-    <div class="relative min-h-screen lg:mx-32 sm:pt-24 space-y-10 sm:mt-2">
+    <div class="relative min-h-screen lg:mx-32 mx-5 space-y-10 lg:mt-32">
       <carousel class=""/>
-      <card-sp class=""/>
       <card-top-volunteer />
+      <card-sp class=""/>
+      <card-volunteer/>
     </div>
 </template>
 

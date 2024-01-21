@@ -28,7 +28,6 @@ const reasons = [
 ]
 
 async function postProfile() {
-  emit('save');
   try {
     loading.value = true;
 
@@ -50,13 +49,18 @@ async function postProfile() {
             message: 'Đã hết hạn hủy tham gia. Hãy liên hệ với người cần hỗ trợ hoặc quản trị viên nếu bạn cần.',
           });
         } else {
-          await client.from('requests').update({ status: 'Đã hủy', cancel_date: new Date(), cancel_reason: reason.value }).eq('id', request.value.id);
+          const {error}= await client.from('requests').update({ status: 'Đã hủy', cancel_date: new Date(), cancel_reason: reason.value }).eq('id', request.value.id);
+          if (error) {
+            console.error('Error post profile:', error);
+            throw new Error('Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.');
+          }
+
           ElNotification.success({
             title: 'Thành công',
             message: 'Hủy tham gia thành công.',
           });
-          await fetchUserData();
-          return true;
+          emit('save');
+
         }
       } else {
         console.error('id_profile is undefined. Cannot make the API call.');

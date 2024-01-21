@@ -1,5 +1,12 @@
 <template>
-  <div class="min-h-screen mx-3 lg:mx-32 sm:pt-24 mt-10 pb-10 space-y-3">
+  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/list-sp-seeker' }">Người cần hỗ trợ</el-breadcrumb-item>
+      <el-breadcrumb-item >Chi tiết tin</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="sm:flex w-full ">
 
       <div class="border border-gray-100 shadow-md rounded-lg bg-white p-5 sm:w-2/5  m-3">
@@ -97,7 +104,7 @@
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian cần hỗ trợ: </label>
               <p class="text-gray-600">Giờ: {{ spSeekerData.support_time_start }} đến {{spSeekerData.support_time_end }}</p>
-              <p class="text-gray-600">Ngày: {{ formatDate(spSeekerData.support_day_start) }} đến {{formatDate(spSeekerData.support_day_end) }}</p>
+              <p class="text-gray-600">Thứ trong tuần: {{ spSeekerData.support_weekday }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Công việc cần hỗ trợ: </label>

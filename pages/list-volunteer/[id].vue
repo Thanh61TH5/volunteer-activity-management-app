@@ -1,5 +1,12 @@
 <template>
-  <div class="min-h-screen mx-3 lg:mx-32 sm:pt-24 mt-10 pb-10 space-y-3">
+  <div class="relative min-h-screen lg:mx-32 mx-5 sm:pt-24">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/list-volunteer' }">Tình nguyện viên</el-breadcrumb-item>
+      <el-breadcrumb-item >Chi tiết tin</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="sm:flex w-full  ">
 
       <div class=" border border-gray-100 shadow-md rounded-lg bg-white p-5 sm:w-2/5  m-3">

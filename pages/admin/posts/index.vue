@@ -6,18 +6,15 @@ definePageMeta({
 
 import { computed, ref } from 'vue'
 
-interface User {
+interface Post {
   id: number;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
+  type: string;
 }
 const loading = ref(false);
 const client = useSupabaseClient();
 const search = ref('');
 const selectedUser = ref(null);
-const users = ref<User[]>([]);
+const users = ref<Post[]>([]);
 const pageSize = 20;
 const currentPage = ref(1);
 
@@ -27,7 +24,7 @@ const tableData = computed(() =>
     users.value.filter(
         (data) =>
             !search.value ||
-            data.name.toLowerCase().includes(search.value.toLowerCase())
+            data.type.toLowerCase().includes(search.value.toLowerCase())
 
     )
 );
@@ -46,24 +43,37 @@ async function fetchUserData() {
 
 fetchUserData();
 
-async function handleApprove(id:number){
+async function handleApprove(id: number) {
+  loading.value = true;
 
-    loading.value = true;
-    const { error } = await client
-        .from('profiles')
-        .update({ status: 'TRUE' })
-        .eq('id',id)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    loading.value = false;
+  // Update the profile with the specific ID
+  const { error } = await client
+      .from('profiles')
+      .update({ status: 'true' })
+      .eq('id', id);
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  loading.value = false;
+
+  if (!error) {
     ElNotification.success({
       title: 'Thành công',
       message: 'Duyệt tin đăng thành công.',
       offset: 100,
-    })
+    });
+
     // Fetch updated user data
     await fetchUserData();
+  } else {
+    console.error('Error approving post:', error);
+    ElNotification.error({
+      title: 'Lỗi',
+      message: 'Đã có lỗi xảy ra khi duyệt tin đăng.',
+      offset: 100,
+    });
+  }
+}
 
-};
 
 function handlePageChange(newPage: number) {
   currentPage.value = newPage;
@@ -97,8 +107,9 @@ const currentPageData = computed(() => {
       <el-table-column label="Trạng thái" prop="status" />
       <el-table-column align="right">
         <template #default="scope">
-          <el-button type="danger" v-if="scope.row.status === 'TRUE'">Đã duyệt</el-button>
-          <el-button type="primary" v-else @click="handleApprove(scope.row.id)">Duyệt</el-button>
+          <el-button type="primary" v-if="scope.row.status === ''">Duyệt</el-button>
+          <el-button type="primary" disabled>Đã duyệt</el-button>
+
         </template>
       </el-table-column>
     </el-table>

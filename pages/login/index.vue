@@ -135,7 +135,7 @@ const signIn = async () => {
 
   if (user.value && userData) {
     if (userData.role === 'Admin') {
-      await router.push("admin");
+      await router.push("admin/statistics");
       loadingStore.setLoading(false);
       ElNotification.success({
         title: 'Thành công',

@@ -1,5 +1,11 @@
 <template>
   <div class="relative min-h-screen lg:mx-32 mx-10 sm:pt-24">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/list-volunteer' }">Người cần hỗ trợ</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-8 lg:grid-cols-3 lg:gap-6  sm:grid-cols-2 gap-4">
       <div class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
            v-for="(spSeeker, index) in spSeekerData"
@@ -11,7 +17,7 @@
             <div>
               <div class="py-2" >
                 <p class="font-bold text-gray-700">{{spSeeker.support_job_name}}</p>
-                <span class="">{{ spSeeker.name }} {{ calculateAge(new Date(), spSeeker.birthday) }} tuổi </span>
+                <span class="">{{ spSeeker.name }} | {{ calculateAge(new Date(), spSeeker.birthday) }} tuổi </span>
               </div>
               <div class="py-2 ">
                 <p class="text-gray-400">Thời gian cần hỗ trợ:</p>
@@ -29,9 +35,9 @@
           <hr>
         </span>
           <div class="flex flex-col items-center justify-center space-y-5 sm:flex  pt-5">
-            <div class="flex items-center">
-              <Icon name="material-symbols:av-timer" class="w-5 h-5"/>
-              <p class="days ml-2">Còn {{ calculateDays(spSeeker.start_date_post, spSeeker.end_date_post) }} ngày</p>
+            <div class="flex items-center justify-center mx-10">
+              <Icon name="material-symbols:av-timer" class="w-5 h-5" />
+              <p class="days ml-2">Đến hạn: {{formatDate(spSeeker.end_date_post)}}</p>
             </div>
             <div class="text-white flex space-x-2">
               <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
@@ -60,6 +66,7 @@ import {formatTime} from "assets/utils/format.ts";
 import { useCartStore } from '~/store/index.ts';
 import PrativeVolunteer from "~/components/form/prative-volunteer.vue";
 
+
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const spSeekerData = ref([]);
@@ -84,8 +91,15 @@ onMounted(async () => {
 let selectedProfile = ref(null);
 
 function requestVolunteer(profile) {
-  selectedProfile.value = profile;
-  openJoinForm.value = true;
+  if(user.value) {
+    selectedProfile.value = profile;
+    openJoinForm.value = true;
+  }else {
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để tham gia bạn nhé!',
+    });
+  }
 }
 const Save = async (spSeeker) => {
   if (user.value) {
@@ -166,24 +180,10 @@ const Save = async (spSeeker) => {
   }
 };
 
-function notifyJoin() {
-  ElNotification.info({
-    title: 'Thông báo',
-    message: 'Hãy đăng nhập để tham gia thiện nguyện bạn nhé!',
-  });
-}
-const calculateDays = (startDate, endDate) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const timeDifference = end.getTime() - start.getTime();
-  const daysDifference = timeDifference / (1000 * 3600 * 24);
-  return Math.floor(daysDifference);
-};
-
 const calculateAge = (currentDay, birthday) => {
   const start = new Date(currentDay);
   const end = new Date(birthday);
-  const timeDifference = end.getFullYear() - start.getFullYear();
+  const timeDifference = start.getFullYear() - end.getFullYear();
   return Math.floor(timeDifference);
 };
 

@@ -20,13 +20,14 @@
 
       <div class=" relative flex items-center w-1/4 py-2 ">
         <div class="absolute right-2">
-          <Icon name="ic:twotone-search" class="w-10 h-10 text-gray-500 px-2" @click="performSearch"/>
+          <Icon name="ic:twotone-search" class="w-10 h-10 text-gray-500 px-2 hover:cursor-pointer hover:text-blue-400 duration-200 ease-in-out" @click="performSearch"/>
         </div>
         <input
             v-model="searchKeyword"
             type="text"
             class="border-gray-200 border rounded-full w-full p-3 text-sm transition duration-100 ease-in outline-none focus:border-blue-300"
             placeholder="Nhập vào thông tin tìm kiếm..."
+            @keydown="handleKeyPress"
         />
       </div>
       <div class="flex space-x-6 ">
@@ -220,6 +221,7 @@
 
 <script setup>
 const links = [
+  { name: "Trang chủ", link: "/" },
   { name: "Việc cần hỗ trợ", link: "/list-sp-seeker/" },
   { name: "Tình nguyện viên", link: "/list-volunteer" },
   { name: "Về chúng tôi", link: "/about" },
@@ -246,6 +248,15 @@ import { useCartStore } from '~/store/index.ts';
 function performSearch() {
   if (searchKeyword.value.trim() !== '') {
     router.push({ name: 'search-results', query: { keyword: searchKeyword.value } });
+  }
+}
+
+function handleKeyPress(event) {
+  if (event.key === 'Enter') {
+
+    if (searchKeyword.value.trim() !== '') {
+      router.push({ name: 'search-results', query: { keyword: searchKeyword.value } });
+    }
   }
 }
 

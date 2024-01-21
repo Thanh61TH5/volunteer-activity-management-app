@@ -91,7 +91,7 @@
               <div >
                 <label class="font-medium text-gray-600 px-1" for="name_job">Thời gian có thể hỗ trợ: </label>
                 <div class=" font-600 px-1">
-                  <p class="text-gray-600 flex"><p class="pr-2 ">Giờ:</p> <p class="font-medium">{{ formatFreeTime(volunteerData.free_time_start) }}</p> <p class="mx-2">đến</p> <p class="font-medium">{{formatFreeTime(volunteerData.free_time_end) }}</p></p>
+                  <p class="text-gray-600 flex"><p class="pr-2 ">Giờ:</p> <p class="font-medium">{{ formatFreeTime(volunteerData.free_time_start) }}</p> <p class="mx-2"></p> <p class="font-medium">{{formatFreeTime(volunteerData.free_time_end) }}</p></p>
                   <p class="text-gray-600 flex"><p class="pr-2 ">Các thứ trong tuần:</p> <p class="font-medium">{{ (volunteerData.free_weekday) }}</p></p>
                 </div>
               </div>
@@ -167,7 +167,7 @@ const formatBirthday = (birthday) => {
 const formatFreeTime = (startTime, endTime) => {
   const formattedStartTime = formatTime(startTime);
   const formattedEndTime = formatTime(endTime);
-  return `${formattedStartTime} đến ${formattedEndTime}`;
+  return `${formattedStartTime}, ${formattedEndTime}`;
 };
 
 const supabase = useSupabaseClient();

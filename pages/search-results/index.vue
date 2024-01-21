@@ -1,47 +1,41 @@
 <!-- SearchResults.vue -->
 <template>
-  <div class="sm:mt-32">
-    <div>
-      <h1>Search Results for "{{ searchKeyword }}"</h1>
+  <div class="lg:mx-32 sm:mt-32">
+    <div class="flex items-center my-10">
+      <h1 class="mr-2">Kết quả hiển thị cho từ khóa tìm kiếm: </h1>
+      <p class="text-blue-800">"{{ searchKeyword }}"</p>
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-4 xl:gap-4 sm:grid-cols-2 gap-2">
-      <div
+      <NuxtLink :to="getProfileRoute(profile)"
           class="h-auto rounded-lg shadow-lg border border-gray-100 bg-white"
-          v-for="(volunteer, index) in searchData"
+          v-for="(profile, index) in searchData"
           :key="index"
       >
-        <!-- Display volunteer information here -->
         <div class=" mb-5 p-2">
           <div class="flex flex-col justify-center items-center">
-            <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar" />
+            <img :src="profile.avt" class="w-24 h-24 rounded-full" alt="avatar" />
             <div>
               <div class="py-2">
-                <p class="font-bold text-gray-700">{{ volunteer.support_job_name }}</p>
-                <span class="">{{ volunteer.name }} {{ calculateAge(new Date(), volunteer.birthday) }} tuổi </span>
+                <p class="font-bold text-gray-700">{{ profile.support_job_name }}</p>
+                <span class="">{{ profile.name }} | {{ calculateAge(new Date(), profile.birthday) }} tuổi </span>
               </div>
               <div class="py-2">
-                <p class="text-gray-400">Thời gian rảnh rỗi:</p>
-                <!-- Display other information as needed -->
-              </div>
-              <div class="py-2">
-                <p class="text-gray-400">Địa chỉ:</p>
-                <p>{{ volunteer.address }}</p>
+                <p class="text-gray-500 font-medium">Địa chỉ:</p>
+                <p>{{ profile.address }}</p>
               </div>
             </div>
           </div>
           <span class="w-full text-gray-400">
             <hr />
           </span>
-          <div class="flex pt-5 space-x-5 justify-between">
-            <div class="flex items-center">
-              <Icon name="material-symbols:av-timer" class="w-5 h-5" />
-            </div>
-            <div class="text-white">
-              <NuxtLink to="/login" class="bg-green-500 rounded-full px-4 py-1 hover:opacity-80">Lưu tin</NuxtLink>
+          <div class="flex pt-5 space-x-5 justify-center">
+            <div class="flex items-center justify-center">
+              <Icon name="material-symbols:av-timer" class="w-5 h-5 text-gray-500" />
+              <p>{{formatDate(profile.end_date_post)}}</p>
             </div>
           </div>
         </div>
-      </div>
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -57,18 +51,10 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
-const calculateDays = (startDate, endDate) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const timeDifference = end.getTime() - start.getTime();
-  const daysDifference = timeDifference / (1000 * 3600 * 24);
-  return Math.floor(daysDifference);
-};
-
 const calculateAge = (currentDay, birthday) => {
   const start = new Date(currentDay);
   const end = new Date(birthday);
-  const timeDifference = end.getFullYear() - start.getFullYear();
+  const timeDifference = start.getFullYear() - end.getFullYear();
   return Math.floor(timeDifference);
 };
 
@@ -78,36 +64,60 @@ const searchKeyword = ref('');
 import { useRouter } from 'vue-router';
 const searchData = ref([]);
 
-// ... (your utility functions) ...
-
-onMounted(async () => {
-  searchKeyword.value = router.currentRoute.value.query.keyword || '';
-
-  const { data, error } = await client
-      .from('get_search_profile_info')
-      .select()
-      .ilike('name', `%${searchKeyword.value}%`)
-      .or()
-      .ilike('type', `%${searchKeyword.value}%`)
-      .or()
-      .ilike('avt', `%${searchKeyword.value}%`);
-
-  if (error) {
-    console.error('Error fetching search results:', error);
-    // Handle the error (e.g., display an error message)
-  } else {
-    console.log('Search results:', data);
-    searchData.value = data || [];
-    // Handle the retrieved data as needed
-  }
+const { currentRoute } = useRouter();
+onMounted(() => {
+  fetchData();
 });
 
+watchEffect(() => {
+
+  fetchData();
+});
+
+async function fetchData() {
+  searchKeyword.value = currentRoute.value.query.keyword || '';
+
+  try {
+
+    const [nameQueryResult, typeQueryResult, addressQueryResult, jobQueryResult] = await Promise.all([
+      client
+          .from('get_search_profile_info')
+          .select()
+          .or(`name.ilike.%${searchKeyword.value}%`),
+      client
+          .from('get_search_profile_info')
+          .select()
+          .or(`type.ilike.%${searchKeyword.value}%`),
+      client
+          .from('get_search_profile_info')
+          .select()
+          .or(`address.ilike.%${searchKeyword.value}%`),
+      client
+          .from('get_search_profile_info')
+          .select()
+          .or(`support_job_name.ilike.%${searchKeyword.value}%`),
+    ]);
 
 
+    if (nameQueryResult.error || typeQueryResult.error || addressQueryResult.error ||jobQueryResult.error) {
+      console.error('Error fetching search results:', nameQueryResult.error, typeQueryResult.error, addressQueryResult.error, jobQueryResult.error);
 
+    } else {
 
+      const combinedResults = [...nameQueryResult.data, ...typeQueryResult.data, ...addressQueryResult.data, ...jobQueryResult.data];
 
+      console.log('Search results:', combinedResults);
+      searchData.value = combinedResults || [];
 
+    }
+  } catch (error) {
+    console.error('Error fetching search results:', error);
 
+  }
+}
+
+const getProfileRoute = (profile: { type: string; }) => {
+  return profile.type === 'Tình nguyện viên' ? '/list-volunteer/'+profile.id : '/list-sp-seeker/'+profile.id;
+};
 </script>
 
