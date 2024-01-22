@@ -53,10 +53,9 @@ function  cancel() {
 </script>
 
 <template>
-  <div
-      class=" rounded-lg bg-white p-10 my-14 sm:mx-32 mx-5 shadow-md">
-    <div class="flex flex-col sm:flex">
-      <h1 class="text-gray-600 sm:text-2xl text-xl font-medium py-2">Quản lý tài khoản</h1>
+  <div class=" rounded-lg bg-white p-10 sm:mx-32 sm:mt-32 mt-10">
+    <div class="lg:flex justify-between items-center">
+      <h1 class="text-gray-600 sm:text-xl text-lg font-medium py-3">Quản lý tài khoản</h1>
       <div class="flex space-x-3 py-3">
         <button class="w-40 px-2 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition duration-200 ease-in-out text-white " @click="editAccount">Sửa tài khoản</button>
         <button class="w-40 px-2 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition duration-200 ease-in-out text-white " @click="changePassword">Đổi mật khẩu</button>

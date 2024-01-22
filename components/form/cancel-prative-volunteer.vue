@@ -59,6 +59,7 @@ async function postProfile() {
             title: 'Thành công',
             message: 'Hủy tham gia thành công.',
           });
+          await fetchUserData()
           emit('save');
 
         }

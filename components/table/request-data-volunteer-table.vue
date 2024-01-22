@@ -3,7 +3,6 @@ import CancelPrativeVolunteer from "~/components/form/cancel-prative-volunteer.v
 import Review from "~/components/form/review.vue";
 import { formatTime, formatDate } from '~/assets/utils/format';
 
-// Function to format birthday
 interface Request {
   id: number;
   index: number;
@@ -176,7 +175,7 @@ const currentPageData = computed(() => {
       </el-table-column>
       <el-table-column label="Lý do hủy" prop="cancel_reason" />
       <el-table-column label="Trạng thái" prop="status" />
-      <!-- Other el-table-column definitions remain unchanged -->
+
       <el-table-column>
         <template #default="scope">
           <div class="flex flex-col space-y-2">
@@ -195,7 +194,7 @@ const currentPageData = computed(() => {
               </el-button>
             </div>
             <el-button
-                class="w-32"
+                style="width: 100px"
                 type="success"
                 v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_volunteer ==false"
                 @click="reviewProfile(scope.row.id)"
@@ -203,7 +202,7 @@ const currentPageData = computed(() => {
               Đánh giá
             </el-button>
             <el-button
-                class="w-32"
+                style="width: 100px"
                 type="warning"
                 v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_volunteer ==true"
                 disabled
@@ -234,5 +233,5 @@ const currentPageData = computed(() => {
 </template>
 
 <style scoped>
-/* Add your styles here if needed */
+
 </style>

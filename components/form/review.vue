@@ -33,9 +33,10 @@ async function sendReview() {
     loading.value = true;
 
     const accountsQuery = await client.from('accounts').select('id').eq('email', user.value.email);
-    const accountsQueryType = await client.from('accounts').select('type').eq('email', user.value.email);
+    const accountsQueryType = await client.from('accounts').select('role').eq('email', user.value.email);
     const accountId = accountsQuery.data?.[0]?.id;
     const accountsType = accountsQueryType.data?.[0]?.type;
+    console.log('accountsType:', accountsType);
 
     if (accountId) {
       const idReviewer = accountId;
