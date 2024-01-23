@@ -3,8 +3,7 @@ definePageMeta({
   layout:"sidebar-admin",
   middleware:"auth"
 })
-
-import { computed, ref } from 'vue'
+import { formatTime, formatDate } from '~/assets/utils/format';
 
 interface Post {
   id: number;
@@ -20,7 +19,6 @@ const currentPage = ref(1);
 
 
 const tableData = computed(() =>
-
     users.value.filter(
         (data) =>
             !search.value ||
@@ -100,15 +98,22 @@ const currentPageData = computed(() => {
     }">
       <el-table-column label="ID" prop="id" />
       <el-table-column label="ID người dùng" prop="id_user" />
-      <el-table-column label="Ngày tạo" prop="created_at" />
       <el-table-column label="Loại hồ sơ" prop="type" />
-      <el-table-column label="Ngày đăng tin" prop="start_date" />
-      <el-table-column label="Ngày hết hạn" prop="end_date" />
+      <el-table-column label="Ngày đăng tin" prop="start_date_post">
+        <template #default="scope">
+          {{ scope.row.start_date_post ? formatDate(new Date(scope.row.start_date_post)) : '' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày hết hạn" prop="end_date_post">
+        <template #default="scope">
+          {{ scope.row.start_date_post ? formatDate(new Date(scope.row.end_date_post)) : '' }}
+        </template>
+      </el-table-column>
       <el-table-column label="Trạng thái" prop="status" />
       <el-table-column align="right">
         <template #default="scope">
-          <el-button type="primary" v-if="scope.row.status === ''">Duyệt</el-button>
-          <el-button type="primary" disabled>Đã duyệt</el-button>
+          <el-button type="primary" v-if="scope.row.status === 'false'">Duyệt</el-button>
+          <el-button type="primary" v-else disabled>Đã duyệt</el-button>
 
         </template>
       </el-table-column>

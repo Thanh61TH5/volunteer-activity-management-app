@@ -25,7 +25,7 @@ const client = useSupabaseClient();
 const search = ref('');
 const selectedUser = ref(null);
 const users = ref<User[]>([]);
-const pageSize = 20;
+const pageSize = 10;
 const currentPage = ref(1);
 const isAddUserDialogVisible = ref(false);
 const isModifyUserDialogVisible = ref(false);
@@ -88,7 +88,6 @@ async function handleDelete(id:number){
         .from('accounts')
         .update({ status: 'FALSE' })
         .eq('id',id)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     loading.value = false;
     ElNotification.success({
       title: 'Thành công',
@@ -113,17 +112,22 @@ const currentPageData = computed(() => {
 </script>
 
 <template>
-  <div class=" sm:mt-20 w-full z-1 bg-white p-10 rounded-lg" :loading="loading">
+  <div class=" rounded-lg bg-white p-8 sm:mx-2 w-full sm:mt-20 mt-10" :loading="loading">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Quản lý người dùng</h1>
     <div class="flex justify-between py-2 w-full">
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin người dùng..." />
       <button @click="handleAdd" class="bg-green-500 rounded text-white hover:bg-green-400 py-2 px-2 mr-2.5 text-sm">Thêm người dùng</button>
     </div>
-    <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
-      pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
-      layout: 'total, sizes, prev, pager, next, jumper', // Cấu trúc phân trang
-      total: tableData.length // Tổng số lượng dữ liệu
-    }">
+    <el-table
+        v-if="tableData.length > 0"
+        :data="currentPageData"
+        style="width: 100%"
+        :pagination="{
+    pageSize: pageSize,
+    layout: 'total, sizes, prev, pager, next, jumper',
+    total: tableData.length // Update this line to use the length of the filtered data
+  }"
+    >
       <el-table-column label="ID" prop="id" />
       <el-table-column label="Họ tên" prop="name" />
       <el-table-column label="Email" prop="email" />
@@ -140,7 +144,13 @@ const currentPageData = computed(() => {
     <div class="text-center" v-else>
       <p>Không tìm thấy dữ liệu người dùng</p>
     </div>
-    <el-pagination class="mt-10" layout="prev, pager, next" :total="tableData.length" @current-change="handlePageChange"></el-pagination>
+    <el-pagination
+        class="mt-10"
+        layout="prev, pager, next"
+        :total="tableData.length"
+    :page-size="pageSize"
+    @current-change="handlePageChange"
+    ></el-pagination>
       <modify-user v-model="isModifyUserDialogVisible"
                    v-loading ="loading"
                    :user="selectedUser"
@@ -152,7 +162,7 @@ const currentPageData = computed(() => {
     <AddUser v-model="isAddUserDialogVisible"
         :fetchUserData="fetchUserData"
         @close="isAddUserDialogVisible = false"
-        @add="handleSaveAdd"
+        @add="handleSaveAdd" @updateUserList="fetchUserData"
     />
   </div>
 </template>

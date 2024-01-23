@@ -7,7 +7,7 @@ const loading = ref(false)
 const props = defineProps({
   user: Object
 });
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(['close', 'save','updateUser']);
 
 const user = ref(props.user);
 const originalUser = ref({ ...user.value });
@@ -41,7 +41,8 @@ async function saveUser() {
         title: 'Thành công',
         message: 'Sửa thông tin người dùng thành công',
       });
-      return true;
+      emit('updateUser', user.value); // Truyền dữ liệu đã được sửa về thành phần cha
+      emit('close');
     }
   } catch (error) {
     console.error('Error modify user:', error);

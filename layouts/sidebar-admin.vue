@@ -75,16 +75,22 @@ function closeSideBar() {
     <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2 font-medium py-5">
         <li>
+          <button
+              class="w-full flex items-center ml-10 px-10 text-gray-900 rounded-lg dark:text-white">
+            <span class="  whitespace-nowrap font-bold">ADMIN</span>
+          </button>
+        </li>
+        <li>
           <NuxtLink to="/admin/statistics/"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon class="text-gray-800 w-5 h-5 ml-5" name="heroicons-outline:chart-bar"/>
+            <Icon class="text-gray-800 w-5 h-5 ml-10" name="heroicons-outline:chart-bar"/>
             <span class="ms-3">Thống kê</span>
           </NuxtLink>
         </li>
         <li>
           <NuxtLink to="/admin/users/"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon name="mdi:account-group-outline" class="text-gray-800 w-5 h-5 ml-5"/>
+            <Icon name="mdi:account-group-outline" class="text-gray-800 w-5 h-5 ml-10"/>
 
             <span class="flex-1 ms-3 whitespace-nowrap">Người dùng</span>
           </NuxtLink>
@@ -92,23 +98,23 @@ function closeSideBar() {
         <li>
           <NuxtLink to="/admin/posts/"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon class="text-gray-800 w-5 h-5 ml-5" name="heroicons-outline:clipboard-document-list"/>
+            <Icon class="text-gray-800 w-5 h-5 ml-10" name="heroicons-outline:clipboard-document-list"/>
             <span class="flex-1 ms-3 whitespace-nowrap">Tin đăng</span>
           </NuxtLink>
         </li>
         <span><hr></span>
         <li>
           <NuxtLink to="/admin/account/"
-                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon name="material-symbols:person-edit-outline" class="text-gray-800 w-5 h-5 ml-5"/>
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-gray-700 group">
+            <Icon name="material-symbols:person-edit-outline" class="text-gray-800 w-5 h-5 ml-10"/>
 
             <span class="flex-1 ms-3 whitespace-nowrap">Tài khoản cá nhân</span>
           </NuxtLink>
         </li>
         <li>
           <button @click="signOut =true"
-                  class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-5"/>
+                  class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-gray-700 group">
+            <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-10"/>
             <span class=" px-3 whitespace-nowrap" >Đăng xuất</span>
           </button>
         </li>
@@ -123,6 +129,12 @@ function closeSideBar() {
          aria-label="Sidebar">
     <div class="min-h-screen px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
       <ul class="space-y-2 font-medium">
+        <li>
+          <button
+              class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <span class=" px-3 whitespace-nowrap font-bold">ADMIN</span>
+          </button>
+        </li>
         <li>
           <NuxtLink  to="/admin/statistics/"
              class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -144,13 +156,6 @@ function closeSideBar() {
             <Icon class="text-gray-800 w-5 h-5 ml-5" name="heroicons-outline:clipboard-document-list"/>
             <span class="flex-1 ms-3 whitespace-nowrap">Tin đăng</span>
           </NuxtLink>
-        </li>
-        <li>
-          <button @click="signOut =true"
-                  class="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-            <Icon name="ic:baseline-logout" class="text-gray-800 w-5 h-5 ml-5"/>
-            <span class=" px-3 whitespace-nowrap">Đăng xuất</span>
-          </button>
         </li>
         <span><hr></span>
         <li>

@@ -296,6 +296,8 @@ onMounted(async () => {
   }
 })
 
+
+
 const { cartCount } = toRefs(useCartStore());
 
 

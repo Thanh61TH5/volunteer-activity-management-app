@@ -1,62 +1,65 @@
 <script setup lang="ts">
 import {ErrorMessage, Field, Form} from "vee-validate";
 import { useLoadingStore } from '~/store';
-import {ref} from "vue";
 
 
 definePageMeta({
-  layout:"sidebar-admin",
   middleware:"auth"
 })
 
 const user = useSupabaseUser();
 const client = useSupabaseClient();
-const email = ref("");
+const email = ref(user.value?.email || '');
 const isOpenModifyForm = ref(false);
 const isOpenChangePassWordForm = ref(false);
 const loadingStore = useLoadingStore();
 
-async function getUserDataByEmail(email: string) {
-  if (user.value) {
-    const { data:userData, error } = await client
-        .from('accounts')
-        .select('*')
-        .eq('email', email)
-        .single();
+const userData = ref([]);
 
-    if (error) {
-      console.error('Error fetching user data:', error);
-      return null;
-    }
+async function fetchUserData(email: string) {
+  const { data, error } = await client
+      .from('accounts')
+      .select('*')
+      .eq('email', email)
+      .single();
 
-    return userData;
+  if (error) {
+    console.error('Error fetching user data:', error);
+  } else {
+    userData.value = data;
   }
-  return null;
 }
 
-let userData = null;
-if (user.value) {
-  userData = await getUserDataByEmail(user.value.email);
-}
-
-function editAccount() {
+async function editAccount() {
   isOpenModifyForm.value = true;
 }
 
-function changePassword() {
+async function changePassword() {
   isOpenChangePassWordForm.value = true;
 }
-function  cancel() {
+
+function cancel() {
+  fetchUserData(email.value);
   isOpenModifyForm.value = false;
   isOpenChangePassWordForm.value = false;
 }
 
+function updateUserAndClose(updatedUser) {
+  userData.value = updatedUser;
+  isOpenModifyForm.value = false;
+}
+
+onMounted(() => {
+  fetchUserData(email.value);
+});
+
 </script>
 
 <template>
-  <div class=" rounded-lg bg-white p-10 w-full sm:mt-20 mt-10">
+  <div class=" rounded-lg bg-white p-8 sm:mx-5 sm:mt-20 mt-10 w-full">
     <div class="lg:flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-xl text-lg font-medium py-3">Quản lý tài khoản</h1>
+
       <div class="flex space-x-3">
         <button class="w-40 px-2 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition duration-200 ease-in-out text-white " @click="editAccount">Sửa thông tin</button>
         <button class="w-40 px-2 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition duration-200 ease-in-out text-white " @click="changePassword">Đổi mật khẩu</button>
@@ -122,9 +125,8 @@ function  cancel() {
         />
       </div>
     </Form>
-    <form-change-password  v-if="isOpenChangePassWordForm" :user="userData"  @close="cancel" @save="changePassword"/>
-    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount"/>
-  </div>
+    <form-change-password  v-if="isOpenChangePassWordForm" :user="userData"  @close="cancel" @save="changePassword" :fetchUserData="fetchUserData"/>
+    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount" :fetchUserData="fetchUserData" @updateUser="updateUserAndClose"/>  </div>
 </template>
 
 <style scoped>

@@ -15,7 +15,8 @@ const password = ref("");
 const selectedRole = ref("");
 const isAddUserDialogVisible = ref(true);
 const loading = ref(false);
-const emit = defineEmits(['close','add']);
+const emit = defineEmits(['close','add','updateUserList']);
+
 
 
 async function addUser() {
@@ -72,6 +73,7 @@ async function addUser() {
         title: 'Thành công',
         message: 'Thêm người dùng thành công',
       })
+      emit('updateUserList')
       await fetchUserData();
       return true;
     }

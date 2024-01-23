@@ -3,7 +3,7 @@ import {ErrorMessage, Field, Form} from "vee-validate";
 definePageMeta({
   middleware:"auth"
 })
-const emit = defineEmits(['close','save'])
+const emit = defineEmits(['close','save','updatePassword'])
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const password = ref("");
@@ -57,6 +57,8 @@ async function resetPassword() {
         title: 'Thành công',
         message: 'Đặt mật khẩu thành công.',
       })
+      emit('updatePassword', password.value);
+      emit('close');
     } catch (error) {
       console.log(error);
     }

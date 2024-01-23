@@ -9,45 +9,49 @@ definePageMeta({
 
 const user = useSupabaseUser();
 const client = useSupabaseClient();
-const email = ref("");
+const email = ref(user.value?.email || '');
 const isOpenModifyForm = ref(false);
 const isOpenChangePassWordForm = ref(false);
 const loadingStore = useLoadingStore();
 
-async function getUserDataByEmail(email: string) {
-  if (user.value) {
-    const { data:userData, error } = await client
-        .from('accounts')
-        .select('*')
-        .eq('email', email)
-        .single();
+const userData = ref([]);
 
-    if (error) {
-      console.error('Error fetching user data:', error);
-      return null;
-    }
+async function fetchUserData(email: string) {
+  const { data, error } = await client
+      .from('accounts')
+      .select('*')
+      .eq('email', email)
+      .single();
 
-    return userData;
+  if (error) {
+    console.error('Error fetching user data:', error);
+  } else {
+    userData.value = data;
   }
-  return null;
 }
 
-let userData = null;
-  if (user.value) {
-    userData = await getUserDataByEmail(user.value.email);
-  }
-
-function editAccount() {
+async function editAccount() {
   isOpenModifyForm.value = true;
 }
 
-function changePassword() {
+async function changePassword() {
   isOpenChangePassWordForm.value = true;
 }
-function  cancel() {
+
+function cancel() {
+  fetchUserData(email.value);
   isOpenModifyForm.value = false;
   isOpenChangePassWordForm.value = false;
 }
+
+function updateUserAndClose(updatedUser) {
+  userData.value = updatedUser;
+  isOpenModifyForm.value = false;
+}
+
+onMounted(() => {
+  fetchUserData(email.value);
+});
 
 </script>
 
@@ -121,9 +125,8 @@ function  cancel() {
         />
       </div>
     </Form>
-    <form-change-password  v-if="isOpenChangePassWordForm" :user="userData"  @close="cancel" @save="changePassword"/>
-    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount"/>
-  </div>
+    <form-change-password  v-if="isOpenChangePassWordForm" :user="userData"  @close="cancel" @save="changePassword" :fetchUserData="fetchUserData"/>
+    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount" :fetchUserData="fetchUserData" @updateUser="updateUserAndClose"/>  </div>
 </template>
 
 <style scoped>
