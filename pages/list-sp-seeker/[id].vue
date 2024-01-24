@@ -77,11 +77,11 @@
           <div class="py-5 flex justify-between items-center space-x-10">
             <button
                 class="w-2/3 px-3 bg-green-500 rounded-lg text-white text-center py-3 hover:opacity-80 transition duration-200 ease-in-out"
-                @click="notifyJoin = true"> Tham gia
+                @click="requestVolunteer"> Tham gia
             </button>
             <button
                 class="w-1/3 py-2 px-3 border-2 border-green-300 rounded-lg text-center hover:bg-gray-100 transition duration-200 ease-in-out"
-                @click="notifySave = true "> Lưu tin
+                @click="save"> Lưu tin
             </button>
           </div>
         </div>
@@ -168,37 +168,16 @@
         </div>
       </div>
       </div>
-    </div>
-    <el-dialog v-model="notifySave" center class="rounded-lg ">
-    <span class="text-center">
-      Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
-    </span>
-      <template #footer>
-      <span class="dialog-footer  flex justify-center items-center space-x-3">
-        <el-button @click="notifySaveCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifySaveOk">
-          Tiếp tục
-        </el-button>
-      </span>
-      </template>
-    </el-dialog>
+    <prative-volunteer class="absolute top-0 right-0 left-0" v-if="openJoinForm"  @send="send" @close="cancelRequestForm" :profile="spSeekerData"/>
+  </div>
 
-    <el-dialog v-model="notifyJoin" center class="rounded-lg">
-    <span class="text-center">
-      Để tham gia thiện nguyện, bạn cần phải có tài khoản. Bạn có muốn tiếp tục?
-    </span>
-      <template #footer>
-      <span class="dialog-footer flex justify-center items-center space-x-3">
-        <el-button @click="notifyJoinCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifyJoinOk">
-          Tiếp tục
-        </el-button>
-      </span>
-      </template>
-    </el-dialog>
+
 </template>
 
 <script setup>
+import PrativeVolunteer from "~/components/form/prative-volunteer.vue";
+import {useCartStore} from "~/store/index.ts";
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -209,12 +188,13 @@ const formatDate = (dateString) => {
 const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
+const user = useSupabaseUser();
+const openJoinForm = ref(false);
 const postId = route.params.id;
 console.log("Post ID:", postId);
 const spSeekerData = ref([]);
 const feedbackData = ref([]);
-const notifySave = ref(false);
-const notifyJoin = ref(false);
+const accRole = ref(null)
 const totalScore = ref({ avg_score: 0 });
 let roundedNumber = 0;
 onMounted(async () => {
@@ -248,22 +228,103 @@ const formatCreateDate = (timestamp) => {
   return `${day}/${month}/${year}`;
 }
 
-const notifySaveOk = () => {
-  notifySave.value = false;
-  router.push('/login');
+const save = async () => {
+  if (user.value) {
+    const email = user.value.email;
+    const { data: accountsData, error: accountsError } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+    if (accountsError) {
+      console.error(accountsError);
+      return;
+    }
+
+    const idAccounts = accountsData.id;
+    const { data: cartData, error: cartError } = await supabase
+        .from('cart')
+        .select('id')
+        .eq('id_user', idAccounts)
+        .single();
+
+    if (cartError) {
+      console.error(cartError);
+      return;
+    }
+
+    const idCart = cartData.id;
+
+    const { data: existingCartDetails, error: existingCartDetailsError } = await supabase
+        .from('cart_details')
+        .select()
+        .eq('id_cart', idCart)
+        .eq('id_profile', spSeekerData.value.id)
+        .single();
+
+    if (existingCartDetails) {
+      ElNotification.info({
+        title: 'Thông báo',
+        message: 'Tin đã được thêm vào giỏ hàng trước đó.',
+      });
+    } else {
+
+      const { error: insertError } = await supabase
+          .from('cart_details')
+          .insert([
+            {
+              id_cart: idCart,
+              id_profile: spSeekerData.value.id,
+            },
+          ]);
+
+      if (insertError) {
+        console.error(insertError);
+        return;
+      }
+
+      ElNotification.success({
+        title: 'Thông báo',
+        message: 'Đã lưu tin thành công vào giỏ hàng.',
+      });
+      useCartStore().incrementCartCount();
+    }
+  } else {
+
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để lưu tin bạn nhé!',
+    });
+  }
 };
 
-const notifySaveCancel = () => {
-  notifySave.value = false;
-};
+async function requestVolunteer() {
+  if(user.value) {
+    const {data, error} = await supabase.from('accounts').select('role').eq('email',user.value.email)
+    const accRole = data[0].role;
+    if(accRole === 'Tình nguyện viên') {
+      openJoinForm.value = true;
+    } else {
+      ElNotification.warning({
+        title: 'Thông báo',
+        message: 'Chức năng này chỉ dành cho tình nguyện viên',
+      });
+    }
+  } else {
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để tham gia bạn nhé!',
+    });
+  }
+}
 
-const notifyJoinOk = () => {
-  notifyJoin.value = false;
-  router.push('/login');
-};
 
-const notifyJoinCancel = () => {
-  notifyJoin.value = false;
-};
+function send() {
+  openJoinForm.value = false;
+}
 
+function cancelRequestForm() {
+  openJoinForm.value = false;
+}
 </script>

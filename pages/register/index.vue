@@ -154,11 +154,6 @@ const showConfirmPassword = ref(false);
 const selectedRole = ref("");
 
 
-
-
-
-
-//check password and confirm password
 const toggleShowPass= () => {
   showPassword.value = !showPassword.value
 };
@@ -180,6 +175,22 @@ const signUp = async () => {
     const {} = await client
         .from('accounts')
         .insert({name: username.value, email: email.value, password: password.value, role: selectedRole.value})
+
+    const { data, error: errorAcc } = await client.from('accounts').select('id').eq('email', email.value);
+    if (errorAcc) {
+      console.error('Error fetching user data:', errorAcc);
+    } else {
+      const accData = data[0];
+      if (accData) {
+          const { error: Error } = await client
+              .from('cart')
+              .insert({
+                id_user: accData.id
+              });
+          if (Error) {
+            console.error('Error inserting data into support_seeker_profile:', Error);
+          }
+        }}
     ElNotification.success({
       title: 'Thành công',
       message: 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.',

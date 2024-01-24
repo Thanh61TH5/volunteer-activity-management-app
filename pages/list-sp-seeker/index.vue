@@ -40,7 +40,7 @@
               <p class="days ml-2">Đến hạn: {{formatDate(spSeeker.end_date_post)}}</p>
             </div>
             <div class="text-white flex space-x-2">
-              <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
+              <button class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</button>
               <button class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="requestVolunteer(spSeeker)">Tham gia</button>
             </div>
           </div>
