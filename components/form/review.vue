@@ -35,7 +35,7 @@ async function sendReview() {
     const accountsQuery = await client.from('accounts').select('id').eq('email', user.value.email);
     const accountsQueryType = await client.from('accounts').select('role').eq('email', user.value.email);
     const accountId = accountsQuery.data?.[0]?.id;
-    const accountsType = accountsQueryType.data?.[0]?.type;
+    const accountsType = accountsQueryType.data?.[0]?.role;
     console.log('accountsType:', accountsType);
 
     if (accountId) {
@@ -44,10 +44,8 @@ async function sendReview() {
       const idRequest = request.id;
       const createDate = new Date();
 
-      // Use computedScore directly
       const content = computedScore.value;
 
-      // Gửi request POST đến server
       const { data, error } = await client
           .from('feedbacks')
           .insert([
@@ -66,7 +64,6 @@ async function sendReview() {
         throw new Error('Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.');
       }
 
-      // Update is_done_sp or is_done_volunteer based on accountsType
       if (accountsType === 'Người cần hỗ trợ') {
         const updateResult = await client
             .from('requests')

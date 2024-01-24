@@ -85,16 +85,25 @@ onMounted(async () => {
 });
 let selectedProfile = ref(null);
 
-function requestVolunteer(profile) {
-  if(user.value) {
-    selectedProfile.value = profile;
-    openJoinForm.value = true;
-  }else {
+async function requestVolunteer(profile) {
+  if (user.value) {
+    const {data, error} = await client.from('accounts').select('role').eq('email', user.value.email)
+    const accRole = data[0].role;
+    if (accRole === 'Tình nguyện viên') {
+      openJoinForm.value = true;
+    } else {
+      ElNotification.warning({
+        title: 'Thông báo',
+        message: 'Chức năng này chỉ dành cho tình nguyện viên',
+      });
+    }
+  } else {
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để tham gia bạn nhé!',
     });
   }
+
 }
 const Save = async (spSeeker) => {
   if (user.value) {

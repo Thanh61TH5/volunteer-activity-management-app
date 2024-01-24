@@ -87,22 +87,8 @@ onMounted(async () => {
 });
 let selectedProfile = ref(null);
 
-function requestVolunteer(profile) {
-  if(user.value) {
-    selectedProfile.value = profile;
-    openJoinForm.value = true;
-  }else {
-    ElNotification.info({
-      title: 'Thông báo',
-      message: 'Hãy đăng nhập để tham gia bạn nhé!',
-    });
-  }
-}
 const Save = async (spSeeker) => {
   if (user.value) {
-    // User is authenticated
-
-    // Step 1: Get id_accounts
     const email = user.value.email; // Assuming user email is used as a reference
     const { data: accountsData, error: accountsError } = await client
         .from('accounts')
@@ -117,7 +103,6 @@ const Save = async (spSeeker) => {
 
     const idAccounts = accountsData.id;
 
-    // Step 2: Get id_cart
     const { data: cartData, error: cartError } = await client
         .from('cart')
         .select('id')
@@ -131,7 +116,6 @@ const Save = async (spSeeker) => {
 
     const idCart = cartData.id;
 
-    // Step 3: Check if the entry already exists in cart_details
     const { data: existingCartDetails, error: existingCartDetailsError } = await client
         .from('cart_details')
         .select()
@@ -140,7 +124,6 @@ const Save = async (spSeeker) => {
         .single();
 
     if (existingCartDetails) {
-      // Entry already exists
       ElNotification.info({
         title: 'Thông báo',
         message: 'Tin đã được thêm vào giỏ hàng trước đó.',
@@ -161,7 +144,6 @@ const Save = async (spSeeker) => {
         return;
       }
 
-      // Notify success
       ElNotification.success({
         title: 'Thông báo',
         message: 'Đã lưu tin thành công vào giỏ hàng.',
@@ -169,7 +151,6 @@ const Save = async (spSeeker) => {
       useCartStore().incrementCartCount();
     }
   } else {
-    // User is not authenticated
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để lưu tin bạn nhé!',

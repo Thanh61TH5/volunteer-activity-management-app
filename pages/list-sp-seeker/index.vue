@@ -40,7 +40,7 @@
               <p class="days ml-2">Đến hạn: {{formatDate(spSeeker.end_date_post)}}</p>
             </div>
             <div class="text-white flex space-x-2">
-              <button class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</button>
+              <button class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => save(spSeeker)">Lưu tin</button>
               <button class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="requestVolunteer(spSeeker)">Tham gia</button>
             </div>
           </div>
@@ -90,23 +90,28 @@ onMounted(async () => {
 });
 let selectedProfile = ref(null);
 
-function requestVolunteer(profile) {
-  if(user.value) {
-    selectedProfile.value = profile;
-    openJoinForm.value = true;
-  }else {
+async function requestVolunteer(profile) {
+  if (user.value) {
+    const {data, error} = await client.from('accounts').select('role').eq('email', user.value.email)
+    const accRole = data[0].role;
+    if (accRole === 'Tình nguyện viên') {
+      openJoinForm.value = true;
+    } else {
+      ElNotification.warning({
+        title: 'Thông báo',
+        message: 'Chức năng này chỉ dành cho tình nguyện viên',
+      });
+    }
+  } else {
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để tham gia bạn nhé!',
     });
   }
 }
-const Save = async (spSeeker) => {
+const save = async (spSeeker) => {
   if (user.value) {
-    // User is authenticated
-
-    // Step 1: Get id_accounts
-    const email = user.value.email; // Assuming user email is used as a reference
+    const email = user.value.email;
     const { data: accountsData, error: accountsError } = await client
         .from('accounts')
         .select('id')
@@ -117,10 +122,8 @@ const Save = async (spSeeker) => {
       console.error(accountsError);
       return;
     }
-
     const idAccounts = accountsData.id;
 
-    // Step 2: Get id_cart
     const { data: cartData, error: cartError } = await client
         .from('cart')
         .select('id')
@@ -134,7 +137,6 @@ const Save = async (spSeeker) => {
 
     const idCart = cartData.id;
 
-    // Step 3: Check if the entry already exists in cart_details
     const { data: existingCartDetails, error: existingCartDetailsError } = await client
         .from('cart_details')
         .select()
@@ -143,7 +145,7 @@ const Save = async (spSeeker) => {
         .single();
 
     if (existingCartDetails) {
-      // Entry already exists
+
       ElNotification.info({
         title: 'Thông báo',
         message: 'Tin đã được thêm vào giỏ hàng trước đó.',
@@ -164,7 +166,6 @@ const Save = async (spSeeker) => {
         return;
       }
 
-      // Notify success
       ElNotification.success({
         title: 'Thông báo',
         message: 'Đã lưu tin thành công vào giỏ hàng.',
@@ -172,7 +173,6 @@ const Save = async (spSeeker) => {
       useCartStore().incrementCartCount();
     }
   } else {
-    // User is not authenticated
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để lưu tin bạn nhé!',

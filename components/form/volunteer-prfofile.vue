@@ -1,6 +1,13 @@
-
-
 <template>
+  <div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
+    <div>
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item
+        ><a href="/">Trang chủ</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/sp-seeker/profile/'}">Hồ sơ cá nhân</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
   <div class="flex justify-center sm:mx-32 sm:mt-32">
     <div class="min-h-screen pb-10 space-y-3 mx-auto relative">
       <div class="sm:flex">
@@ -152,18 +159,17 @@
     <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="volunteerData"/>
     <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="volunteerData" @hideParentButton="hideParentButton"/>
   </div>
+  </div>
 </template>
 
 <script setup>
 import ModifyProfile from "~/components/form/modify-profile.vue";
 import { formatTime, formatDate } from '~/assets/utils/format.ts';
 
-// Function to format birthday
 const formatBirthday = (birthday) => {
   return formatDate(new Date(birthday));
 };
 
-// Function to format free_time_start and free_time_end
 const formatFreeTime = (startTime, endTime) => {
   const formattedStartTime = formatTime(startTime);
   const formattedEndTime = formatTime(endTime);
@@ -175,8 +181,6 @@ const user = useSupabaseUser();
 const volunteerData = ref([]);
 const feedbackData = ref([]);
 const totalScore = ref([]);
-const notifySave = ref(false);
-const notifyJoin = ref(false);
 const openEditForm = ref(false);
 const openPostForm = ref(false)
 const isPost = ref(false)
@@ -285,7 +289,6 @@ async function cancelPostProfile() {
     }
   }
 }
-// Gọi fetchData khi component được mounted
 const formatCreateDate = (timestamp) => {
   const date = new Date(timestamp);
   const day = String(date.getDate()).padStart(2, '0');
@@ -294,23 +297,4 @@ const formatCreateDate = (timestamp) => {
 
   return `${day}/${month}/${year}`;
 }
-
-const notifySaveOk = () => {
-  notifySave.value = false;
-  router.push('/login');
-};
-
-const notifySaveCancel = () => {
-  notifySave.value = false;
-};
-
-const notifyJoinOk = () => {
-  notifyJoin.value = false;
-  router.push('/login');
-};
-
-const notifyJoinCancel = () => {
-  notifyJoin.value = false;
-};
-
 </script>

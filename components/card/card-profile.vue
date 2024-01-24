@@ -1,8 +1,17 @@
 
 
 <template>
-  <div class="flex justify-center sm:mt-32">
-    <div class="min-h-screen pb-10 space-y-3 relative">
+  <div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
+    <div>
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item
+        ><a href="/">Trang chủ</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/sp-seeker/profile'}">Hồ sơ cá nhân</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+  <div class="">
+    <div class="min-h-screen pb-10 space-y-3 relative ">
       <div class="sm:flex">
         <div class="border border-gray-100 shadow-md rounded-lg w-full bg-white sm:px-20 px-5 py-10 m-3">
           <h1 class="text-gray-600 sm:text-2xl text-xl font-medium py-2">Quản lý hồ sơ</h1>
@@ -153,6 +162,7 @@
     </div>
     <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="spSeekerData"/>
     <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="spSeekerData" @hideParentButton="hideParentButton"/>
+  </div>
   </div>
 
 </template>

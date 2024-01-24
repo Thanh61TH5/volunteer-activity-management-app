@@ -56,7 +56,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class=" rounded-lg bg-white p-10 sm:mx-32 sm:mt-32 mt-10">
+<div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
+  <div>
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/sp-seeker/account'}">Tài khoản cá nhân</el-breadcrumb-item>
+    </el-breadcrumb>
+  </div>
+  <div class=" rounded-lg bg-white p-10">
     <div class="lg:flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-xl text-lg font-medium py-3">Quản lý tài khoản</h1>
 
@@ -126,7 +135,9 @@ onMounted(() => {
       </div>
     </Form>
     <form-change-password  v-if="isOpenChangePassWordForm" :user="userData"  @close="cancel" @save="changePassword" :fetchUserData="fetchUserData"/>
-    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount" :fetchUserData="fetchUserData" @updateUser="updateUserAndClose"/>  </div>
+    <form-modify-account v-if="isOpenModifyForm" :user="userData"  @close="cancel" @save="editAccount" :fetchUserData="fetchUserData" @updateUser="updateUserAndClose"/>
+  </div>
+</div>
 </template>
 
 <style scoped>

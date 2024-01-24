@@ -13,6 +13,7 @@ interface Request {
   sent_date: string;
   is_done_volunteer:boolean;
   is_done_sp:boolean;
+  status: string;
 }
 
 const loading = ref(false);
@@ -30,13 +31,10 @@ const tableData = computed(() =>
       const senderNameMatch = !search.value ||
           data.name_sender.toLowerCase().includes(search.value.toLowerCase());
 
-      const sentDateMatch = !search.value ||
-          data.sent_date.toLowerCase().includes(search.value.toLowerCase());
+      const statusMatch = !search.value ||
+          data.status.toLowerCase().includes(search.value.toLowerCase());
 
-      const approvalDateMatch = !search.value ||
-          (data.approval_date && data.approval_date.toLowerCase().includes(search.value.toLowerCase()));
-
-      return senderNameMatch || sentDateMatch || approvalDateMatch;
+      return senderNameMatch || statusMatch;
     })
 );
 const selectedRequestData = ref(null);
@@ -49,7 +47,6 @@ async function selectedRequest(id: number) {
     console.error(error);
   }
 }
-
 async function fetchUserData() {
   try {
     const { data: usersData, error } = await client
@@ -75,10 +72,7 @@ async function fetchUserData() {
   }
 }
 
-
-
 fetchUserData();
-
 
 function handlePageChange(newPage: number) {
   fetchUserData();
@@ -99,20 +93,17 @@ function closeForm() {
   fetchUserData()
   openReviewForm.value = false;
 }
-
-
 function saveReviewForm() {
   openReviewForm.value = false;
   isReviewSent.value = true
 }
 
 </script>
-
 <template>
   <div class="relative w-full z-1 p-10 bg-white" :loading="loading">
     <h1 class="text-gray-600 sm:text-2xl text-xl font-medium pb-10">Quản lý yêu cầu tham gia thiện nguyện</h1>
     <div class="flex justify-between py-2 w-full">
-      <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin cần tìm..." />
+      <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin người gửi..." />
     </div>
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
       pageSize: 10,
@@ -150,7 +141,7 @@ function saveReviewForm() {
           <el-button
               v-if="scope.row.status == 'Đang chờ duyệt' && scope.row.status !== 'Đã hủy'"
               type="primary"
-              class="w-32"
+              style="width: 100px"
               @click="selectedRequest(scope.row.id)"
           >
             Duyệt
@@ -160,13 +151,13 @@ function saveReviewForm() {
               v-else-if="scope.row.status == 'Đã hủy'"
               type="danger"
               disabled
-              class="w-32"
+              style="width: 100px"
               @click="selectedRequest(scope.row.id)"
           >
             Đã hủy
           </el-button>
           <el-button
-              class="w-32"
+              style="width: 100px"
               type="success"
               v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_sp ==false"
               @click="reviewProfile(scope.row.id)"
@@ -174,7 +165,7 @@ function saveReviewForm() {
             Đánh giá
           </el-button>
           <el-button
-              class="w-32"
+              style="width: 100px"
               type="warning"
               v-if="scope.row.status=='Đã duyệt' && scope.row.is_done_sp ==true"
               disabled

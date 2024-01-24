@@ -6,7 +6,7 @@
 definePageMeta({
   middleware:"auth"
 })
-import Test from "~/components/card/test.vue";
+import Test from "~/components/card/card-profile.vue";
 import AddProfile from "~/components/card/add-profile.vue";
 const user = useSupabaseUser()
 const client = useSupabaseClient()

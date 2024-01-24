@@ -53,7 +53,7 @@
             <div>
               <label class="font-medium text-gray-600" for="name_job">Thời gian có thể hỗ trợ: </label>
               <p class="text-gray-600">Giờ: {{ volunteerData.free_time_start }} đến {{volunteerData.free_time_end }}</p>
-              <p class="text-gray-600">Thứ trong tuần: {{ formatDate(volunteerData.free_weekday) }}</p>
+              <p class="text-gray-600">Thứ trong tuần: {{ volunteerData.free_weekday }}</p>
             </div>
             <div>
               <label class="font-medium text-gray-600" for="name_job">Hạn hồ sơ: </label>
@@ -77,7 +77,7 @@
           <div class="py-5 flex justify-between items-center space-x-10">
             <button
                 class="w-1/3 py-2 px-3 border-2 border-green-300 rounded-lg text-center hover:bg-gray-100 transition duration-200 ease-in-out"
-                @click="notifySave = true "> Lưu tin
+               @click="save"> Lưu tin
             </button>
           </div>
         </div>
@@ -190,6 +190,8 @@
 </template>
 
 <script setup>
+import {useCartStore} from "~/store/index.ts";
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -200,6 +202,7 @@ const formatDate = (dateString) => {
 const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
+const user = useSupabaseUser();
 const postId = route.params.id;
 console.log("Post ID:", postId);
 const volunteerData = ref([]);
@@ -237,22 +240,74 @@ const formatCreateDate = (timestamp) => {
   return `${day}/${month}/${year}`;
 }
 
-const notifySaveOk = () => {
-  notifySave.value = false;
-  router.push('/login');
-};
+const save = async () => {
+  if (user.value) {
+    const email = user.value.email;
+    const { data: accountsData, error: accountsError } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('email', email)
+        .single();
 
-const notifySaveCancel = () => {
-  notifySave.value = false;
-};
+    if (accountsError) {
+      console.error(accountsError);
+      return;
+    }
 
-const notifyJoinOk = () => {
-  notifyJoin.value = false;
-  router.push('/login');
-};
+    const idAccounts = accountsData.id;
+    const { data: cartData, error: cartError } = await supabase
+        .from('cart')
+        .select('id')
+        .eq('id_user', idAccounts)
+        .single();
 
-const notifyJoinCancel = () => {
-  notifyJoin.value = false;
-};
+    if (cartError) {
+      console.error(cartError);
+      return;
+    }
 
+    const idCart = cartData.id;
+
+    const { data: existingCartDetails, error: existingCartDetailsError } = await supabase
+        .from('cart_details')
+        .select()
+        .eq('id_cart', idCart)
+        .eq('id_profile', volunteerData.value.id)
+        .single();
+
+    if (existingCartDetails) {
+      ElNotification.info({
+        title: 'Thông báo',
+        message: 'Tin đã được thêm vào giỏ hàng trước đó.',
+      });
+    } else {
+
+      const { error: insertError } = await supabase
+          .from('cart_details')
+          .insert([
+            {
+              id_cart: idCart,
+              id_profile: volunteerData.value.id,
+            },
+          ]);
+
+      if (insertError) {
+        console.error(insertError);
+        return;
+      }
+
+      ElNotification.success({
+        title: 'Thông báo',
+        message: 'Đã lưu tin thành công vào giỏ hàng.',
+      });
+      useCartStore().incrementCartCount();
+    }
+  } else {
+
+    ElNotification.info({
+      title: 'Thông báo',
+      message: 'Hãy đăng nhập để lưu tin bạn nhé!',
+    });
+  }
+};
 </script>

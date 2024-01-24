@@ -11,10 +11,7 @@
         :key="index">
       <div class="mb-5">
         <div>
-          <div class="flex flex-col justify-center items-center">
-            <div>
-              <p class="text-white p-2 float-right rounded-lgo">{{volunteer.score}}</p>
-            </div>
+          <div class="flex flex-col justify-center items-center pt-10">
             <img :src="volunteer.avt" class="w-24 h-24 rounded-full" alt="avatar" />
             <div>
               <div class="py-2">

@@ -212,6 +212,15 @@ const levels = [
 </script>
 
 <template>
+  <div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
+    <div>
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item
+        ><a href="/">Trang chủ</a>
+        </el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/sp-seeker/profile/'}">Hồ sơ cá nhân</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
   <div
              class="rounded-lg bg-white p-10 sm:mx-32 sm:mt-32 mt-10" >
     <h1 class="text-gray-600 sm:text-2xl text-xl font-medium">Tạo hồ sơ</h1>
@@ -591,6 +600,7 @@ const levels = [
         <p class="text-white">Đang xử lý...</p>
       </div>
     </Form>
+  </div>
   </div>
 </template>
 
