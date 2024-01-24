@@ -95,16 +95,6 @@ async function saveProfile() {
       const { data: dataImg, error: errorImg } = await client.storage
           .from('avatars')
           .upload(`avatars/${avatarFile.value.name}`, avatarFile.value.file);
-      const { error: profileError } = await client
-          .from('profiles')
-          .update({
-            avt: storeURL + avatarFile.value.name,
-          })
-          .eq('id', profile.value.id);
-
-      if (errorImg) {
-        console.error('Error uploading avatar image:', errorImg);
-      }
     }
 
     if(profile.value.type === 'Người cần hỗ trợ'){
@@ -125,19 +115,21 @@ async function saveProfile() {
           .from('volunteer_profile')
           .update({
             job: job.value,
-            support_job_name: support_job_name.value,
             free_weekday: free_weekday.value,
             free_time_end: free_time_end.value,
             free_time_start: free_time_start.value,
             volunteer_exp_description: volunteer_exp_description.value
           })
           .eq('id', profile.value.id);
+      if (profileSpError) {
+        console.error('Error modifying user in support_seeker_profile:', profileSpError);
+      }
     }
-
 
     const { error: profileError } = await client
         .from('profiles')
         .update({
+          avt: storeURL + avatarFile.value.name,
           name: name.value,
           birthday: birthday.value,
           gender: gender.value,
@@ -146,15 +138,13 @@ async function saveProfile() {
           area: area.value,
           phone: phone.value,
           self_description: self_description.value,
+          support_job_name: support_job_name.value,
           hobbies: hobbies.value,
           helth_description: helth_description.value
         })
         .eq('id', profile.value.id);
 
 
-    if (profileSpError) {
-      console.error('Error modifying user in support_seeker_profile:', profileSpError);
-    }
 
     if (profileError) {
       console.error('Error modifying user in profiles:', profileError);

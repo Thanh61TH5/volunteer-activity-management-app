@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import {ErrorMessage, Field, Form} from "vee-validate";
+import { ErrorMessage, Field, Form } from "vee-validate";
 import dataCity from '~/static/cities.json';
 import data from '~/static/days.json';
-import {  formatDate } from '~/assets/utils/format';
-
+import { formatDate } from '~/assets/utils/format';
+import {reload} from "vite-node/hmr";
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
-const email = ref(user.value?.email );
-console.log(email.value)
-const isModifyDialogVisible = ref(true)
-const loading = ref(false)
+const email = ref(user.value?.email);
+const isModifyDialogVisible = ref(true);
+const loading = ref(false);
 const router = useRouter();
-
 
 const type = ref('');
 const avt = ref('https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png');
@@ -20,7 +18,7 @@ const name = ref('');
 const birthday = ref('');
 const gender = ref('');
 const address = ref('');
-const level = ref('')
+const level = ref('');
 const phone = ref('');
 const sp_weekday = ref('');
 const free_weekday = ref('');
@@ -35,57 +33,51 @@ const support_time_start = ref('');
 const support_time_end = ref('');
 const free_time_start = ref('');
 const free_time_end = ref('');
-const volunteer_exp_description = ref('')
-const avatar = ref(null)
+const volunteer_exp_description = ref('');
+const avatar = ref(null);
 const avatarFile = ref("");
 const storeURL = 'https://swldzquurwqdqhceugzs.supabase.co/storage/v1/object/public/avatars/avatars/';
-const day = ref([])
-const area = ref('')
+const day = ref([]);
+const area = ref('');
 const days = ref(data.days);
 const cities = ref(dataCity.cities);
 const userDb = ref([]);
-const prData = ref([])
 
 async function fetchUserData() {
-  const { data, error } = await client
-      .from('accounts')
-      .select('*')
-      .eq('email', user.value.email)
-      .single();
+  try {
+    const { data, error } = await client
+        .from('accounts')
+        .select('*')
+        .eq('email', user.value.email)
+        .single();
 
-  if (error) {
+    if (error) {
+      console.error('Error fetching user data:', error);
+    } else {
+      userDb.value = data;
+    }
+  } catch (error) {
     console.error('Error fetching user data:', error);
-  } else {
-    userDb.value = data;
   }
 }
+
 fetchUserData();
-console.log(userDb.value)
-const { value: formattedBirthday } = computed(() => {
-  if (birthday.value) {
-    const date = new Date(birthday.value);
-    return formatDate(date);
-  }
-  return '';
-});
+
 const onFileChange = (event: { target: { files: string | any[]; }; }) => {
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
-    avt.value = URL.createObjectURL(file)
+    avt.value = URL.createObjectURL(file);
   }
 
-  const {name:fileName} =  event.target.files[0];
+  const { name: fileName } = event.target.files[0];
   const names = fileName.split('.');
-  console.log(names)
   const extension = names.pop();
   const imgName = names.join('');
-  console.log(`${imgName}-${Date.now().toString()}.${extension}`)
   avatarFile.value = {
-    file:event.target.files[0],
-    name:`${imgName}-${Date.now().toString()}.${extension}`
-  }
+    file: event.target.files[0],
+    name: `${imgName}-${Date.now().toString()}.${extension}`
+  };
 };
-
 
 const options = ref(
     days.value.map(day => ({
@@ -99,26 +91,36 @@ watch(day, (newVal) => {
   free_weekday.value = newVal.join(' | ');
 });
 
-
-console.log(days);
-console.log(cities);
-async function saveProfile() {
+const saveProfile = async () => {
   try {
     loading.value = true;
-
-    // Perform input validation
-    if (level.value === "" || personal_situation.value === "" || area.value === "" || sp_weekday.value === "" || support_time_end.value === "" || support_time_start.value === "") {
-      ElNotification.error({
-        title: 'Lỗi',
-        message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
-      });
-      return;
+    if (userDb.value.role === 'Tình nguyện viên') {
+      // Only perform validation if the role is "Tình nguyện viên"
+      if (level.value === "" || area.value === "" || free_time_end.value === '' || free_time_start.value === '' || free_weekday.value === '') {
+        ElNotification.error({
+          title: 'Lỗi',
+          message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
+        });
+        return;
+      }
+    }else {
+      if (level.value === "" || area.value === "" || support_time_end.value === '' || support_time_start.value === '' || sp_weekday.value === '') {
+        ElNotification.error({
+          title: 'Lỗi',
+          message: 'Vui lòng điền đầy đủ các trường thông tin còn thiếu.',
+        });
+        return;
+      }
     }
-    // Check if the email already exists in the 'accounts' table
-    const {error} = await client
+    if (avatarFile.value.file) {
+      const {data: dataImg, error: errorImg} = await client.storage
+          .from('avatars')
+          .upload(`avatars/${avatarFile.value.name}`, avatarFile.value.file);
+    }
+    const { error } = await client
         .from('profiles')
         .insert({
-          id_user:userDb.value.id,
+          id_user: userDb.value.id,
           type: userDb.value.role,
           avt: storeURL + avatarFile.value.name,
           name: name.value,
@@ -133,24 +135,32 @@ async function saveProfile() {
           hobbies: hobbies.value,
           helth_description: helth_description.value
         });
+
+    if (error) {
+      console.error('Error inserting data into profiles:', error);
+      return;
+    }
+
     const { data, error: errorPr } = await client.from('profiles').select('id').eq('id_user', userDb.value.id);
+
     if (errorPr) {
       console.error('Error fetching user data:', errorPr);
     } else {
-      const prData = data[0]; // Assuming data is an array and we take the first element
+      const prData = data[0];
+
       if (prData) {
-        // Insert data into the respective profile table based on the user's role
         if (userDb.value.role === 'Người cần hỗ trợ') {
           const { error: profileSpError } = await client
               .from('support_seeker_profile')
               .insert({
-                id: prData.id, // Assuming prData contains the correct bigint id
+                id: prData.id,
                 personal_situation: personal_situation.value,
                 support_weekday: sp_weekday.value,
                 support_time_end: support_time_end.value,
                 support_time_start: support_time_start.value,
                 contact_family_info: contact_family_info.value
               });
+
           if (profileSpError) {
             console.error('Error inserting data into support_seeker_profile:', profileSpError);
           }
@@ -158,13 +168,14 @@ async function saveProfile() {
           const { error: profileVolunteerError } = await client
               .from('volunteer_profile')
               .insert({
-                id: prData.id, // Assuming prData contains the correct bigint id
+                id: prData.id,
                 job: job.value,
                 free_weekday: free_weekday.value,
                 free_time_end: free_time_end.value,
                 free_time_start: free_time_start.value,
                 volunteer_exp_description: volunteer_exp_description.value
               });
+
           if (profileVolunteerError) {
             console.error('Error inserting data into volunteer_profile:', profileVolunteerError);
           }
@@ -172,57 +183,29 @@ async function saveProfile() {
       } else {
         console.error('Error: Inserted ID is null or undefined');
       }
-      location.reload();
-      ElMessage({
-        type: 'success',
-        message: 'Tạo hồ sơ thành công',
-      });
 
+      // Update component state or navigate to a different route
+      window.location.reload();
+      console.log('Profile created successfully.');
     }
   } catch (error) {
     console.error('Error modifying user:', error);
   } finally {
     loading.value = false;
-
-}
-}
-
-
+  }
+};
 
 const levels = [
-  {
-    level: '1',
-    label: '1',
-  },
-  {
-    level: '2',
-    label: '2',
-  },
-  {
-    level: '3',
-    label: '3',
-  },
-  {
-    level: '4',
-    label: '4',
-  }
-]
-
-
+  { level: '1', label: '1' },
+  { level: '2', label: '2' },
+  { level: '3', label: '3' },
+  { level: '4', label: '4' }
+];
 </script>
 
 <template>
-  <div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
-    <div>
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item
-        ><a href="/">Trang chủ</a>
-        </el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/sp-seeker/profile/'}">Hồ sơ cá nhân</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
   <div
-             class="rounded-lg bg-white p-10 sm:mx-32 sm:mt-32 mt-10" >
+             class="rounded-lg bg-white p-10 " >
     <h1 class="text-gray-600 sm:text-2xl text-xl font-medium">Tạo hồ sơ</h1>
     <span>
       <hr class="w-full">
@@ -344,8 +327,6 @@ const levels = [
                 :value="city.name"
             ></el-option>
           </el-select>
-
-
         </div>
 
 
@@ -512,9 +493,9 @@ const levels = [
               :max-time="support_time_end"
               class=""
               placeholder="Thời gian bắt đầu"
-              start="08:30"
+              start="00:00"
               step="00:15"
-              end="18:30"
+              end="00:00"
           />
           <el-time-select
               v-model="support_time_end"
@@ -543,8 +524,8 @@ const levels = [
               end="18:30"
           />
           <el-time-select
-              v-model="support_time_end"
-              :min-time="support_time_start"
+              v-model="free_time_end"
+              :min-time="free_time_start"
               placeholder="Thời gian kết thúc"
               start="08:30"
               step="00:15"
@@ -552,7 +533,6 @@ const levels = [
           />
         </div>
       </div>
-
 
       <div class="relative mt-6 space-x-3 flex flex-col">
         <label for="" class="py-2 mr-2 text-gray-800 focus:text-gray-600">
@@ -600,7 +580,6 @@ const levels = [
         <p class="text-white">Đang xử lý...</p>
       </div>
     </Form>
-  </div>
   </div>
 </template>
 

@@ -35,12 +35,10 @@ async function fetchTotalUsers() {
 
   if (volunteerCount) {
     totalUsersVolunteer.value = volunteerCount;
-    console.log(`Tình nguyện viên: ${volunteerCount}`);
   }
 
   if (supportCount) {
     totalUsersSupport.value = supportCount;
-    console.log(`Người cần hỗ trợ: ${supportCount}`);
   }
 }
 

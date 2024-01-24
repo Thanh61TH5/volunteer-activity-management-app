@@ -1,5 +1,7 @@
 <template>
-  <component :is="displayComponent" />
+  <div class="relative min-h-screen lg:mx-32 sm:mt-32">
+    <component :is="displayComponent" />
+  </div>
 </template>
 
 <script setup lang="ts">
