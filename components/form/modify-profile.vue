@@ -149,7 +149,10 @@ async function saveProfile() {
     if (profileError) {
       console.error('Error modifying user in profiles:', profileError);
     }
-
+    ElNotification.success({
+      title: 'Thành công',
+      message: 'Sửa hồ sơ thành công',
+    });
   } catch (error) {
     console.error('Error modifying user:', error);
   } finally {

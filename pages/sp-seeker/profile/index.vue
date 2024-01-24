@@ -1,5 +1,13 @@
 <template>
-  <component :is="displayComponent" />
+  <div class="relative min-h-screen lg:mx-32 sm:mt-32">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item
+      ><a href="/">Trang chủ</a>
+      </el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/sp-seeker/profile' }">Hồ sơ</el-breadcrumb-item>
+    </el-breadcrumb>
+    <component :is="displayComponent" />
+  </div>
 </template>
 
 <script setup lang="ts">
