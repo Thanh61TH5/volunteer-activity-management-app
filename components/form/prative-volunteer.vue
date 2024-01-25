@@ -69,9 +69,6 @@ const handleClose = (done: () => void) => {
   emit('close');
   done()
 }
-
-
-
 </script>
 
 <template class="">

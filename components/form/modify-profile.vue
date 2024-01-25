@@ -11,7 +11,7 @@ const loading = ref(false)
 const props = defineProps({
   profile: Object
 });
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(['close', 'save','updatedProfile']);
 const profile = ref(props.profile);
 const type = ref(profile.value.type);
 const avt = ref(profile.value.avt);
@@ -97,6 +97,7 @@ async function saveProfile() {
           .upload(`avatars/${avatarFile.value.name}`, avatarFile.value.file);
     }
 
+
     if(profile.value.type === 'Người cần hỗ trợ'){
       const { error: profileSpError } = await client
           .from('support_seeker_profile')
@@ -129,7 +130,7 @@ async function saveProfile() {
     const { error: profileError } = await client
         .from('profiles')
         .update({
-          avt: storeURL + avatarFile.value.name,
+          ...(avatarFile.value.file && { avt: storeURL + avatarFile.value.name }),
           name: name.value,
           birthday: birthday.value,
           gender: gender.value,
@@ -149,6 +150,7 @@ async function saveProfile() {
     if (profileError) {
       console.error('Error modifying user in profiles:', profileError);
     }
+    emit('updatedProfile', profile.value);
     ElNotification.success({
       title: 'Thành công',
       message: 'Sửa hồ sơ thành công',

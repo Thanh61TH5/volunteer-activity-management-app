@@ -326,7 +326,10 @@ watchEffect(async () => {
 }, [user, userData, cartCount]);
 
 function openDetailCart() {
-  openDetail.value = !openDetail.value
+  window.onload = function() {
+    openDetail.value = !openDetail.value;
+  };
+  window.location.reload();
 }
 </script>
 

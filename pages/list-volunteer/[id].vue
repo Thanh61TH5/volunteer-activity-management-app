@@ -205,10 +205,58 @@ const router = useRouter();
 const user = useSupabaseUser();
 const postId = route.params.id;
 console.log("Post ID:", postId);
+const notifyData = ref([]);
 const volunteerData = ref([]);
 const feedbackData = ref([]);
 const totalScore = ref({ avg_score: 0 });
 let roundedNumber = 0;
+
+onMounted(async () => {
+  try {
+    const { data } = await supabase.from('volunteer_statistics_view').select('*').eq('id', postId).single();
+    notifyData.value = data;
+
+    const createdAtDate = new Date(notifyData.value.profile_created_at);
+
+    const timeDifference = Date.now() - createdAtDate.getTime();
+
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    const notificationMessage = h('div', { style: 'display: flex; flex-direction: column;' }, [
+      h('p', { style: 'margin-bottom: 5px; display: flex; align-items: center;' }, [
+        'Hồ sơ được tạo ',
+        h('span', { style: 'color: blue; margin-left: 5px;' }, `${daysDifference ?? 0} ngày trước`),
+      ]),
+      h('p', { style: 'margin-bottom: 5px; display: flex; align-items: center;' }, [
+        'Số lượng yêu cầu gửi đi: ',
+        h('span', { style: 'color: blue; margin-left: 5px;' }, `${notifyData.value.request_count ?? 0}`),
+      ]),
+      h('p', { style: 'display: flex; align-items: center;' }, [
+        'Số lượng yêu cầu đã được duyệt: ',
+        h('span', { style: 'color: blue; margin-left: 5px;' }, `${notifyData.value.request_count_done ?? 0}`),
+      ]),
+      h('p', { style: 'display: flex; align-items: center;' }, [
+        'Số lượt đánh giá: ',
+        h('span', { style: 'color: blue; margin-left: 5px;' }, `${notifyData.value.feedback_count ?? 0}`),
+      ]),
+    ]);
+
+    ElNotification.info({
+      title: 'Thông báo',
+      message: notificationMessage,
+      duration: 0,
+      onClose: () => {
+        console.log('Notification closed');
+      },
+      closeOnClick: false,
+    });
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
+
+
 onMounted(async () => {
   const {data} = await supabase.from('get_profile_volunteer').select('*').eq('id', postId).single();
   volunteerData.value = data;

@@ -8,6 +8,7 @@ const loading = ref(false);
 const props = defineProps(['request', 'fetchUserData']);
 const emit = defineEmits(['close', 'save']);
 const request = props.request;
+const id_sender = request.id_sender;
 const score = ref(0);
 const review = ref("")
 console.log(request)
@@ -34,11 +35,14 @@ async function sendReview() {
 
     const accountsQuery = await client.from('accounts').select('id').eq('email', user.value.email);
     const accountsQueryType = await client.from('accounts').select('role').eq('email', user.value.email);
+    const profileQueryIdSender = await client.from('profiles').select('id').eq('id_user', id_sender);
+    const profileIdSender = profileQueryIdSender.data?.[0]?.id;
+    console.log('profileIdSender')
     const accountId = accountsQuery.data?.[0]?.id;
     const accountsType = accountsQueryType.data?.[0]?.role;
     console.log('accountsType:', accountsType);
 
-    if (accountId) {
+    if (accountId && accountsType === 'Tình nguyện viên') {
       const idReviewer = accountId;
       const idProfile = request.id_profile;
       const idRequest = request.id;
@@ -54,7 +58,7 @@ async function sendReview() {
               id_profile: idProfile,
               score: score.value,
               created_at: createDate,
-              content: content,
+              content: review.value,
               id_request: idRequest
             },
           ]);
@@ -63,18 +67,6 @@ async function sendReview() {
         console.error('Error post profile:', error);
         throw new Error('Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.');
       }
-
-      if (accountsType === 'Người cần hỗ trợ') {
-        const updateResult = await client
-            .from('requests')
-            .update({ is_done_sp: true })
-            .eq('id', idRequest);
-
-        if (updateResult.error) {
-          console.error('Error updating is_done_sp:', updateResult.error);
-          throw new Error('Lỗi cập nhật thông tin đánh giá.');
-        }
-      } else {
         const updateResult = await client
             .from('requests')
             .update({ is_done_volunteer: true })
@@ -84,11 +76,52 @@ async function sendReview() {
           console.error('Error updating is_done_volunteer:', updateResult.error);
           throw new Error('Lỗi cập nhật thông tin đánh giá.');
         }
-      }
+
 
       ElNotification.success({
         title: 'Thành công',
-        message: 'Yêu cầu đã được gửi thành công.',
+        message: 'Đánh giá đã được gửi thành công.',
+      });
+      await fetchUserData();
+      emit('save');
+    }else {
+      const idReviewer = accountId;
+      const idProfile = profileIdSender;
+      const idRequest = request.id;
+      const createDate = new Date();
+
+      const content = computedScore.value;
+
+      const { data, error } = await client
+          .from('feedbacks')
+          .insert([
+            {
+              id_reviewer: idReviewer,
+              id_profile: idProfile,
+              score: score.value,
+              created_at: createDate,
+              content: review.value,
+              id_request: idRequest
+            },
+          ]);
+
+      if (error) {
+        console.error('Error post profile:', error);
+        throw new Error('Lỗi gửi yêu cầu. Hãy liên hệ với quản trị viên.');
+      }
+        const updateResult = await client
+            .from('requests')
+            .update({ is_done_sp: true })
+            .eq('id', idRequest);
+
+        if (updateResult.error) {
+          console.error('Error updating is_done_sp:', updateResult.error);
+          throw new Error('Lỗi cập nhật thông tin đánh giá.');
+        }
+
+      ElNotification.success({
+        title: 'Thành công',
+        message: 'Đánh giá đã được gửi thành công.',
       });
       await fetchUserData();
       emit('save');

@@ -35,8 +35,8 @@
               <p class="days ml-2">Đến hạn: {{formatDate(spSeeker.end_date_post)}}</p>
             </div>
             <div class="text-white flex space-x-2">
-              <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
-              <button class="bg-blue-500 rounded-full  w-24 text-center py-2 hover:opacity-80" @click="requestVolunteer(spSeeker)">Tham gia</button>
+              <NuxtLink class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80 hover:cursor-pointer" @click="() => Save(spSeeker)">Lưu tin</NuxtLink>
+              <button class="bg-blue-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="requestVolunteer(spSeeker)">Tham gia</button>
             </div>
           </div>
         </div>
@@ -85,16 +85,37 @@ onMounted(async () => {
 });
 let selectedProfile = ref(null);
 
+
+
+async function fetchUserRole() {
+  try {
+    const { data, error } = await client
+        .from('accounts')
+        .select('role')
+        .eq('email', user.value.email);
+
+    if (error) {
+      console.error('Error fetching user role:', error);
+      return null;
+    }
+
+    return data[0]?.role || null;
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+    return null;
+  }
+}
+
 async function requestVolunteer(profile) {
   if (user.value) {
-    const {data, error} = await client.from('accounts').select('role').eq('email', user.value.email)
-    const accRole = data[0].role;
-    if (accRole === 'Tình nguyện viên') {
-      openJoinForm.value = true;
+    const accRole = await fetchUserRole();
+
+    if (accRole) {
+      handleUserRole(accRole, profile);  // Pass the profile parameter
     } else {
       ElNotification.warning({
         title: 'Thông báo',
-        message: 'Chức năng này chỉ dành cho tình nguyện viên',
+        message: 'Không thể xác định vai trò của người dùng',
       });
     }
   } else {
@@ -103,8 +124,24 @@ async function requestVolunteer(profile) {
       message: 'Hãy đăng nhập để tham gia bạn nhé!',
     });
   }
-
 }
+
+function handleUserRole(role, profile) {
+  if (role === 'Tình nguyện viên') {
+    openJoinForm.value = true;
+    selectedProfile.value = profile;
+  } else {
+    ElNotification.warning({
+      title: 'Thông báo',
+      message: 'Chức năng này chỉ dành cho tình nguyện viên',
+    });
+  }
+}
+
+
+
+
+
 const Save = async (spSeeker) => {
   if (user.value) {
     // User is authenticated

@@ -90,22 +90,53 @@ onMounted(async () => {
 });
 let selectedProfile = ref(null);
 
+async function fetchUserRole() {
+  try {
+    const { data, error } = await client
+        .from('accounts')
+        .select('role')
+        .eq('email', user.value.email);
+
+    if (error) {
+      console.error('Error fetching user role:', error);
+      return null;
+    }
+
+    return data[0]?.role || null;
+  } catch (error) {
+    console.error('Error fetching user role:', error);
+    return null;
+  }
+}
+
 async function requestVolunteer(profile) {
   if (user.value) {
-    const {data, error} = await client.from('accounts').select('role').eq('email', user.value.email)
-    const accRole = data[0].role;
-    if (accRole === 'Tình nguyện viên') {
-      openJoinForm.value = true;
+    const accRole = await fetchUserRole();
+
+    if (accRole) {
+      handleUserRole(accRole, profile);  // Pass the profile parameter
     } else {
       ElNotification.warning({
         title: 'Thông báo',
-        message: 'Chức năng này chỉ dành cho tình nguyện viên',
+        message: 'Không thể xác định vai trò của người dùng',
       });
     }
   } else {
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để tham gia bạn nhé!',
+    });
+  }
+}
+
+function handleUserRole(role, profile) {
+  if (role === 'Tình nguyện viên') {
+    openJoinForm.value = true;
+    selectedProfile.value = profile;
+  } else {
+    ElNotification.warning({
+      title: 'Thông báo',
+      message: 'Chức năng này chỉ dành cho tình nguyện viên',
     });
   }
 }

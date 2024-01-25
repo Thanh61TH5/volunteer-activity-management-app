@@ -14,23 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="sm:mx-32 mx-5 sm:mt-32 mt-10">
-    <div v-if="userData === 'Tình nguyện viên'">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item
-        ><a href="/">Trang chủ</a>
-        </el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/volunteer/profile'}">Hồ sơ</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <div v-else>
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item
-        ><a href="/">Trang chủ</a>
-        </el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/sp-seeker/profile'}">Hồ sơ</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
+  <div class=" mx-5">
   <form-add-profile v-if="isOpen"/>
   <div v-else class="">
     <div class=" flex flex-col items-center p-10 bg-white space-y-3  rounded-lg ">

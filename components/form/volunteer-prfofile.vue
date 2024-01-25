@@ -147,12 +147,19 @@
         </div>
       </div>
     </div>
-    <modify-profile class="absolute top-0 right-0 left-0" v-if="openEditForm" @save="editProfile" @close="cancelEditForm" :profile="volunteerData"/>
+    <modify-profile
+        class="absolute top-0 right-0 left-0"
+        v-if="openEditForm"
+        @save="handleUpdatedProfile"
+        @close="cancelEditForm"
+        :profile="volunteerData"
+        :updatedProfile="handleUpdatedProfile"
+    />
     <form-post class="absolute top-0 right-0 left-0" v-if="openPostForm"  @post="postProfile" @close="cancelPostForm" :profile="volunteerData" @hideParentButton="hideParentButton"/>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ModifyProfile from "~/components/form/modify-profile.vue";
 import { formatTime, formatDate } from '~/assets/utils/format.ts';
 
@@ -207,6 +214,46 @@ async function getUserDataByEmail(email) {
   return data;
 }
 
+
+async function cancelPostProfile() {
+  const confirmed = await ElMessageBox.confirm(
+      'Bạn chắc chắn muốn hủy đăng tin?',
+      {
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy',
+        type: 'warning',
+      }
+  );
+
+  if (confirmed) {
+    const { error } = await supabase
+        .from('profiles')
+        .update({ status: false })
+        .eq('id', volunteerData.value.id);
+
+    if (!error) {
+      isPost.value = true
+      ElMessage({
+        type: 'success',
+        message: 'Hủy đăng tin thành công',
+      });
+    }
+  }
+}
+const formatCreateDate = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+function handleUpdatedProfile(updatedProfile) {
+  volunteerData.value = { ...volunteerData.value, ...updatedProfile };
+  openEditForm.value = false;
+}
+
 onMounted(async () => {
   if (user.value && user.value.email) {
     const userData = await getUserDataByEmail(user.value.email);
@@ -254,37 +301,4 @@ onMounted(async () => {
 
 });
 
-async function cancelPostProfile() {
-  const confirmed = await ElMessageBox.confirm(
-      'Bạn chắc chắn muốn hủy đăng tin?',
-      {
-        confirmButtonText: 'Đồng ý',
-        cancelButtonText: 'Hủy',
-        type: 'warning',
-      }
-  );
-
-  if (confirmed) {
-    const { error } = await supabase
-        .from('profiles')
-        .update({ status: false })
-        .eq('id', volunteerData.value.id);
-
-    if (!error) {
-      isPost.value = true
-      ElMessage({
-        type: 'success',
-        message: 'Hủy đăng tin thành công',
-      });
-    }
-  }
-}
-const formatCreateDate = (timestamp) => {
-  const date = new Date(timestamp);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-
-  return `${day}/${month}/${year}`;
-}
 </script>

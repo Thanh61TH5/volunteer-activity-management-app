@@ -190,7 +190,16 @@ const signUp = async () => {
           if (Error) {
             console.error('Error inserting data into support_seeker_profile:', Error);
           }
-        }}
+      const { error: ErrorPr } = await client
+          .from('profiles')
+          .insert({
+            id_user: accData.id
+          });
+      if (ErrorPr) {
+        console.error('Error inserting data into support_seeker_profile:', Error);
+      }
+    }
+    }
     ElNotification.success({
       title: 'Thành công',
       message: 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.',
