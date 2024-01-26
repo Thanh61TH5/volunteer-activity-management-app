@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import {formatTime, formatDate } from '~/assets/utils/format'
+import {useCartStore} from "~/store";
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const savedItems = ref([]);
@@ -92,6 +93,7 @@ async function deleteItem(item) {
     // Refresh or fetch the updated list of saved items after deletion
     // This assumes that you have a function to fetch the updated data
     await fetchSavedItems();
+    useCartStore().reduceCartCount();
     loading.value = false;
     ElNotification.success({
       title: 'Thành công',

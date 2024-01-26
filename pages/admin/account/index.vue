@@ -4,7 +4,8 @@ import { useLoadingStore } from '~/store';
 
 
 definePageMeta({
-  middleware:"auth"
+  middleware:"auth",
+  layout: "sidebar-admin"
 })
 
 const user = useSupabaseUser();
@@ -56,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class=" rounded-lg bg-white p-8 sm:mx-5 sm:mt-20 mt-10 w-full">
+  <div class=" rounded-lg bg-white p-8  w-full sm:mt-12 mt-10 min-h-screen">
     <div class="lg:flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-xl text-lg font-medium py-3">Quản lý tài khoản</h1>
 

@@ -94,6 +94,7 @@ const password = ref("");
 const errorMsg = ref(null);
 const showPassword = ref(false);
 const loadingStore = useLoadingStore();
+let userData = null;
 const loading = computed(() => {
   loadingStore.isLoading
 })
@@ -126,12 +127,9 @@ const signIn = async () => {
     return null;
   }
 
-  let userData = null;
   if (user.value) {
     userData = await getUserDataByEmail(user.value.email);
   }
-
-  // signIn
 
   if (user.value && userData) {
     if (userData.role === 'Admin') {

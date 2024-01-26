@@ -44,9 +44,10 @@ fetchTotalUsers()
 </script>
 
 <template>
-  <div class="flex flex-col space-y-10 bg-white p-8 rounded-lg w-full mt-10">
+  <div class="rounded-lg bg-gray-50 p-8  w-full sm:mt-12 mt-10">
+    <h1 class="text-gray-800 sm:text-xl text-md font-medium pb-5">Thống kê báo cáo</h1>
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-12">
-      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
+      <div class=" rounded bg-white  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount1" >
         <div class="flex justify-between items-center">
           <p class="font-medium text-gray-800">Thống kê số lượng tình nguyện viên</p>
           <Icon name="mdi:account-multiple-plus" class="text-green-500 w-12 h-12"/>
@@ -60,7 +61,7 @@ fetchTotalUsers()
         </div>
       </div>
 
-      <div class=" rounded  p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount2">
+      <div class=" rounded  bg-white p-3 shadow-md hover:cursor-pointer hover:scale-105 transition duration-200 ease-in-out" @click="handleCount2">
         <div class="flex justify-between items-center">
           <p class="font-medium text-gray-800">Thống kê số lượng người cần hỗ trợ</p>
           <Icon name="mdi:account-multiple-plus" class="text-yellow-500 w-12 h-12"/>
@@ -75,17 +76,17 @@ fetchTotalUsers()
       </div>
 
     </div>
-    <div class="grid lg:grid-cols-2 grid-cols-1 gap-12 ">
-      <div class="rounded  p-3 shadow-md">
+    <div class="grid lg:grid-cols-2 grid-cols-1 gap-12 my-10 ">
+      <div class="rounded bg-white  p-3 shadow-md">
         <div>
            <ChartLineChart/>
         </div>
       </div>
-      <div class="rounded  p-3 shadow-md">
+      <div class="rounded bg-white  p-3 shadow-md">
         <chart-cricel/>
       </div>
     </div>
-    <div class="rounded  p-3 shadow-md">
+    <div class="rounded  p-3 shadow-md bg-white">
       <p class="py-5 text-gray-500 text-md font-bold">Danh sách người dùng</p>
       <table-user-data-table/>
     </div>

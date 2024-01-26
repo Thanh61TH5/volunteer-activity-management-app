@@ -19,5 +19,10 @@ export const useCartStore = defineStore({
         incrementCartCount() {
             this.cartCount += 1;
         },
+        reduceCartCount() {
+            this.cartCount -= 1;
+        },
     },
 });
+
+
