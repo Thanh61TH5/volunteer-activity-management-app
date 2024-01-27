@@ -119,8 +119,7 @@ const saveProfile = async () => {
     }
     const { error } = await client
         .from('profiles')
-        .insert({
-          id_user: userDb.value.id,
+        .update({
           type: userDb.value.role,
           avt: storeURL + avatarFile.value.name,
           name: name.value,
@@ -134,7 +133,7 @@ const saveProfile = async () => {
           self_description: self_description.value,
           hobbies: hobbies.value,
           helth_description: helth_description.value
-        });
+        }).eq('id_user', userDb.value.id)
 
     if (error) {
       console.error('Error inserting data into profiles:', error);
@@ -493,9 +492,9 @@ const levels = [
               :max-time="support_time_end"
               class=""
               placeholder="Thời gian bắt đầu"
-              start="00:00"
+              start="08:30"
               step="00:15"
-              end="00:00"
+              end="18:30"
           />
           <el-time-select
               v-model="support_time_end"

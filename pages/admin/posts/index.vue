@@ -86,7 +86,7 @@ const currentPageData = computed(() => {
 </script>
 
 <template>
-  <div class=" rounded-lg bg-white p-8  w-full sm:mt-12 mt-10" :loading="loading">
+  <div class=" rounded-lg bg-white p-8  w-full" :loading="loading" style="margin-top: 50px">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Duyệt tin đăng</h1>
     <div class="flex justify-between py-2 w-full">
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin tin đăng..." />

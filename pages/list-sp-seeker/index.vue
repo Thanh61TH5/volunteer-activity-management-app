@@ -65,7 +65,28 @@ button, input {
 import {formatTime} from "assets/utils/format.ts";
 import { useCartStore } from '~/store/index.ts';
 import PrativeVolunteer from "~/components/form/prative-volunteer.vue";
+const keywords = ['tình nguyện', 'thiện nguyện', 'người già', 'người già neo đơn'];
 
+const head = () => ({
+  title: 'Hệ thống quản lý hoạt động thiện nguyện hỗ trợ người già neo đơn',
+  meta: [
+    {
+      hid: 'title',
+      name: 'title',
+      content: 'Hỗ trợ người già neo đơn',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content: 'Hệ thống quản lý hoạt động thiện nguyện hỗ trợ người già neo đơn',
+    },
+    {
+      hid: 'keywords',
+      name: 'keywords',
+      content: keywords.join(', '),
+    },
+  ],
+});
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();

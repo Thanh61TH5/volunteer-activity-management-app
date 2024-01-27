@@ -57,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class=" rounded-lg bg-white p-8  w-full sm:mt-12 mt-10 min-h-screen">
+  <div class=" rounded-lg bg-white p-8  w-full" style="margin-top: 50px">
     <div class="lg:flex justify-between items-center">
       <h1 class="text-gray-600 sm:text-xl text-lg font-medium py-3">Quản lý tài khoản</h1>
 

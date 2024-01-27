@@ -28,7 +28,7 @@ export default ({
   components: true,
   app: {
     head: {
-      title: 'Hỗ trợ người già neo đơn',
+      title: 'Hệ thống quản lý hoạt động thiện nguyện hỗ trợ người già neo đơn',
       meta: [
         {
           name: 'viewport',
