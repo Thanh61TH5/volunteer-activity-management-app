@@ -198,6 +198,9 @@
     </div>
   </nav>
   <div class="lg:hidden block flex-col bg-white space-y-6 w-full pl-5 py-5 z-0" v-show="openNav" :class="openNav ? 'nav-slide-down-enter-active' : 'nav-slide-down-leave-active'">
+    <NuxtLink to="/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">
+      Trang chủ
+    </NuxtLink>
     <NuxtLink to="/list-sp-seeker/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">
       Việc cần hỗ trợ
     </NuxtLink>
