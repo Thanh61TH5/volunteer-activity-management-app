@@ -97,13 +97,13 @@
               <li class="w-full border-r border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3 border-r">
                   <Field v-model="selectedRole" value= "Người cần hỗ trợ" type="radio" name="list-radio" rules="required" class="w-4 h-4 text-blue-600 bg-gray-100"/>
-                  <label for="horizontal-list-radio-license" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Người cần hỗ trợ </label>
+                  <label for="horizontal-list-radio-license" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-800">Người cần hỗ trợ </label>
                 </div>
               </li>
               <li class="w-full">
                 <div class="flex items-center ps-3">
                   <Field v-model="selectedRole" value="Tình nguyện viên" type="radio" rules="required"  name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"/>
-                  <label for="horizontal-list-radio-id" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Tình nguyện viện</label>
+                  <label for="horizontal-list-radio-id" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-800">Tình nguyện viện</label>
                 </div>
               </li>
             </ul>
