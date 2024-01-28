@@ -108,14 +108,17 @@
     </div>
 
     <div class=" relative flex items-center  border-gray-200 border w-2/4 rounded-full py-2  text-sm  duration-100 ease-in outline-none focus:border-blue-300">
-      <div class="absolute right-2 " @click="performSearch">
-        <Icon name="ic:twotone-search" class="w-10 h-10 text-gray-500 px-2" />
+      <div class="absolute right-2" @click="performSearch">
+        <Icon name="ic:twotone-search" class="w-10 h-10 text-gray-500 px-2 focus:text-blue-500" />
       </div>
 
       <input
+
+          v-model="searchKeyword"
           type="text"
           class="lg:hidden block px-3 outline-none"
           placeholder="Nhập vào thông tin..."
+          @keydown="handleKeyPress"
       />
     </div>
 
@@ -201,7 +204,7 @@
     <NuxtLink to="/list-volunteer/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">
       Tình nguyện viên
     </NuxtLink>
-    <NuxtLink to="/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi
+    <NuxtLink to="/about/" class="block text-gray-600 hover:text-blue-400 transition duration-300 ease-linear">Về chúng tôi
     </NuxtLink>
   </div>
   <el-dialog v-model="signOut" center class="rounded-lg " >
