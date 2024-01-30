@@ -122,10 +122,8 @@ onMounted(async () => {
 
 const Save = async (volunteer) => {
   if (user.value) {
-    // User is authenticated
 
-    // Step 1: Get id_accounts
-    const email = user.value.email; // Assuming user email is used as a reference
+    const email = user.value.email;
     const { data: accountsData, error: accountsError } = await client
         .from('accounts')
         .select('id')
@@ -139,7 +137,6 @@ const Save = async (volunteer) => {
 
     const idAccounts = accountsData.id;
 
-    // Step 2: Get id_cart
     const { data: cartData, error: cartError } = await client
         .from('cart')
         .select('id')
@@ -153,7 +150,6 @@ const Save = async (volunteer) => {
 
     const idCart = cartData.id;
 
-    // Step 3: Check if the entry already exists in cart_details
     const { data: existingCartDetails, error: existingCartDetailsError } = await client
         .from('cart_details')
         .select()
@@ -168,7 +164,7 @@ const Save = async (volunteer) => {
         message: 'Tin đã được thêm vào giỏ hàng trước đó.',
       });
     } else {
-      // Step 4: Insert data into cart_details
+
       const { error: insertError } = await client
           .from('cart_details')
           .insert([
@@ -183,7 +179,6 @@ const Save = async (volunteer) => {
         return;
       }
 
-      // Notify success
       ElNotification.success({
         title: 'Thông báo',
         message: 'Đã lưu tin thành công vào giỏ hàng.',
@@ -191,7 +186,7 @@ const Save = async (volunteer) => {
       useCartStore().incrementCartCount();
     }
   } else {
-    // User is not authenticated
+
     ElNotification.info({
       title: 'Thông báo',
       message: 'Hãy đăng nhập để lưu tin bạn nhé!',

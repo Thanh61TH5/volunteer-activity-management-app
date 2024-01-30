@@ -221,6 +221,28 @@ const totalScore = ref({ avg_score: 0 });
 let roundedNumber = 0;
 
 onMounted(async () => {
+  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
+  if (data.length > 0) {
+    totalScore.value = data[0];
+    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
+    roundedNumber = parseFloat(roundedNumberString);
+  } else {
+    console.error('No data found');
+  }
+});
+
+onMounted(async () => {
+  const {data} = await supabase.from('get_profile_sp').select('*').eq('id', postId).single();
+  spSeekerData.value = data;
+});
+
+onMounted(async () => {
+  const {data} = await supabase.from('get_info_feedbacks').select('*').eq('id_profile', postId);
+  feedbackData.value = data;
+});
+
+
+onMounted(async () => {
   try {
     const { data } = await supabase.from('support_statistics_view').select('*').eq('id', postId).single();
     notifyData.value = data;
@@ -266,26 +288,6 @@ onMounted(async () => {
 });
 
 
-onMounted(async () => {
-  const {data} = await supabase.from('get_profile_sp').select('*').eq('id', postId).single();
-  spSeekerData.value = data;
-});
-
-onMounted(async () => {
-  const {data} = await supabase.from('get_info_feedbacks').select('*').eq('id_profile', postId);
-  feedbackData.value = data;
-});
-
-onMounted(async () => {
-  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
-  if (data.length > 0) {
-    totalScore.value = data[0];
-    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
-    roundedNumber = parseFloat(roundedNumberString);
-  } else {
-    console.error('No data found');
-  }
-});
 
 const formatCreateDate = (timestamp) => {
   const date = new Date(timestamp);
@@ -387,7 +389,6 @@ async function requestVolunteer() {
     });
   }
 }
-
 
 function send() {
   openJoinForm.value = false;

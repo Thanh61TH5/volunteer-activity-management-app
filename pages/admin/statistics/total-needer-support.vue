@@ -92,7 +92,6 @@ const tableData = computed(() =>
         (data) =>
             !search.value ||
             data.name.toLowerCase().includes(search.value.toLowerCase())
-
     )
 );
 

@@ -160,59 +160,12 @@
       </div>
     </div>
   </div>
-  <el-dialog v-model="notifySave" center class="rounded-lg ">
-    <span class="text-center">
-      Để lưu tin, bạn cần phải đăng nhập. Bạn có muốn tiếp tục?
-    </span>
-    <template #footer>
-      <span class="dialog-footer  flex justify-center items-center space-x-3">
-        <el-button @click="notifySaveCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifySaveOk">
-          Tiếp tục
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
 
-  <el-dialog v-model="notifyJoin" center class="rounded-lg">
-    <span class="text-center">
-      Để tham gia thiện nguyện, bạn cần phải có tài khoản. Bạn có muốn tiếp tục?
-    </span>
-    <template #footer>
-      <span class="dialog-footer flex justify-center items-center space-x-3">
-        <el-button @click="notifyJoinCancel">Hủy bỏ</el-button>
-        <el-button type="primary" @click="notifyJoinOk">
-          Tiếp tục
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
 </template>
 
 <script setup>
 import {useCartStore} from "~/store/index.ts";
-const keywords = ['tình nguyện', 'thiện nguyện', 'người già', 'người già neo đơn'];
 
-const head = () => ({
-  title: 'Hệ thống quản lý hoạt động thiện nguyện hỗ trợ người già neo đơn',
-  meta: [
-    {
-      hid: 'title',
-      name: 'title',
-      content: 'Hỗ trợ người già neo đơn',
-    },
-    {
-      hid: 'description',
-      name: 'description',
-      content: 'Hệ thống quản lý hoạt động thiện nguyện hỗ trợ người già neo đơn',
-    },
-    {
-      hid: 'keywords',
-      name: 'keywords',
-      content: keywords.join(', '),
-    },
-  ],
-});
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, '0');
@@ -231,6 +184,26 @@ const volunteerData = ref([]);
 const feedbackData = ref([]);
 const totalScore = ref({ avg_score: 0 });
 let roundedNumber = 0;
+
+onMounted(async () => {
+  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
+  if (data.length > 0) {
+    totalScore.value = data[0];
+    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
+    roundedNumber = parseFloat(roundedNumberString);
+  } else {
+    console.error('No data found');
+  }
+});
+onMounted(async () => {
+  const {data} = await supabase.from('get_profile_volunteer').select('*').eq('id', postId).single();
+  volunteerData.value = data;
+});
+
+onMounted(async () => {
+  const {data} = await supabase.from('get_info_feedbacks').select('*').eq('id_profile', postId);
+  feedbackData.value = data;
+});
 
 onMounted(async () => {
   try {
@@ -278,26 +251,6 @@ onMounted(async () => {
 });
 
 
-onMounted(async () => {
-  const {data} = await supabase.from('get_profile_volunteer').select('*').eq('id', postId).single();
-  volunteerData.value = data;
-});
-
-onMounted(async () => {
-  const {data} = await supabase.from('get_info_feedbacks').select('*').eq('id_profile', postId);
-  feedbackData.value = data;
-});
-
-onMounted(async () => {
-  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
-  if (data.length > 0) {
-    totalScore.value = data[0];
-    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
-    roundedNumber = parseFloat(roundedNumberString);
-  } else {
-    console.error('No data found');
-  }
-});
 
 const formatCreateDate = (timestamp) => {
   const date = new Date(timestamp);

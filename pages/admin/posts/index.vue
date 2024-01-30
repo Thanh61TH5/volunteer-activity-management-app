@@ -57,7 +57,6 @@ async function handleApprove(id: number) {
     ElNotification.success({
       title: 'Thành công',
       message: 'Duyệt tin đăng thành công.',
-      offset: 100,
     });
 
     // Fetch updated user data
@@ -67,7 +66,6 @@ async function handleApprove(id: number) {
     ElNotification.error({
       title: 'Lỗi',
       message: 'Đã có lỗi xảy ra khi duyệt tin đăng.',
-      offset: 100,
     });
   }
 }
@@ -92,9 +90,9 @@ const currentPageData = computed(() => {
       <input  class="rounded text-sm w-1/4 py-2 px-2 outline-none border hover:border-blue-200 transition duration-200 ease-in-out" v-model="search" placeholder="Nhập thông tin tin đăng..." />
     </div>
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
-      pageSize: 10,
-      layout: 'total, sizes, prev, pager, next, jumper',
-      total: tableData.length
+      pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
+      layout: 'total, sizes, prev, pager, next, jumper', // Cấu trúc phân trang
+      total: tableData.length // Tổng số lượng dữ liệu
     }">
       <el-table-column label="ID" prop="id" />
       <el-table-column label="ID người dùng" prop="id_user" />
@@ -112,9 +110,22 @@ const currentPageData = computed(() => {
       <el-table-column label="Trạng thái" prop="status" />
       <el-table-column align="right">
         <template #default="scope">
-          <el-button type="primary" v-if="scope.row.status === 'false'">Duyệt</el-button>
-          <el-button type="primary" v-else disabled>Đã duyệt</el-button>
-
+          <el-button
+              v-if="!scope.row.status"
+              type="primary"
+              style="width: 100px"
+              @click="handleApprove(scope.row.id)"
+          >
+            Duyệt
+          </el-button>
+          <el-button
+              v-if="scope.row.status"
+              type="primary"
+              disabled
+              style="width: 100px"
+          >
+            Đã duyệt
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
