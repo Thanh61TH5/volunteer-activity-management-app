@@ -63,16 +63,16 @@
               <label class="font-medium text-gray-600" for="name_job">Khu vực: </label>
               <p class=" text-gray-600"> {{spSeekerData.area}}</p>
             </div>
-            <div class="flex flex-wrap  items-center">
-              <label class="font-medium text-gray-600 pr-1" for="name_job">Đánh giá: </label>
-              <el-rate
-                  v-model="roundedNumber"
-                  disabled
-                  show-score
-                  text-color="#ff9900"
-                  score-template="{value} điểm"
-              />
-            </div>
+<!--            <div class="flex flex-wrap  items-center">-->
+<!--              <label class="font-medium text-gray-600 pr-1" for="name_job">Đánh giá: </label>-->
+<!--              <el-rate-->
+<!--                  v-model="roundedNumber"-->
+<!--                  disabled-->
+<!--                  show-score-->
+<!--                  text-color="#ff9900"-->
+<!--                  score-template="{value} điểm"-->
+<!--              />-->
+<!--            </div>-->
           </div>
           <div class="py-5 flex justify-between items-center space-x-10">
             <button
@@ -122,16 +122,16 @@
     <div class="m-3">
       <div class="bg-white border border-gray-100 shadow-md rounded-lg p-5 ">
         <div class="">
-          <div class="flex flex-wrap  items-center">
-            <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>
-            <el-rate
-                v-model="roundedNumber"
-                disabled
-                show-score
-                text-color="#ff9900"
-                score-template="{value} sao"
-            />
-          </div>
+<!--          <div class="flex flex-wrap  items-center">-->
+<!--            <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>-->
+<!--            <el-rate-->
+<!--                v-model="roundedNumber"-->
+<!--                disabled-->
+<!--                show-score-->
+<!--                text-color="#ff9900"-->
+<!--                score-template="{value} sao"-->
+<!--            />-->
+<!--          </div>-->
           <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
             <p>Chi tiết đánh giá: </p>
           </div>
@@ -220,16 +220,6 @@ const accRole = ref(null);
 const totalScore = ref({ avg_score: 0 });
 let roundedNumber = 0;
 
-onMounted(async () => {
-  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
-  if (data.length > 0) {
-    totalScore.value = data[0];
-    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
-    roundedNumber = parseFloat(roundedNumberString);
-  } else {
-    console.error('No data found');
-  }
-});
 
 onMounted(async () => {
   const {data} = await supabase.from('get_profile_sp').select('*').eq('id', postId).single();
@@ -241,6 +231,16 @@ onMounted(async () => {
   feedbackData.value = data;
 });
 
+onMounted(async () => {
+  const { data } = await supabase.from('get_id_profile_and_total_score').select().eq('id_profile', postId);;
+  if (data.length > 0) {
+    totalScore.value = data[0];
+    const roundedNumberString = totalScore.value.avg_score.toFixed(2);
+    roundedNumber = parseFloat(roundedNumberString);
+  } else {
+    console.error('No data found');
+  }
+});
 
 onMounted(async () => {
   try {

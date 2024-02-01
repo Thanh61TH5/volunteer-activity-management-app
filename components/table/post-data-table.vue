@@ -59,9 +59,9 @@ const currentPageData = computed(() => {
 <template>
   <div class="relative w-full z-1" :loading="loading">
     <el-table v-if="tableData.length > 0" :data="currentPageData" style="width: 100%" :pagination="{
-      pageSize: 10, // Số lượng dữ liệu hiển thị trên mỗi trang
-      layout: 'total, sizes, prev, pager, next, jumper', // Cấu trúc phân trang
-      total: tableData.length // Tổng số lượng dữ liệu
+      pageSize: 10,
+      layout: 'total, sizes, prev, pager, next, jumper',
+      total: tableData.length
     }">      <el-table-column label="ID" prop="id" />
       <el-table-column label="Họ tên" prop="name" />
       <el-table-column label="Email" prop="email" />

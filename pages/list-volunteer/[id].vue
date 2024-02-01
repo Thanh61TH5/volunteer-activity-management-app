@@ -63,16 +63,16 @@
               <label class="font-medium text-gray-600" for="name_job">Khu vực: </label>
               <p class=" text-gray-600"> {{volunteerData.area}}</p>
             </div>
-            <div class="flex flex-wrap  items-center">
-              <label class="font-medium text-gray-600 pr-1" for="name_job">Đánh giá: </label>
-              <el-rate
-                  v-model="roundedNumber"
-                  disabled
-                  show-score
-                  text-color="#ff9900"
-                  score-template="{value} điểm"
-              />
-            </div>
+<!--            <div class="flex flex-wrap  items-center">-->
+<!--              <label class="font-medium text-gray-600 pr-1" for="name_job">Đánh giá: </label>-->
+<!--              <el-rate-->
+<!--                  v-model="roundedNumber"-->
+<!--                  disabled-->
+<!--                  show-score-->
+<!--                  text-color="#ff9900"-->
+<!--                  score-template="{value} điểm"-->
+<!--              />-->
+<!--            </div>-->
           </div>
           <div class="py-5 flex justify-between items-center space-x-10">
             <button
@@ -114,16 +114,16 @@
     <div class="m-3">
       <div class="bg-white border border-gray-100 shadow-md rounded-lg p-5 ">
         <div class="">
-          <div class="flex flex-wrap  items-center">
-            <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>
-            <el-rate
-                v-model="roundedNumber"
-                disabled
-                show-score
-                text-color="#ff9900"
-                score-template="{value} điểm"
-            />
-          </div>
+<!--          <div class="flex flex-wrap  items-center">-->
+<!--            <label class="font-medium text-gray-600 pr-1" for="name_job">Tổng sao đánh giá: </label>-->
+<!--            <el-rate-->
+<!--                v-model="roundedNumber"-->
+<!--                disabled-->
+<!--                show-score-->
+<!--                text-color="#ff9900"-->
+<!--                score-template="{value} điểm"-->
+<!--            />-->
+<!--          </div>-->
           <div class=" text-gray-600 font-bold text-lg py-5 flex space-x-5">
             <p>Chi tiết đánh giá: </p>
           </div>

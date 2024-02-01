@@ -69,7 +69,7 @@ watch(() => props.profile, (newValue) => {
 
 <template class="">
   <el-dialog  class="p-5" :before-close="handleClose" :v-loading ="loading" :style="{ width: '65%' }"
-             v-model="isDialogVisible">
+              v-model="isDialogVisible">
     <h1 class="text-gray-600 sm:text-xl text-md font-medium">Nhập thời hạn đăng tin:</h1>
     <span>
       <hr class="w-full">

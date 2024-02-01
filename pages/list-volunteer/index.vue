@@ -88,7 +88,7 @@ const head = () => ({
       name: 'keywords',
       content: keywords.join(', '),
     },
-  ],
+  ],z
 });
 
 const client = useSupabaseClient();

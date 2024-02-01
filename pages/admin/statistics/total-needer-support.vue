@@ -42,7 +42,7 @@ async function fetchUserData() {
 
   const { data: usersData, count, error } = await client
       .from('accounts')
-      .select('*', { count: 'exact' }) // Include count in the result
+      .select('*', { count: 'exact' })
       .eq('status', 'TRUE')
       .eq('role', 'Người cần hỗ trợ')
       .gte('created_at', formatDate(startYear.value, startMonth.value))

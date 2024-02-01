@@ -176,9 +176,9 @@ function saveReviewForm() {
       </el-table-column>
     </el-table>
     <review v-if="openReviewForm" :request="selectedRequestData" @close="closeForm" @save="saveReviewForm" :fetchUserData="fetchUserData"/>
-    <div class="text-center" v-else>
-      <p>Không tìm thấy dữ liệu</p>
-    </div>
+<!--    <div class="text-center" v-else>-->
+<!--      <p>Không tìm thấy dữ liệu</p>-->
+<!--    </div>-->
     <el-pagination
         class="mt-10"
         layout="prev, pager, next"

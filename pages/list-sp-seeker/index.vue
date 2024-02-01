@@ -203,7 +203,7 @@ const save = async (spSeeker) => {
         message: 'Tin đã được thêm vào giỏ hàng trước đó.',
       });
     } else {
-      // Step 4: Insert data into cart_details
+
       const { error: insertError } = await client
           .from('cart_details')
           .insert([

@@ -103,7 +103,6 @@ async function saveProfile() {
           .from('support_seeker_profile')
           .update({
             personal_situation: personal_situation.value,
-            support_job_name: support_job_name.value,
             support_weekday: sp_weekday.value,
             support_time_end: support_time_end.value,
             support_time_start: support_time_start.value,
