@@ -37,7 +37,7 @@
           <div class="flex flex-col items-center justify-center space-y-5 sm:flex  pt-5">
             <div class="flex items-center justify-center mx-10">
               <Icon name="material-symbols:av-timer" class="w-5 h-5" />
-              <p class="days ml-2">Đến hạn: {{formatDate(spSeeker.end_date_post)}}</p>
+              <p class="days ml-2">Hạn tin đăng: {{formatDate(spSeeker.end_date_post)}}</p>
             </div>
             <div class="text-white flex space-x-2">
               <button class="bg-green-500 rounded-full w-24 text-center py-2 hover:opacity-80" @click="() => save(spSeeker)">Lưu tin</button>

@@ -227,7 +227,6 @@ const signUp = async () => {
     });
     loadingStore.setLoading(false);
   }
-
 };
 </script>
 <style scoped>

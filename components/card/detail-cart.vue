@@ -39,7 +39,6 @@
       </li>
     </ul>
     <div v-else class="flex flex-col justify-center items-center space-y-2">
-      <img src="/empty-cart.png" class="w-20 h-20" alt="empty-cart">
       <p class="text-gray-400 text-sm">Bạn chưa có tin nào được lưu.</p>
     </div>
     <div v-if="loading" class=" loading right-0 left-0 bottom-0 top-0 flex justify-center items-center  absolute">
@@ -128,7 +127,9 @@ async function fetchSavedItems() {
 onMounted(async() => {
   fetchSavedItems();
 })
-
+watchEffect(() => {
+  fetchSavedItems();
+});
 
 
 

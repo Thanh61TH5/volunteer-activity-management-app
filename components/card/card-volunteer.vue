@@ -33,7 +33,7 @@
         <div class="flex flex-col justify-center pt-5 sm:justify-between sm:flex space-y-5">
           <div class="flex items-center justify-center mx-10">
             <Icon name="material-symbols:av-timer" class="w-5 h-5" />
-            <p class="days ml-2">Đến hạn: {{formatDate(volunteer.end_date_post)}}</p>
+            <p class="days ml-2">Hạn tin đăng: {{formatDate(volunteer.end_date_post)}}</p>
           </div>
           <div class="flex items-center justify-center text-white mx-10">
             <button
@@ -129,7 +129,7 @@ const Save = async (spSeeker) => {
         message: 'Tin đã được thêm vào giỏ hàng trước đó.',
       });
     } else {
-      // Step 4: Insert data into cart_details
+
       const { error: insertError } = await client
           .from('cart_details')
           .insert([
@@ -167,7 +167,7 @@ const calculateAge = (currentDay, birthday) => {
 
 
 function send() {
-  openJoinForm.value = false;
+
 }
 
 function cancelRequestForm() {

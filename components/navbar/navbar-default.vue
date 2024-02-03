@@ -33,7 +33,7 @@
       <div class="flex space-x-6 ">
         <div class="flex justify-center items-center hover:cursor-pointer" @click="drawer = true">
           <el-badge :value="cartCount" class="item" type="primary">
-            <Icon name="icons8:shopping-cart" class="w-8 h-8 text-gray-500"/>
+            <Icon name="material-symbols:card-travel-outline" class="w-8 h-8 text-gray-500"/>
           </el-badge>
         </div>
         <el-dropdown trigger="click" v-if="user" class="">
